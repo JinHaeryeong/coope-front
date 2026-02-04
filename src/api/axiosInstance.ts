@@ -1,10 +1,13 @@
 import axios from "axios";
-//사용자 요청이 필요없는 서비스 요청시 사용
+
+const BASE_URL = `http://localhost:8080/api`;
+
+// 기본 인스턴스 (모든 요청에 쿠키 허용)
 const axiosInstance = axios.create({
-    baseURL: `http://localhost:8080/api`,
-    headers: {
-        "Content-Type": "application/json",
-    },
+    baseURL: BASE_URL,
+    withCredentials: true,
 });
+
+// JSON용 (기본값)
 
 export default axiosInstance;

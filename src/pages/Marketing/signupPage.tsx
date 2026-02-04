@@ -3,7 +3,7 @@ import { SignupForm } from "@/components/Auth/SignupForm";
 
 const SignupPage = () => {
     return (
-        <div className="flex-1 flex items-center justify-center bg-background py-12 px-4 lg:px-8">
+        <div className="flex-1 flex items-center justify-center bg-background py-12 p-1 lg:px-8">
 
             <div className="relative lg:max-w-4/6 w-full space-y-8 bg-card p-8 rounded-2xl border shadow-sm">
                 <img

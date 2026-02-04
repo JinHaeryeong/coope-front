@@ -11,13 +11,21 @@ import {
     FieldGroup,
     FieldDescription
 } from "@/components/ui/field";
+import { apiSignUp } from "@/api/userApi";
+import axios from "axios";
+
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 
 // 회원가입 유효성 검사 스키마
 const signupSchema = z.object({
     name: z.string().min(2, "이름은 2자 이상 입력해주세요."),
     nickname: z.string().min(2, "닉네임은 2자 이상 입력해주세요."),
     email: z.string().email("올바른 이메일 형식을 입력해주세요."),
-    password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다."),
+    password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다.").regex(
+        passwordRegex,
+        "비밀번호는 영어, 숫자, 특수문자를 포함해야 합니다."
+    ),
     confirmPassword: z.string().min(1, "비밀번호 확인을 입력해주세요."),
     userIcon: z.instanceof(File).optional()
 }).refine((data) => data.password === data.confirmPassword, {
@@ -40,9 +48,37 @@ export function SignupForm() {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof signupSchema>) => {
-        console.log("백엔드(Spring Boot)로 보낼 데이터:", values);
-        // TODO: axios.post("/api/auth/signup", values)
+    const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+        try {
+            const formData = new FormData();
+
+            // 데이터 밀어넣기
+            formData.append("name", values.name);
+            formData.append("nickname", values.nickname);
+            formData.append("email", values.email);
+            formData.append("password", values.password);
+
+            if (values.userIcon instanceof File) {
+                formData.append("userIcon", values.userIcon);
+            }
+            const result = await apiSignUp(formData);
+
+            // 전용 API 호출
+            if (result) {
+                console.log("서버 응답 데이터:", result);
+                alert(result.message || "회원가입 성공!");
+
+                // 가입 성공 후 로그인 페이지로 리다이렉트
+                navigate("/");
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const serverMessage = error.response?.data?.message;
+                alert(serverMessage || "회원가입 중 오류가 발생했습니다.");
+            } else {
+                console.error("알 수 없는 에러:", error);
+            }
+        }
     };
 
     return (
@@ -65,10 +101,14 @@ export function SignupForm() {
                         accept="image/*"
                         onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) form.setValue("userIcon", file);
+                            if (file) {
+                                form.setValue("userIcon", file);
+                            } else {
+                                form.setValue("userIcon", undefined);
+                            }
                         }}
                     />
-                    <FieldDescription>나를 표현할 사진을 선택해주세요. (로컬 서버에 저장됩니다.)</FieldDescription>
+                    <FieldDescription>나를 표현할 사진을 선택해주세요</FieldDescription>
                 </Field>
                 {/* 닉네임 필드 */}
                 <Field>

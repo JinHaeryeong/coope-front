@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
 import { useNavigate } from "react-router-dom";
 import { useLoginModal } from "@/hooks/useLoginModal";
-import { GoogleLogin } from '@react-oauth/google';
+import axios from "axios";
+import { apiLogin } from "@/api/userApi";
+import { useAuthStore } from "@/store/authStore";
 
 // 유효성 검사 규칙 정의
 const formSchema = z.object({
@@ -19,16 +21,39 @@ export function LoginForm() {
 
     const navigate = useNavigate();
     const loginModal = useLoginModal();
+    const { signIn } = useAuthStore();
     // 폼 초기화
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: { email: "", password: "" },
     });
 
-    // 제출 핸들러
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log("서버로 보낼 데이터:", values);
-        // 여기서 Spring Boot API 호출!
+
+
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            const result = await apiLogin(values);
+
+            if (result) {
+                signIn(result.accessToken, {
+                    email: result.email,
+                    nickname: result.nickname,
+                    userIcon: result.userIcon,
+                });
+
+                console.log("로그인 성공 및 스토어 저장 완료");
+
+                loginModal.onClose();
+                navigate("/");
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const serverMessage = error.response?.data?.message;
+                alert(serverMessage || "로그인에 실패했습니다.");
+            } else {
+                console.error("알 수 없는 에러:", error);
+            }
+        }
     };
 
     const handleSignupClick = () => {
@@ -42,7 +67,7 @@ export function LoginForm() {
                 <Field>
                     <FieldLabel>이메일</FieldLabel>
                     <Input
-                        {...form.register("email")} // 핵심: react-hook-form에 연결
+                        {...form.register("email")}
                         placeholder="name@example.com"
                     />
                     {form.formState.errors.email && (

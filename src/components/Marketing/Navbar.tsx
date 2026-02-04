@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; // react-router-dom으로 교체
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, Settings, UserIcon, X } from "lucide-react";
 
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,21 @@ import { Spinner } from "@/components/ui/spinner";
 import { ModeToggle } from "@/components/Common/ModeToggle";
 import { Logo } from "./Logo";
 import { useLoginModal } from "@/hooks/useLoginModal";
+import { useAuthStore } from "@/store/authStore";
+
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from "@/components/ui/avatar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Links = [
     { href: "/notice", text: '공지사항' },
@@ -21,8 +36,7 @@ export const Navbar = () => {
     const scrolled = useScrollTop();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // TODO: 나중에 Spring Boot 백엔드 인증 로직과 연결
-    const isAuthenticated = false;
+    const { isLoggedIn, user, signOut } = useAuthStore();
     const isLoading = false;
 
     const toggleMobileMenu = () => {
@@ -56,7 +70,7 @@ export const Navbar = () => {
                                 </li>
                             ))}
                             {isLoading && <Spinner />}
-                            {!isAuthenticated && !isLoading && (
+                            {!isLoggedIn && !isLoading && (
                                 <li className="relative group font-medium cursor-pointer" onClick={handleLoginModal}>
                                     <span>로그인</span>
                                     <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-black dark:bg-white"></span>
@@ -66,10 +80,51 @@ export const Navbar = () => {
                     </nav>
 
                     <div className="hidden md:flex items-center gap-x-10">
-                        {isAuthenticated && !isLoading && (
-                            <Button variant="ghost" size="sm" asChild>
-                                <Link to="/profile">프로필</Link>
-                            </Button>
+                        {isLoggedIn && !isLoading && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <div className="cursor-pointer hover:opacity-80 transition ml-4">
+                                        <Avatar className="h-9 w-9 border">
+                                            <AvatarImage
+                                                src={user?.userIcon ? `http://localhost:8080${user.userIcon}` : "/default-icon.png"}
+                                                alt={user?.nickname}
+                                            />
+                                            <AvatarFallback className="bg-sky-500 text-white">
+                                                {user?.nickname?.charAt(0) || "U"}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56" align="end" forceMount>
+                                    <DropdownMenuLabel className="font-normal">
+                                        <div className="flex flex-col space-y-1">
+                                            <p className="text-sm font-medium leading-none">{user?.nickname}</p>
+                                            <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                                        </div>
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild className="cursor-pointer">
+                                        <Link to="/profile">
+                                            <UserIcon className="mr-2 h-4 w-4" />
+                                            <span>프로필 설정</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild className="cursor-pointer">
+                                        <Link to="/settings">
+                                            <Settings className="mr-2 h-4 w-4" />
+                                            <span>환경 설정</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        className="text-red-600 cursor-pointer focus:text-red-600"
+                                        onClick={() => signOut()}
+                                    >
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        <span>로그아웃</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         )}
                         <ModeToggle />
                     </div>
@@ -108,13 +163,13 @@ export const Navbar = () => {
                                 </li>
                             ))}
                             <hr className="dark:border-slate-700" />
-                            {!isAuthenticated && !isLoading && (
+                            {!isLoggedIn && !isLoading && (
                                 <li className="relative group font-medium cursor-pointer" onClick={handleLoginModal}>
                                     <span>로그인</span>
                                     <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-black dark:bg-white"></span>
                                 </li>
                             )}
-                            {isAuthenticated && !isLoading && (
+                            {isLoggedIn && !isLoading && (
                                 <li className="text-lg font-medium" onClick={toggleMobileMenu}>
                                     <Link to="/profile" className="block w-full">프로필</Link>
                                 </li>
