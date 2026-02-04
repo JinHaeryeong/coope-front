@@ -1,0 +1,374 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --font-sans: "Pretendard Variable", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+    @keyframes wave {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+    @keyframes tracking-in-expand {
+        0% {
+            letter-spacing: -0.5em;
+            opacity: 0;
+        }
+        40% {
+            opacity: 0.6;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    --animate-wave: wave 10s linear infinite;
+    --animate-tracking-in-expand: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+:root {
+    --radius: 0.625rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        font-family: "Pretendard Variable", var(--font-sans);
+        @apply bg-background text-foreground;
+    }
+}
+
+.ocean {
+    height: 150px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    @apply left-0 right-0 overflow-hidden;
+}
+
+.wave {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%23003F7C'/%3E%3C/svg%3E");
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background-repeat: repeat-x;
+    background-size: 50% 100%;
+    @apply animate-wave opacity-80;
+}
+
+.wave:nth-of-type(2) {
+    bottom: 0;
+    animation: wave 18s linear reverse infinite;
+    opacity: 0.5;
+}
+
+.wave:nth-of-type(3) {
+    bottom: 0;
+    animation: wave 20s -1s linear infinite;
+    opacity: 0.5;
+}
+
+.table {
+    display: table;
+}
+.table-row {
+    display: table-row;
+}
+.table-cell {
+    display: table-cell;
+}
+
+.hidden-box {
+    opacity: 0; /* 애니메이션 전 기본 상태 */
+    transform: translateY(50px);
+}
+.tracking-in-expand {
+    -webkit-animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+    animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+.mountain-image {
+    position: relative;
+    width: 100%;
+    height: 30rem;
+    text-align: center;
+}
+
+.div-container {
+    display: grid;
+    position: relative;
+    overflow-x: auto;
+    grid-template-columns: auto auto auto auto auto;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    margin-bottom: 5rem;
+}
+
+.div-box {
+    border: 2px solid gray;
+    height: 10rem;
+    width: 90%;
+    margin-right: 2rem;
+    text-align: center;
+}
+
+.div-box:hover {
+    background-color: rgb(224, 248, 255);
+    border: 2px solid rgb(123, 172, 180);
+}
+
+.comment-box {
+    display: flex;
+    position: relative;
+    align-items: center;
+    grid-template-columns: auto auto;
+    margin-top: 5;
+    column-gap: 0.688rem;
+}
+.userList-box {
+    display: flex;
+    position: relative;
+    align-items: center;
+    margin-top: 5;
+    column-gap: 0.688rem;
+}
+
+.errorMessage {
+    flex-basis: 100%;
+}
+.add-button {
+    margin-left: auto; /* 버튼만 오른쪽으로 밀림 */
+}
+
+.comment-textarea {
+    resize: none;
+    border: 2px solid rgb(159, 159, 159);
+    border-radius: 0.8rem;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    font-size: 14px;
+}
+.speech-bubble {
+    position: relative;
+    padding: 1rem;
+    border: 2px solid rgb(196, 196, 196);
+    /* background: #e8f3f3; */
+    width: 100%;
+    border-radius: 0.8em;
+    word-break: break-all;
+    box-sizing: border-box;
+}
+
+.div-faq-cs {
+    position: relative;
+    display: grid;
+    margin-top: 1rem;
+    grid-template-columns: auto auto;
+    align-items: center;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.files.box {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.previews {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+}
+.preview-box {
+    margin: 1rem;
+}
+
+.grid-col-3 {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(43, 43, 43, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 60;
+}
+.modal-content {
+    background: white;
+    padding: 10rem;
+    border-radius: 2rem;
+    position: relative;
+}
+
+.message-mine {
+    padding-right: 16px;
+}
+
+.message-mine div {
+    text-align: right;
+    justify-self: end;
+    grid-column: 1 / 3;
+}
+
+.message-mine p {
+    border-radius: 16px;
+    border-bottom-right-radius: 0;
+    background: var(--bubbles-mine-background);
+    color: white;
+    justify-self: end;
+}
+
+/* 모바일에서 Swiper 화살표 가리기용 */
+
+@media (max-width: 768px) {
+    .swiper-button-next,
+    .swiper-button-prev {
+        display: none;
+    }
+}
+
+/* 진짜 거친 붓터치 질감 */
+.real-brush {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cfilter id='rough-texture'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05 0.5' numOctaves='4' result='noise'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='noise' scale='30' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Cg filter='url(%23rough-texture)'%3E%3Cpath d='M0,50 L1000,50' stroke='%233b82f6' stroke-width='40' fill='none' stroke-linecap='butt' opacity='0.6'/%3E%3Cpath d='M0,40 L1000,40' stroke='%233b82f6' stroke-width='10' fill='none' opacity='0.3'/%3E%3Cpath d='M0,60 L1000,60' stroke='%233b82f6' stroke-width='8' fill='none' opacity='0.2'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    filter: contrast(150%) brightness(110%);
+}
