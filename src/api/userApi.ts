@@ -13,9 +13,11 @@ export interface LoginRequest {
 
 export interface LoginResponse {
     accessToken: string;
+    id: number;
     email: string;
     nickname: string;
     userIcon: string;
+    role: string;
 }
 
 // 회원가입
@@ -26,7 +28,6 @@ export const apiSignUp = async (formData: FormData) => {
 
 // 로그인
 export const apiLogin = async (loginData: LoginRequest) => {
-    // JSON 데이터를 보내면 기본 설정인 application/json이 적용됩니다.
     const response = await axiosInstance.post<LoginResponse>("/auth/login", loginData);
     return response.data;
 }

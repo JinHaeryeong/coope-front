@@ -33,6 +33,11 @@ export const Footer = () => {
                     개인정보정책
                 </Button>
 
+
+                <Button variant="ghost" size="sm" onClick={openTermsModal}>
+                    이용약관
+                </Button>
+
                 {/* lazy 컴포넌트는 반드시 Suspense로 감싸줘야 합니다. */}
                 <Suspense fallback={null}>
                     {isPrivacyModalOpen && (
@@ -41,9 +46,7 @@ export const Footer = () => {
                         </DynamicModal>
                     )}
 
-                    <Button variant="ghost" size="sm" onClick={openTermsModal}>
-                        이용약관
-                    </Button>
+
 
                     {isTermsModalOpen && (
                         <DynamicModal isOpen={isTermsModalOpen} onClose={closeTermsModal} title="이용약관">

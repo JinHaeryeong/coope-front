@@ -1,13 +1,12 @@
 import axios from "axios";
 
-const BASE_URL = `http://localhost:8080/api`;
+const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 // 기본 인스턴스 (모든 요청에 쿠키 허용)
 const axiosInstance = axios.create({
-    baseURL: BASE_URL,
+    baseURL: `${API_HOST}/api`,
     withCredentials: true,
 });
 
-// JSON용 (기본값)
 
 export default axiosInstance;

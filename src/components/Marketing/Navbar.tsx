@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; // react-router-dom으로 교체
-import { LogOut, Menu, Settings, UserIcon, X } from "lucide-react";
+import { HatGlassesIcon, LogOut, Menu, UserIcon, X } from "lucide-react";
 
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { cn } from "@/lib/utils";
@@ -38,6 +38,8 @@ export const Navbar = () => {
 
     const { isLoggedIn, user, signOut } = useAuthStore();
     const isLoading = false;
+
+    const canWrite = isLoggedIn && user?.role === "ROLE_ADMIN";
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -109,13 +111,18 @@ export const Navbar = () => {
                                             <span>프로필 설정</span>
                                         </Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem asChild className="cursor-pointer">
-                                        <Link to="/settings">
-                                            <Settings className="mr-2 h-4 w-4" />
-                                            <span>환경 설정</span>
-                                        </Link>
-                                    </DropdownMenuItem>
                                     <DropdownMenuSeparator />
+                                    {canWrite &&
+                                        <>
+                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                <Link to="/profile">
+                                                    <HatGlassesIcon className="mr-2 h-4 w-4" />
+                                                    <span>관리자 페이지</span>
+                                                </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                        </>
+                                    }
                                     <DropdownMenuItem
                                         className="text-red-600 cursor-pointer focus:text-red-600"
                                         onClick={() => signOut()}
@@ -155,6 +162,24 @@ export const Navbar = () => {
                         style={{ zIndex: 55 }}
                     >
                         <ul className="flex flex-col space-y-4">
+                            {isLoggedIn && user && (
+                                <div className="flex items-center gap-x-4 pb-4 border-b dark:border-slate-700">
+                                    <Avatar className="h-12 w-12 border">
+                                        <AvatarImage
+                                            src={user?.userIcon ? `http://localhost:8080${user.userIcon}` : "/default-icon.png"}
+                                            alt={user?.nickname}
+                                        />
+                                        <AvatarFallback className="bg-sky-500 text-white">
+                                            {user?.nickname?.charAt(0)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col">
+                                        <p className="text-base font-bold leading-none">{user?.nickname}님</p>
+                                        <p className="text-xs text-muted-foreground mt-1">{user?.email}</p>
+                                    </div>
+                                </div>
+                            )}
+
                             {Links.map((link) => (
                                 <li key={link.href} className="text-lg font-medium" onClick={toggleMobileMenu}>
                                     <Link to={link.href} className="capitalize block w-full">
@@ -162,19 +187,40 @@ export const Navbar = () => {
                                     </Link>
                                 </li>
                             ))}
+
                             <hr className="dark:border-slate-700" />
+
                             {!isLoggedIn && !isLoading && (
-                                <li className="relative group font-medium cursor-pointer" onClick={handleLoginModal}>
-                                    <span>로그인</span>
-                                    <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-black dark:bg-white"></span>
+                                <li className="text-lg font-medium cursor-pointer py-2" onClick={handleLoginModal}>
+                                    로그인
                                 </li>
                             )}
+
                             {isLoggedIn && !isLoading && (
-                                <li className="text-lg font-medium" onClick={toggleMobileMenu}>
-                                    <Link to="/profile" className="block w-full">프로필</Link>
-                                </li>
+                                <>
+                                    <li className="text-lg font-medium" onClick={toggleMobileMenu}>
+                                        <Link to="/profile" className="block w-full">프로필 설정</Link>
+                                    </li>
+                                    <li className="text-lg font-medium">
+                                        <Link to="/manage" className="block w-full">관리자 페이지</Link>
+                                    </li>
+                                    <li
+                                        className="text-lg font-medium text-red-600 cursor-pointer py-2"
+                                        onClick={() => {
+                                            signOut();
+                                            toggleMobileMenu();
+                                        }}
+                                    >
+                                        <div className="flex items-center">
+                                            <LogOut className="mr-2 h-5 w-5" />
+                                            <span>로그아웃</span>
+                                        </div>
+                                    </li>
+                                </>
                             )}
-                            <li className="flex items-center justify-between pt-2">
+
+                            <li className="flex items-center justify-between pt-2 border-t dark:border-slate-700">
+                                <span className="text-sm font-medium">테마 변경</span>
                                 <ModeToggle />
                             </li>
                         </ul>

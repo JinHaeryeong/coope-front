@@ -5,13 +5,13 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 
 //자주 묻는 질문 내용
 const FaqContent = () => {
     return (
-        <div className="w-full max-w-[500px] min-h-[350px] flex flex-col justify-between overflow-x-hidden p-1">
+        <div className="w-full max-w-125 min-h-87.5 flex flex-col justify-between overflow-x-hidden p-1">
             <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                     <AccordionTrigger>가입하지 않고 페이지 편집에 참여할 수 있나요?</AccordionTrigger>
@@ -34,9 +34,9 @@ const FaqContent = () => {
 
             </Accordion>
             <div className="div-faq-cs">
-                <span className="pr-1 font-medium text-sm">해결되지 않은 의문이 남아있으신가요?</span>
-                <Link href="/customerService" className="text-right">
-                    <Button>1:1 문의하기</Button>
+                <span className="pr-1 text-sm md:text-base">해결되지 않은 의문이 남아있으신가요?</span>
+                <Link to="/customerService" className="text-right">
+                    <Button variant="outline">1:1 문의하기</Button>
                 </Link>
             </div>
         </div>

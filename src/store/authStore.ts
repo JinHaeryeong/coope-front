@@ -3,9 +3,11 @@ import { create } from "zustand";
 import { devtools, persist, createJSONStorage } from "zustand/middleware";
 
 interface UserInfo {
+    id: number;
     email: string;
     nickname: string;
     userIcon: string;
+    role: string;
 }
 
 interface AuthState {
@@ -37,7 +39,6 @@ export const useAuthStore = create<AuthState>()(
                 signOut: async () => {
                     try {
                         // 백엔드 로그아웃 API 호출 (쿠키와 DB 토큰 삭제)
-                        // axiosAuthInstance를 임포트해서 사용하세요.
                         await axiosAuthInstance.post("/auth/logout");
                     } catch (error) {
                         console.error("로그아웃 API 호출 실패:", error);

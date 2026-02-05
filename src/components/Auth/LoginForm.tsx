@@ -35,11 +35,8 @@ export function LoginForm() {
             const result = await apiLogin(values);
 
             if (result) {
-                signIn(result.accessToken, {
-                    email: result.email,
-                    nickname: result.nickname,
-                    userIcon: result.userIcon,
-                });
+                const { accessToken, ...userInfo } = result;
+                signIn(accessToken, userInfo);
 
                 console.log("로그인 성공 및 스토어 저장 완료");
 

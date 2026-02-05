@@ -8,6 +8,12 @@ import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 import axiosInstance from './api/axiosInstance';
 import IntroductionPage from './pages/Marketing/introducePage';
+import SupportPage from './pages/Marketing/supportPage';
+import NoticePage from './pages/Marketing/notices/noticePage';
+import { Toaster } from 'sonner';
+import NoticeDetailPage from './pages/Marketing/notices/noticeDetailPage';
+import NoticeWritePage from './pages/Marketing/notices/noticeWritePage';
+import { AdminGuard } from './components/Auth/AdminGuard';
 
 function App() {
 
@@ -39,18 +45,21 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <BrowserRouter>
           <ModalProvider />
+          <Toaster position='bottom-center' />
 
           <Routes>
-            {/* 마케팅/랜딩 페이지 */}
             <Route element={<MarketingLayout />}>
               <Route path="/" element={<MarketingPage />} />
               <Route path="/signup" element={<SignupPage />} />
-              <Route path="/notice" element={<div>Notice</div>} />
+              <Route path="/notice" element={<NoticePage />} />
+              <Route path="/notice/:id" element={<NoticeDetailPage />} />
+              <Route path="/notice/write" element={<AdminGuard>
+                <NoticeWritePage />
+              </AdminGuard>} />
               <Route path="/introduction" element={<IntroductionPage />} />
-              <Route path="/support" element={<div>Support</div>} />
+              <Route path="/support" element={<SupportPage />} />
             </Route>
 
-            {/* 메인 워크스페이스 (로그인 후) */}
             <Route path="/workspace/:workspaceId" element={<div>Workspace Page</div>}>
               <Route path="documents/:documentId" element={<div>Editor Page</div>} />
             </Route>

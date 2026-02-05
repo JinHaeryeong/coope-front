@@ -1,4 +1,10 @@
+import type { ComponentPropsWithoutRef } from "react";
+
 export const Logo = () => {
+
+    type ImageProps = ComponentPropsWithoutRef<"img"> & {
+        fetchpriority?: "high" | "low" | "auto";
+    };
     return (
         <div className="flex items-center gap-x-2">
             {/* 라이트 모드 로고 */}
@@ -7,9 +13,8 @@ export const Logo = () => {
                 height="200"
                 width="200"
                 alt="logo"
-                // loading="eager"와 fetchpriority="high"로 넥스트의 priority 기능 흉내내기
                 loading="eager"
-                style={{ fetchPriority: "high" } as any}
+                style={{ fetchPriority: "high" } as ImageProps}
                 className="dark:hidden"
             />
             {/* 다크 모드 로고 */}

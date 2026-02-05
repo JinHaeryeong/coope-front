@@ -1,10 +1,8 @@
-import React from "react";
-
 //개인정보정책 내용
 
 const Policy = () => {
     return (
-        <p className="w-50 h-80">
+        <p className="h-80">
 
             제 1 조 (목적)<br />
 

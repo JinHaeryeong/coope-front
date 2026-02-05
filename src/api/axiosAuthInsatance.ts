@@ -2,12 +2,16 @@ import { useAuthStore } from "@/store/authStore";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import axiosInstance from "./axiosInstance";
 
+const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+
+
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
 }
 
+
 const axiosAuthInstance = axios.create({
-    baseURL: `http://localhost:8080/api`,
+    baseURL: `${API_HOST}/api`,
     withCredentials: true,
 });
 

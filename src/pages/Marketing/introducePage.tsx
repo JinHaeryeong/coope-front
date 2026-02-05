@@ -136,7 +136,7 @@ const IntroductionPage = () => {
 
                         {/* 팀원 소개 섹션 */}
                         <div className="relative mt-24 md:mt-32 w-full">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center md:text-start">Team Members</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center md:text-start">팀원</h2>
 
                             {/* 데스크탑 배경 붓터치 효과 */}
                             <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-64 pointer-events-none -rotate-2 z-0 opacity-80">
