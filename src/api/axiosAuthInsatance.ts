@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/store/authStore";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import axiosInstance from "./axiosInstance";
+import { toast } from "sonner";
 
 const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
@@ -71,7 +72,7 @@ axiosAuthInstance.interceptors.response.use(
         }
 
         if (status === 403) {
-            alert("접근 권한이 없습니다.");
+            toast.error("접근 권한이 없습니다.");
             window.location.href = "/";
         }
 

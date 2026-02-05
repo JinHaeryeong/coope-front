@@ -36,7 +36,7 @@ const NoticeDetailPage = () => {
 
     useEffect(() => {
         if (!stringId || isNaN(noticeId)) {
-            alert("유효하지 않은 게시글 번호입니다.");
+            toast.info("유효하지 않은 게시글 번호입니다.");
             navigate("/notice");
             return;
         }
@@ -87,9 +87,9 @@ const NoticeDetailPage = () => {
             }
         } catch (error) {
             console.error("공지사항 삭제 실패", error);
-            alert("삭제 권한이 없거나 오류가 발생했습니다.");
+            toast.error("삭제 권한이 없거나 오류가 발생했습니다.");
         }
-    }
+    };
 
     if (loading) return (
         <div className="flex justify-center py-20"><Loader2 className="animate-spin" /></div>

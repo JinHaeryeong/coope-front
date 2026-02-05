@@ -38,6 +38,7 @@ export const CommentForm = ({ noticeId, onCommentAdded }: CommentFormProps) => {
         setPreviewUrl(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
+
     const handleComment = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -72,7 +73,7 @@ export const CommentForm = ({ noticeId, onCommentAdded }: CommentFormProps) => {
         } finally {
             setIsSubmitting(false);
         }
-    }
+    };
 
     return (
         <div className="flex flex-col w-full mt-6"> {/* 가로가 아닌 세로 배치가 미리보기 보기에 편해요 */}

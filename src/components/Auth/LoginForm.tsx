@@ -10,6 +10,7 @@ import { useLoginModal } from "@/hooks/useLoginModal";
 import axios from "axios";
 import { apiLogin } from "@/api/userApi";
 import { useAuthStore } from "@/store/authStore";
+import { toast } from "sonner";
 
 // 유효성 검사 규칙 정의
 const formSchema = z.object({
@@ -46,7 +47,7 @@ export function LoginForm() {
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const serverMessage = error.response?.data?.message;
-                alert(serverMessage || "로그인에 실패했습니다.");
+                toast.info(serverMessage || "로그인에 실패했습니다.");
             } else {
                 console.error("알 수 없는 에러:", error);
             }

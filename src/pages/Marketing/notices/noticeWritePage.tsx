@@ -1,4 +1,3 @@
-"use client";
 
 import React, { useRef, useState, useMemo } from "react";
 import data from "@emoji-mart/data";
@@ -42,6 +41,12 @@ const NoticeWritePage = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (content.length > 1000) {
+            toast.error("내용은 1000자를 초과할 수 없습니다.");
+            return;
+        }
+
         if (!user) {
             toast.error("로그인이 필요합니다.");
             return;
@@ -67,11 +72,35 @@ const NoticeWritePage = () => {
     };
 
     const handleEmojiSelect = (emoji: EmojiData) => {
-        const maxLength = 500;
+        const maxLength = 1000;
         if (content.length + emoji.native.length <= maxLength) {
             setContent((prev) => prev + emoji.native);
         }
         setShowEmojiPicker(false);
+    };
+
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 미리보기 상태 추가
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // 1MB 제한 로직 (리뷰 반영)
+        if (file.size > 1 * 1024 * 1024) {
+            toast.error("파일 크기는 1MB를 초과할 수 없습니다.");
+            if (fileInput.current) fileInput.current.value = "";
+            return;
+        }
+
+        setSelectedFile(file);
+        setPreviewUrl(URL.createObjectURL(file)); // 미리보기 생성
+    };
+
+    const removeFile = () => {
+        setSelectedFile(null);
+        if (previewUrl) URL.revokeObjectURL(previewUrl); // 메모리 해제
+        setPreviewUrl(null);
+        if (fileInput.current) fileInput.current.value = "";
     };
 
     return (
@@ -119,9 +148,10 @@ const NoticeWritePage = () => {
                     <input
                         type="file"
                         ref={fileInput}
-                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                        onChange={handleFileChange}
                         className="hidden"
                         id="fileInput"
+                        accept="image/*"
                     />
                     <label htmlFor="fileInput" className="cursor-pointer group">
                         <Paperclip className="group-hover:text-primary transition-colors" />
@@ -129,13 +159,13 @@ const NoticeWritePage = () => {
 
                     {selectedFile && (
                         <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded text-xs text-blue-600 dark:text-blue-300">
-                            <span className="truncate max-w-[150px]">{selectedFile.name}</span>
-                            <X size={14} className="cursor-pointer" onClick={() => setSelectedFile(null)} />
+                            <span className="truncate max-w-37.5">{selectedFile.name}</span>
+                            <X size={14} className="cursor-pointer" onClick={() => removeFile()} />
                         </div>
                     )}
 
                     <div className="count ml-auto text-gray-400 text-xs font-medium">
-                        <span className={content.length >= 500 ? "text-red-500" : ""}>{content.length}</span> / 500자
+                        <span className={content.length >= 1000 ? "text-red-500" : ""}>{content.length}</span> / 1000자
                     </div>
                 </div>
 

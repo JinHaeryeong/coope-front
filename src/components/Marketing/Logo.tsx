@@ -1,10 +1,12 @@
 import type { ComponentPropsWithoutRef } from "react";
 
+type ImageProps = ComponentPropsWithoutRef<"img"> & {
+    fetchpriority?: "high" | "low" | "auto";
+};
+
 export const Logo = () => {
 
-    type ImageProps = ComponentPropsWithoutRef<"img"> & {
-        fetchpriority?: "high" | "low" | "auto";
-    };
+
     return (
         <div className="flex items-center gap-x-2">
             {/* 라이트 모드 로고 */}

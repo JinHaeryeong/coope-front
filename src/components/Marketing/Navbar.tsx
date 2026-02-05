@@ -166,7 +166,7 @@ export const Navbar = () => {
                                 <div className="flex items-center gap-x-4 pb-4 border-b dark:border-slate-700">
                                     <Avatar className="h-12 w-12 border">
                                         <AvatarImage
-                                            src={user?.userIcon ? `http://localhost:8080${user.userIcon}` : "/default-icon.png"}
+                                            src={user?.userIcon ? `${import.meta.env.VITE_API_BASE_URL}${user.userIcon}` : "/default-icon.png"}
                                             alt={user?.nickname}
                                         />
                                         <AvatarFallback className="bg-sky-500 text-white">
@@ -201,9 +201,11 @@ export const Navbar = () => {
                                     <li className="text-lg font-medium" onClick={toggleMobileMenu}>
                                         <Link to="/profile" className="block w-full">프로필 설정</Link>
                                     </li>
-                                    <li className="text-lg font-medium">
-                                        <Link to="/manage" className="block w-full">관리자 페이지</Link>
-                                    </li>
+                                    {canWrite && (
+                                        <li className="text-lg font-medium">
+                                            <Link to="/manage" className="block w-full">관리자 페이지</Link>
+                                        </li>
+                                    )}
                                     <li
                                         className="text-lg font-medium text-red-600 cursor-pointer py-2"
                                         onClick={() => {

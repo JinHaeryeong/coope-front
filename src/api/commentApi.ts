@@ -16,11 +16,6 @@ export const apiAddComment = async (noticeId: number, formData: FormData) => {
     const response = await axiosAuthInstance.post(
         `/comments?noticeId=${noticeId}`,
         formData,
-        {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        }
     );
     return response;
 };

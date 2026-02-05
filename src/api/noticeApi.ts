@@ -1,9 +1,6 @@
 import axiosAuthInstance from "./axiosAuthInsatance";
 import axiosInstance from "./axiosInstance"
 
-
-
-
 // 공지사항 가져오기
 export const apiNotices = async (page: number, size: number) => {
     const response = await axiosInstance.get(`/notices/all?page=${page}&size=${size}`);
@@ -22,11 +19,6 @@ export const apiCreateNotice = async (formData: FormData) => {
     const response = await axiosAuthInstance.post(
         `/notices/write`,
         formData,
-        {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        }
     );
     return response;
 }

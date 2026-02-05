@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/field";
 import { apiSignUp } from "@/api/userApi";
 import axios from "axios";
+import { toast } from "sonner";
 
 const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -66,7 +67,7 @@ export function SignupForm() {
             // 전용 API 호출
             if (result) {
                 console.log("서버 응답 데이터:", result);
-                alert(result.message || "회원가입 성공!");
+                toast.success(result.message || "회원가입 성공!");
 
                 // 가입 성공 후 로그인 페이지로 리다이렉트
                 navigate("/");
@@ -74,7 +75,7 @@ export function SignupForm() {
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const serverMessage = error.response?.data?.message;
-                alert(serverMessage || "회원가입 중 오류가 발생했습니다.");
+                toast.error(serverMessage || "회원가입 중 오류가 발생했습니다.");
             } else {
                 console.error("알 수 없는 에러:", error);
             }

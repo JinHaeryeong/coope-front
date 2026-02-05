@@ -89,7 +89,7 @@ const NoticeList = () => {
                                     <TableHead className="font-bold text-left">제목</TableHead>
                                     <TableHead className="hidden sm:table-cell text-right w-20 md:w-25 font-bold">작성자</TableHead>
                                     <TableHead className="hidden md:table-cell text-right w-20 font-bold">조회수</TableHead>
-                                    <TableHead className="hiddme md:table-cell text-right w-21.25 md:w-45 font-bold">날짜</TableHead>
+                                    <TableHead className="hidden md:table-cell text-right w-21.25 md:w-45 font-bold">날짜</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -160,7 +160,10 @@ const NoticeList = () => {
                                     <PaginationItem>
                                         <PaginationNext
                                             href="#"
-                                            onClick={(e) => { e.preventDefault(); handlePageChange(currentPage + 1); }}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                                            }}
                                         />
                                     </PaginationItem>
                                 </PaginationContent>

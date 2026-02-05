@@ -28,7 +28,7 @@
 //     const handleRecord = async () => {
 //         if (!recording) {
 //             if (!micStream) {
-//                 alert("마이크가 켜져 있어야 녹음이 가능합니다.");
+//                 alert("마이크가 켜져 있어야 녹음이 가능합니다."); // 나중에 toast로 바꾸기...
 //                 return;
 //             }
 //             audioChunksRef.current = [];
@@ -129,7 +129,7 @@
 
 //             } catch (error) {
 //                 console.error('AI 처리 중 오류:', error);
-//                 alert('오디오 처리 중 오류가 발생했습니다.');
+//                 alert('오디오 처리 중 오류가 발생했습니다.'); // toast로 바꾸기
 //             } finally {
 //                 setProcessing(false);
 //                 setPendingAudio(null);
