@@ -1,8 +1,3 @@
-import type { ComponentPropsWithoutRef } from "react";
-
-type ImageProps = ComponentPropsWithoutRef<"img"> & {
-    fetchpriority?: "high" | "low" | "auto";
-};
 
 export const Logo = () => {
 
@@ -16,7 +11,7 @@ export const Logo = () => {
                 width="200"
                 alt="logo"
                 loading="eager"
-                style={{ fetchPriority: "high" } as ImageProps}
+                {...{ fetchpriority: "high" }}
                 className="dark:hidden"
             />
             {/* 다크 모드 로고 */}
