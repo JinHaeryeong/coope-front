@@ -94,9 +94,6 @@ const IntroductionPage = () => {
                                         {isLoggedIn ? "워크스페이스 시작" : "지금 시작하기"}
                                         <ArrowRight className="h-4 w-4 ml-2" />
                                     </Button>
-                                    <Button variant="outline" size="lg">
-                                        {isLoggedIn ? "기능 살펴보기" : "문의하기"}
-                                    </Button>
                                 </>
                             )}
                         </div>

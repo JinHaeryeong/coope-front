@@ -149,7 +149,7 @@ export function SignupForm() {
                 </Field>
 
                 <div className="flex flex-col gap-y-4 pt-4">
-                    <Button type="submit" className="w-full" size="lg">
+                    <Button type="submit" className="w-full cursor-pointer" size="lg">
                         계정 생성하기
                     </Button>
                     <div className="flex flex-1 items-center justify-center">

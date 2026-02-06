@@ -25,7 +25,7 @@ export const Footer = () => {
 
     return (
         <div className={cn(
-            "flex items-center w-full p-3 bg-background z-40 dark:bg-[#1F1F1F] rounded-t-2xl",
+            "flex items-center w-full p-3 bg-background dark:bg-[#1F1F1F] rounded-t-2xl",
             isMainPage ? "fixed bottom-0" : "relative mt-auto"
         )}>
             <div className="md:ml-auto w-full justify-between md:justify-end flex items-center gap-x-2 text-muted-foreground">

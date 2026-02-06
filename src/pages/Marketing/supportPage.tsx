@@ -29,10 +29,10 @@ const SupportPage = () => {
                     </p>
                 </header>
                 <div className="tracking-in-expand">
-                    <Button onClick={redirectFunctionPage}>
+                    <Button onClick={redirectFunctionPage} className="cursor-pointer">
                         <BookOpenText className="mr-2" /> Coope의 기능
                     </Button>
-                    <Button onClick={openQnaModal} className="mx-2">
+                    <Button onClick={openQnaModal} className="mx-2 cursor-pointer">
                         <MailOpen className="mr-2" /> 자주 묻는 질문
                     </Button>
                     <div className="flex items-center justify-center">

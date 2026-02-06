@@ -35,8 +35,8 @@ const FaqContent = () => {
             </Accordion>
             <div className="div-faq-cs">
                 <span className="pr-1 text-sm md:text-base">해결되지 않은 의문이 남아있으신가요?</span>
-                <Link to="/customerService" className="text-right">
-                    <Button variant="outline">1:1 문의하기</Button>
+                <Link to="/inquiry" className="text-right">
+                    <Button variant="outline" className="cursor-pointer">1:1 문의하기</Button>
                 </Link>
             </div>
         </div>

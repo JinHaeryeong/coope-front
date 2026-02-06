@@ -203,7 +203,7 @@ export const Navbar = () => {
                                     </li>
                                     {canWrite && (
                                         <li className="text-lg font-medium">
-                                            <Link to="/manage" className="block w-full">관리자 페이지</Link>
+                                            <Link to="/admin" className="block w-full">관리자 페이지</Link>
                                         </li>
                                     )}
                                     <li

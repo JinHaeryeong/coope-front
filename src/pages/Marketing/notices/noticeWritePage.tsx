@@ -31,7 +31,7 @@ const NoticeWritePage = () => {
         spellChecker: false,
         placeholder: "공지 내용을 마크다운으로 작성하세요...",
         status: false,
-        minHeight: "350px",
+        minHeight: "200px",
         autosave: {
             enabled: true,
             uniqueId: "notice-write-cache",
@@ -85,15 +85,18 @@ const NoticeWritePage = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // 1MB 제한 로직 (리뷰 반영)
         if (file.size > 1 * 1024 * 1024) {
             toast.error("파일 크기는 1MB를 초과할 수 없습니다.");
             if (fileInput.current) fileInput.current.value = "";
             return;
         }
 
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+        }
+
         setSelectedFile(file);
-        setPreviewUrl(URL.createObjectURL(file)); // 미리보기 생성
+        setPreviewUrl(URL.createObjectURL(file)); // 새 파일로 자동 교체
     };
 
     const removeFile = () => {
@@ -127,44 +130,43 @@ const NoticeWritePage = () => {
                     />
                 </div>
 
-                <div className="icons flex items-center text-gray-500 m-2 gap-4 relative">
-                    <div className="relative">
-                        <Smile
-                            className={`cursor-pointer transition-colors ${showEmojiPicker ? 'text-primary' : 'hover:text-primary'}`}
-                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        />
-                        {showEmojiPicker && (
-                            <div className="absolute bottom-10 left-0 z-50 shadow-xl">
-                                <Picker
-                                    data={data}
-                                    onEmojiSelect={handleEmojiSelect}
-                                    theme="auto"
-                                    locale="ko"
-                                />
-                            </div>
-                        )}
+                <div className="icons flex flex-col md:flex-row md:items-center m-2 gap-3 relative mt-4">
+                    <div className="flex items-center gap-4 border-b md:border-none pb-2 md:pb-0">
+                        <div className="relative">
+                            <Smile
+                                className={`cursor-pointer transition-colors ${showEmojiPicker ? 'text-primary' : 'hover:text-primary'}`}
+                                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                            />
+                            {showEmojiPicker && (
+                                <div className="absolute bottom-10 left-0 z-50 shadow-xl scale-90 origin-bottom-left md:scale-100">
+                                    <Picker data={data} onEmojiSelect={handleEmojiSelect} theme="auto" locale="ko" />
+                                </div>
+                            )}
+                        </div>
+
+                        <input type="file" ref={fileInput} onChange={handleFileChange} className="hidden" id="fileInput" accept="image/*" />
+                        <label htmlFor="fileInput" className="cursor-pointer group flex items-center gap-2">
+                            <Paperclip className="group-hover:text-primary transition-colors" size={20} />
+                            <span className="text-[10px] md:text-xs text-muted-foreground">이미지 첨부</span>
+                        </label>
                     </div>
 
-                    <input
-                        type="file"
-                        ref={fileInput}
-                        onChange={handleFileChange}
-                        className="hidden"
-                        id="fileInput"
-                        accept="image/*"
-                    />
-                    <label htmlFor="fileInput" className="cursor-pointer group">
-                        <Paperclip className="group-hover:text-primary transition-colors" />
-                    </label>
-
-                    {selectedFile && (
-                        <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded text-xs text-blue-600 dark:text-blue-300">
-                            <span className="truncate max-w-37.5">{selectedFile.name}</span>
-                            <X size={14} className="cursor-pointer" onClick={() => removeFile()} />
+                    {/* 파일이 있을 때만 작게 보여주기 */}
+                    {previewUrl && (
+                        <div className="flex gap-2 items-center py-1">
+                            <div className="relative w-14 h-14 md:w-20 md:h-20 border-2 border-primary rounded-md overflow-hidden animate-in zoom-in-95 duration-200">
+                                <img src={previewUrl} className="w-full h-full object-cover" />
+                                <button type="button" onClick={removeFile} className="absolute top-0 right-0 bg-destructive text-white p-1 rounded-bl-md">
+                                    <X size={10} />
+                                </button>
+                            </div>
+                            <span className="text-[10px] text-slate-500 truncate max-w-25 md:hidden">
+                                {selectedFile?.name}
+                            </span>
                         </div>
                     )}
 
-                    <div className="count ml-auto text-gray-400 text-xs font-medium">
+                    <div className="md:ml-auto text-gray-400 text-[11px] md:text-xs text-right">
                         <span className={content.length >= 1000 ? "text-red-500" : ""}>{content.length}</span> / 1000자
                     </div>
                 </div>
@@ -173,12 +175,12 @@ const NoticeWritePage = () => {
                     <Button
                         type="button"
                         variant="ghost"
-                        className="ml-auto text-slate-500"
+                        className="ml-auto text-slate-500 cursor-pointer"
                         onClick={() => navigate('/notice')}
                     >
                         취소
                     </Button>
-                    <Button type="submit" className="px-8 font-bold">게시하기</Button>
+                    <Button type="submit" className="md:px-6 font-bold cursor-pointer">게시</Button>
                 </div>
             </form>
         </div>
