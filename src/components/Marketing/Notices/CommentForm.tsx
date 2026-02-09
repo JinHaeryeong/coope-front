@@ -123,7 +123,7 @@ export const CommentForm = ({ noticeId, onCommentAdded }: CommentFormProps) => {
 
                 <Button
                     type="submit"
-                    className="h-full px-6"
+                    className="h-full px-6 cursor-pointer"
                     disabled={!isLoggedIn || isSubmitting}
                 >
                     {isSubmitting ? "등록 중..." : "등록"}

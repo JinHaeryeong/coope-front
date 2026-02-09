@@ -1,13 +1,32 @@
-import Modal from "@/components/Marketing/Modal";
 import { useLoginModal } from "@/hooks/useLoginModal";
-import { LoginForm } from "../Auth/LoginForm";
+import { usePrivacyModal } from "@/hooks/usePrivacyModal";
+import { useQnaModal } from "@/hooks/useQnaModal";
+import { useTermsModal } from "@/hooks/useTermsModal";
+import { lazy, Suspense, useEffect, useState } from "react";
+
+const Modal = lazy(() => import("@/components/Marketing/Modal"));
+const LoginForm = lazy(() =>
+    import("../Auth/LoginForm").then(module => ({ default: module.LoginForm }))
+);
+const FaqContent = lazy(() => import("@/components/Marketing/FaqContent"));
+const Policy = lazy(() => import("@/components/Marketing/Policy"));
+const Term = lazy(() => import("@/components/Marketing/Term"));
 
 export const ModalProvider = () => {
     const loginModal = useLoginModal();
+    const qnaModal = useQnaModal();
+    const termsModal = useTermsModal();
+    const privacyModal = usePrivacyModal();
+    const [isMounted, setIsMounted] = useState(false);
 
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) return null;
 
     return (
-        <>
+        <Suspense fallback={null}>
             <Modal
                 isOpen={loginModal.isOpen}
                 onClose={loginModal.onClose}
@@ -18,7 +37,18 @@ export const ModalProvider = () => {
                 </div>
             </Modal>
 
-            {/* TODO: 나중에 추가될 다른 모달들 (예: 설정모달, 검색모달 등)도 여기에 추가 */}
-        </>
+            <Modal isOpen={qnaModal.isOpen} onClose={qnaModal.onClose} title="자주 묻는 질문">
+                <FaqContent />
+            </Modal>
+
+
+            <Modal isOpen={privacyModal.isOpen} onClose={privacyModal.onClose} title="개인정보 정책">
+                <Policy />
+            </Modal>
+
+            <Modal isOpen={termsModal.isOpen} onClose={termsModal.onClose} title="이용약관">
+                <Term />
+            </Modal>
+        </Suspense>
     );
 };

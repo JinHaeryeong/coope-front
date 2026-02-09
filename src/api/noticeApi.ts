@@ -23,6 +23,11 @@ export const apiCreateNotice = async (formData: FormData) => {
     return response;
 }
 
+// 공지사항 수정
+export const apiEditNotice = async (id: number, formData: FormData) => {
+    const response = await axiosAuthInstance.patch(`/notices/${id}`, formData);
+    return response;
+};
 
 // 공지사항 삭제
 export const apiDeleteNotice = async (id: number) => {

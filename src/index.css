@@ -71,14 +71,15 @@
     }
     @keyframes tracking-in-expand {
         0% {
-            letter-spacing: -0.5em;
             opacity: 0;
+            transform: translateY(10px);
         }
         40% {
             opacity: 0.6;
         }
         100% {
             opacity: 1;
+            transform: translateY(0);
         }
     }
 
@@ -160,7 +161,26 @@
         @apply border-border outline-ring/50;
     }
     body {
-        font-family: "Pretendard Variable", var(--font-sans);
+        font-family:
+            "Pretendard Variable",
+            "Pretendard",
+            -apple-system,
+            BlinkMacSystemFont,
+            system-ui,
+            Roboto,
+            "Helvetica Neue",
+            "Segoe UI",
+            "Apple SD Gothic Neo",
+            "Noto Sans KR",
+            "Malgun Gothic",
+            sans-serif;
+
+        font-variant-numeric: tabular-nums;
+        -webkit-font-smoothing: antialiased;
+
+        text-rendering: optimizeLegibility;
+        word-break: keep-all;
+
         @apply bg-background text-foreground;
     }
 }

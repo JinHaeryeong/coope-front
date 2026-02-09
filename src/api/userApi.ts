@@ -1,3 +1,5 @@
+import type { UserInfo } from '@/store/authStore';
+import axiosAuthInstance from './axiosAuthInsatance';
 import axiosInstance from './axiosInstance';
 
 interface SignUpResponse {
@@ -29,5 +31,11 @@ export const apiSignUp = async (formData: FormData) => {
 // 로그인
 export const apiLogin = async (loginData: LoginRequest) => {
     const response = await axiosInstance.post<LoginResponse>("/auth/login", loginData);
+    return response.data;
+}
+
+export const apiGetMe = async () => {
+    // axiosAuthInstance를 사용하면 인터셉터가 자동으로 Authorization 헤더를 붙여줍니다.
+    const response = await axiosAuthInstance.get<UserInfo>("/user/me");
     return response.data;
 }

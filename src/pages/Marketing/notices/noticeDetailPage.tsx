@@ -12,6 +12,8 @@ import { CommentList } from "@/components/Marketing/Notices/CommentList";
 import { apiGetComments, type CommentResponse } from "@/api/commentApi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import axios from "axios";
+import { NoticeNotFound } from "@/components/Marketing/Notices/NoticeNotFound";
 
 export interface NoticeDetail {
     id: number;
@@ -80,14 +82,34 @@ const NoticeDetailPage = () => {
 
     const handleDeleteNotice = async (noticeId: number) => {
         try {
-            const response = await apiDeleteNotice(noticeId);
-            if (response.status === 200 || response.status === 204) {
-                toast.success("공지사항이 성공적으로 삭제되었습니다.");
-                navigate("/notice");
+            const deletePromise = apiDeleteNotice(noticeId);
+
+            toast.promise(deletePromise, {
+                loading: '삭제 중...',
+                success: '공지사항이 삭제되었습니다.',
+            });
+
+            const response = await deletePromise;
+
+            if (response && (response.status === 200 || response.status === 204)) {
+                navigate("/notice", { replace: true });
             }
-        } catch (error) {
-            console.error("공지사항 삭제 실패", error);
-            toast.error("삭제 권한이 없거나 오류가 발생했습니다.");
+        } catch (error: unknown) {
+            console.error("공지사항 삭제 실패 상세 로그:", error);
+
+            if (axios.isAxiosError(error)) {
+                const status = error.response?.status;
+
+                if (status === 403) {
+                    toast.error("관리자 권한이 없습니다.");
+                } else if (status === 404) {
+                    toast.error("이미 삭제되었거나 존재하지 않는 게시글입니다.");
+                } else {
+                    toast.error("서버 응답 오류가 발생했습니다.");
+                }
+            } else {
+                toast.error("알 수 없는 오류가 발생했습니다.");
+            }
         }
     };
 
@@ -95,7 +117,7 @@ const NoticeDetailPage = () => {
         <div className="flex justify-center py-20"><Loader2 className="animate-spin" /></div>
     );
 
-    if (!notice) return <div className="text-center py-20">공지사항을 찾을 수 없습니다.</div>;
+    if (!notice) return <NoticeNotFound />;
 
     return (
         <div className="px-3 md:px-12 min-h-full flex justify-center py-10">
@@ -138,13 +160,9 @@ const NoticeDetailPage = () => {
 
                     {user?.role === "ROLE_ADMIN" && (
                         <div className="text-right my-2">
-                            {/* <Link key={notice._id}
-                            href={{
-                                pathname: '/noticeEditPage',
-                                query: { notice: JSON.stringify(notice) },
-                        }} */}
-                            <Link to="/notice"
-                            ><Button variant="outline" className="mr-2">수정</Button></Link>
+                            <Link to={`/notice/edit/${notice.id}`}>
+                                <Button variant="outline" className="mr-2">수정</Button>
+                            </Link>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button>삭제</Button>

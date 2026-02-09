@@ -13,17 +13,15 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-999">
-      <div className="bg-background dark:bg-[#1F1F1F] p-6 rounded-xl w-[90%] max-w-md shadow-2xl border border-border">
+      <div className="bg-background dark:bg-[#1F1F1F] p-6 rounded-xl w-full max-w-md shadow-2xl border border-border">
         <div className="flex justify-between items-center mb-6 ">
           <h2 className="text-xl font-bold text-foreground">{title}</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-          </button>
         </div>
         <div className="mb-6 text-foreground overflow-y-auto">
           {children}
         </div>
         <div className="flex justify-end">
-          <Button variant="default" onClick={onClose}>닫기</Button>
+          <Button variant="default" onClick={onClose} className="cursor-pointer">닫기</Button>
         </div>
       </div>
     </div>

@@ -60,8 +60,8 @@ const IntroductionPage = () => {
     };
 
     return (
-        <div className="min-h-screen pt-10 md:pt-20 overflow-x-hidden bg-background">
-            <div className="flex flex-col items-center gap-y-8 pb-20">
+        <div className="min-h-screen pt-10 md:pt-20 overflow-x-hidden">
+            <div className="flex flex-col items-center gap-y-8 pb-20 bg-inherit">
                 {/* 메인 비주얼 이미지 */}
                 <div className="w-full max-w-225 px-4">
                     <img
@@ -93,9 +93,6 @@ const IntroductionPage = () => {
                                     <Button className="shadow-lg mr-2" onClick={onStart} size="lg">
                                         {isLoggedIn ? "워크스페이스 시작" : "지금 시작하기"}
                                         <ArrowRight className="h-4 w-4 ml-2" />
-                                    </Button>
-                                    <Button variant="outline" size="lg">
-                                        {isLoggedIn ? "기능 살펴보기" : "문의하기"}
                                     </Button>
                                 </>
                             )}

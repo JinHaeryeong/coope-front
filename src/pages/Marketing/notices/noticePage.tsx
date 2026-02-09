@@ -1,7 +1,6 @@
 import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 
-// 로딩 확인을 위해 lazy 적용
 const NoticeList = lazy(() => import("@/components/Marketing/Notices/NoticeList"));
 
 const NoticePage = () => {

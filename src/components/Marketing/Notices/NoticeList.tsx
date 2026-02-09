@@ -174,7 +174,7 @@ const NoticeList = () => {
             </div>
             {canWrite && (
                 <div className="flex justify-end mt-4 w-full">
-                    <Button size="lg" className="px-8 shadow-md" onClick={() => navigate("/notice/write")}>글쓰기</Button>
+                    <Button size="lg" className="px-8 shadow-md cursor-pointer" onClick={() => navigate("/notice/write")}>글쓰기</Button>
                 </div>
             )}
         </div>

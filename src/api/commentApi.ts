@@ -33,7 +33,9 @@ export const apiDeleteComment = async (id: number) => {
 };
 
 // 댓글 수정
-export const apiEditComment = async (id: number, data: { content: string }) => {
-    const response = await axiosAuthInstance.patch(`/comments/${id}`, data);
+export const apiEditComment = async (id: number, formData: FormData) => {
+    const response = await axiosAuthInstance.patch(`/comments/${id}`,
+        formData
+    );
     return response;
 };

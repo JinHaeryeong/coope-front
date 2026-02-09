@@ -5,7 +5,14 @@ import { Heroes } from "@/components/Marketing/Heroes";
 const MarketingPage = () => {
     return (
         <div className="min-h-full flex flex-col">
-            <div className="flex flex-col items-center justify-center md:justify-start text-center gap-y-8 flex-1 px-6 pb-10 pt-20">
+            <div className="
+  flex flex-col items-center
+  justify-center md:justify-start
+  gap-y-8 flex-1
+  px-6
+  pt-12 md:pt-20
+  pb-4 md:pb-10
+">
                 <Heading />
                 <Heroes />
                 <div className="hidden md:block">
