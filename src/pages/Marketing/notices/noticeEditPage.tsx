@@ -54,6 +54,14 @@ const NoticeEditPage = () => {
         fetchNotice();
     }, [id, navigate]);
 
+    useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
+
     const mdeOptions = useMemo(() => ({
         spellChecker: false,
         status: false,
@@ -102,8 +110,11 @@ const NoticeEditPage = () => {
             return;
         }
 
-        setIsImageDeletedFlag(true);
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+        }
 
+        setIsImageDeletedFlag(true);
         setSelectedFile(file);
         setPreviewUrl(URL.createObjectURL(file));
     };

@@ -87,7 +87,6 @@ const NoticeDetailPage = () => {
             toast.promise(deletePromise, {
                 loading: '삭제 중...',
                 success: '공지사항이 삭제되었습니다.',
-                error: '삭제 권한이 없거나 오류가 발생했습니다.',
             });
 
             const response = await deletePromise;
@@ -118,7 +117,7 @@ const NoticeDetailPage = () => {
         <div className="flex justify-center py-20"><Loader2 className="animate-spin" /></div>
     );
 
-    if (!notice) return <NoticeNotFound />
+    if (!notice) return <NoticeNotFound />;
 
     return (
         <div className="px-3 md:px-12 min-h-full flex justify-center py-10">

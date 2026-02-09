@@ -1,17 +1,12 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // next/navigation -> react-router-dom
 import { BookOpenText, MailOpen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import Modal from "@/components/Marketing/Modal";
-import FaqContent from "@/components/Marketing/FaqContent";
+import { useQnaModal } from "@/hooks/useQnaModal";
 
 const SupportPage = () => {
     const navigate = useNavigate();
-    const [isQnaModalOpen, setIsQnaModalOpen] = useState(false);
-
-    const openQnaModal = () => setIsQnaModalOpen(true);
-    const closeQnasModal = () => setIsQnaModalOpen(false);
+    const qnaModal = useQnaModal();
 
     const redirectFunctionPage = () => {
         navigate('/function');
@@ -32,11 +27,11 @@ const SupportPage = () => {
                     <Button onClick={redirectFunctionPage} className="cursor-pointer">
                         <BookOpenText className="mr-2" /> Coope의 기능
                     </Button>
-                    <Button onClick={openQnaModal} className="mx-2 cursor-pointer">
+                    <Button onClick={qnaModal.onOpen} className="mx-2 cursor-pointer">
                         <MailOpen className="mr-2" /> 자주 묻는 질문
                     </Button>
                     <div className="flex items-center justify-center">
-                        <div className="relative w-87.5 h-87.5 md:w-150 md:h-150">
+                        <div className="relative w-87.5 h-87.5 md:w-150 md:h-150 min-h-87.5 md:min-h-150">
                             <img
                                 src="/support1.webp"
                                 className="object-contain w-full h-full"
@@ -46,11 +41,6 @@ const SupportPage = () => {
                     </div>
                 </div>
             </div>
-            {isQnaModalOpen && (
-                <Modal isOpen={isQnaModalOpen} onClose={closeQnasModal} title="자주 묻는 질문">
-                    <FaqContent />
-                </Modal>
-            )}
         </div>
     );
 }

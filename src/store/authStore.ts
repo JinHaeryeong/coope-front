@@ -2,7 +2,7 @@ import axiosAuthInstance from "@/api/axiosAuthInsatance";
 import { create } from "zustand";
 import { devtools, persist, createJSONStorage } from "zustand/middleware";
 
-interface UserInfo {
+export interface UserInfo {
     id: number;
     email: string;
     nickname: string;

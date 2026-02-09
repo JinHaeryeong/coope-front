@@ -90,6 +90,10 @@ export const CommentList = ({ comments, onRefresh }: CommentListProps) => {
             return;
         }
 
+        if (editPreviewUrl) {
+            URL.revokeObjectURL(editPreviewUrl);
+        }
+
         setEditFile(selectedFile);
         setEditPreviewUrl(URL.createObjectURL(selectedFile));
     };

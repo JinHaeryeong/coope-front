@@ -9,8 +9,8 @@ import {
     Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,
 } from "@/components/ui/pagination";
 import { useAuthStore } from "@/store/authStore";
-import axiosAuthInstance from "@/api/axiosAuthInsatance";
 import { formatDate } from "@/lib/utils";
+import { apiInquiries } from "@/api/inquiryApi";
 
 const InquiryPage = () => {
     const navigate = useNavigate();
@@ -35,7 +35,7 @@ const InquiryPage = () => {
         const fetchInquiries = async () => {
             try {
                 setLoading(true);
-                const response = await axiosAuthInstance.get(`/api/inquiries?page=${currentPage - 1}&size=${noticesPerPage}`);
+                const response = await apiInquiries(currentPage);
                 setInquiries(response.data.content);
                 setTotalPages(response.data.totalPages);
                 setTotalElements(response.data.totalElements);

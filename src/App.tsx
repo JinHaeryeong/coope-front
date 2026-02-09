@@ -19,6 +19,7 @@ import NoticeEditPage from './pages/Marketing/notices/noticeEditPage';
 import { LoginSuccess } from './pages/loginSuccess';
 import { ScrollToTop } from './components/Common/ScrollToTop';
 import InquiryPage from './pages/Marketing/inquiries/inquiryPage';
+import { Spinner } from './components/ui/spinner';
 
 function App() {
 
@@ -46,6 +47,10 @@ function App() {
     }
   }, [isLoggedIn, accessToken, user, signIn, signOut]);
 
+
+  if (isLoggedIn && !accessToken) {
+    return <Spinner />;
+  }
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

@@ -60,8 +60,8 @@ const IntroductionPage = () => {
     };
 
     return (
-        <div className="min-h-screen pt-10 md:pt-20 overflow-x-hidden bg-background">
-            <div className="flex flex-col items-center gap-y-8 pb-20">
+        <div className="min-h-screen pt-10 md:pt-20 overflow-x-hidden">
+            <div className="flex flex-col items-center gap-y-8 pb-20 bg-inherit">
                 {/* 메인 비주얼 이미지 */}
                 <div className="w-full max-w-225 px-4">
                     <img

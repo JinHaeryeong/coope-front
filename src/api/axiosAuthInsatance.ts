@@ -55,7 +55,7 @@ axiosAuthInstance.interceptors.response.use(
                 // 실패했던 원래 요청 재시도
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-                return axios(originalRequest);
+                return axiosAuthInstance(originalRequest);
             } catch (refreshError) {
                 if (axios.isAxiosError(refreshError)) {
                     console.error("리프레시 토큰 만료 또는 서버 에러:", refreshError.response?.data?.message);

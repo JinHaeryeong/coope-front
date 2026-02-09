@@ -30,7 +30,7 @@ export function LoginForm() {
     });
 
     const handleGoogleLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/google";
+        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`;
     };
 
 
@@ -64,7 +64,7 @@ export function LoginForm() {
     };
 
     const handleSocialLogin = (provider: string) => {
-        toast.info("아직 없서영");
+        toast.info("아직 없서영" + provider);
     };
 
     return (
