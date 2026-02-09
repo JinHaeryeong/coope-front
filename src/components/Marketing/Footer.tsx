@@ -1,5 +1,4 @@
-import { useState, Suspense, lazy } from "react";
-import { useLocation } from "react-router-dom"; // next/navigation 대신 사용
+import { useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
