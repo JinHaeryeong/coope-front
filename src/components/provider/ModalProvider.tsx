@@ -3,6 +3,7 @@ import { usePrivacyModal } from "@/hooks/usePrivacyModal";
 import { useQnaModal } from "@/hooks/useQnaModal";
 import { useTermsModal } from "@/hooks/useTermsModal";
 import { lazy, Suspense, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const Modal = lazy(() => import("@/components/Marketing/Modal"));
 const LoginForm = lazy(() =>
@@ -13,6 +14,7 @@ const Policy = lazy(() => import("@/components/Marketing/Policy"));
 const Term = lazy(() => import("@/components/Marketing/Term"));
 
 export const ModalProvider = () => {
+    const { pathname } = useLocation();
     const loginModal = useLoginModal();
     const qnaModal = useQnaModal();
     const termsModal = useTermsModal();
@@ -22,6 +24,12 @@ export const ModalProvider = () => {
     useEffect(() => {
         setIsMounted(true);
     }, []);
+    useEffect(() => {
+        loginModal.onClose();
+        qnaModal.onClose();
+        termsModal.onClose();
+        privacyModal.onClose();
+    }, [pathname]);
 
     if (!isMounted) return null;
 

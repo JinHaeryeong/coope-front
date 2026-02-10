@@ -41,11 +41,13 @@ const IntroductionPage = () => {
             ([entry]) => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add("tracking-in-expand");
-                } else {
-                    entry.target.classList.remove("tracking-in-expand");
+                    observer.unobserve(entry.target);
                 }
             },
-            { threshold: 0.1 }
+            {
+                threshold: 0,
+                rootMargin: "0px 0px -100px 0px"
+            }
         );
         observer.observe(target.current);
         return () => observer.disconnect();
@@ -62,7 +64,6 @@ const IntroductionPage = () => {
     return (
         <div className="min-h-screen pt-10 md:pt-20 overflow-x-hidden">
             <div className="flex flex-col items-center gap-y-8 pb-20 bg-inherit">
-                {/* 메인 비주얼 이미지 */}
                 <div className="w-full max-w-225 px-4">
                     <img
                         src="/introduction.webp"
@@ -71,7 +72,7 @@ const IntroductionPage = () => {
                     />
                 </div>
 
-                <div className="w-full px-6 md:px-40 flex flex-col">
+                <div className="w-full px-6 md:px-30 flex flex-col">
                     <div ref={target} className="hidden-box">
                         <h2 className="text-3xl md:text-5xl font-bold leading-tight">
                             <span className="text-blue-500">함께</span> 알아가고<br />
@@ -103,7 +104,7 @@ const IntroductionPage = () => {
                                 <div className="absolute top-0 -left-2.5 w-2.5 h-2.25 bg-blue-900"
                                     style={{ clipPath: 'polygon(100% 0, 0% 100%, 100% 100%)' }}>
                                 </div>
-                                <div className="relative bg-blue-600 text-white px-2 pb-3 md:px-3 md:pt-3 md:pb-5 text-xs font-bold shadow-md clip-path-bookmark animate-bounce-subtle">
+                                <div className="relative bg-blue-600 text-white px-2 pb-3  pt-2 md:px-3 md:pt-3 text-xs font-bold shadow-md clip-path-bookmark animate-bounce-subtle">
                                     PREVIEW
                                 </div>
                             </div>
@@ -133,7 +134,7 @@ const IntroductionPage = () => {
 
                         {/* 팀원 소개 섹션 */}
                         <div className="relative mt-24 md:mt-32 w-full">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center md:text-start">팀원</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-10 text-start">팀원</h2>
 
                             {/* 데스크탑 배경 붓터치 효과 */}
                             <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-64 pointer-events-none -rotate-2 z-0 opacity-80">

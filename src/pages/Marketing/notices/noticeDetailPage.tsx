@@ -142,7 +142,7 @@ const NoticeDetailPage = () => {
                     {notice.imageUrl && (
                         <div className="not-prose mb-10 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md">
                             <img
-                                src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}${notice.imageUrl}`}
+                                src={notice.imageUrl}
                                 alt="공지사항 이미지"
                                 className="w-full h-auto object-contain max-h-150 bg-slate-50 dark:bg-slate-900"
                             />

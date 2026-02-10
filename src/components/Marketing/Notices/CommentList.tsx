@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { ImagePlus, Loader2, X } from "lucide-react";
 
 
-const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 export interface Comment {
     id: number;
@@ -169,10 +168,10 @@ export const CommentList = ({ comments, onRefresh }: CommentListProps) => {
                             {comment.imageUrl && (
                                 <div className="mt-3">
                                     <img
-                                        src={`${API_HOST}${comment.imageUrl}`}
+                                        src={comment.imageUrl}
                                         alt="첨부 이미지"
                                         className="w-auto h-auto max-w-44 md:max-w-sm aspect-auto object-contain rounded-md border shadow-sm cursor-zoom-in hover:opacity-95 transition-all"
-                                        onClick={() => window.open(`${API_HOST}${comment.imageUrl}`)}
+                                        onClick={() => window.open(comment.imageUrl)}
                                     />
                                 </div>
                             )}
@@ -191,7 +190,7 @@ export const CommentList = ({ comments, onRefresh }: CommentListProps) => {
                                     <div className="flex gap-2 mb-2">
                                         {comment.imageUrl && !isImageDeletedFlag && !editPreviewUrl && (
                                             <div className="relative w-20 h-20 border rounded-md overflow-hidden opacity-80">
-                                                <img src={`${API_HOST}${comment.imageUrl}`} alt="기존 이미지" className="w-full h-full object-cover" />
+                                                <img src={comment.imageUrl} alt="기존 이미지" className="w-full h-full object-cover" />
                                                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                                                     <button
                                                         type="button"
