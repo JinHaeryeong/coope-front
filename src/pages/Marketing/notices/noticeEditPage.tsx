@@ -16,7 +16,6 @@ interface EmojiData {
     [key: string]: any;
 }
 
-const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 const NoticeEditPage = () => {
     const { id } = useParams<{ id: string }>(); // URL에서 ID 가져오기
@@ -33,6 +32,7 @@ const NoticeEditPage = () => {
 
     const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
     const [isImageDeletedFlag, setIsImageDeletedFlag] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
         const fetchNotice = async () => {
@@ -62,12 +62,19 @@ const NoticeEditPage = () => {
         };
     }, [previewUrl]);
 
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const isMobile = windowWidth < 768;
+
     const mdeOptions = useMemo(() => ({
         spellChecker: false,
         status: false,
-        minHeight: "350px",
-        // 수정 페이지에서는 자동저장 uniqueId를 다르게 주거나 끄는 게 안전합니다.
-    }), []);
+        minHeight: isMobile ? "200px" : "350px",
+    }), [isMobile]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -131,12 +138,12 @@ const NoticeEditPage = () => {
     if (loading) return <div className="flex justify-center py-20"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="w-11/12 max-w-4xl justify-center mx-auto my-10">
+        <div className="w-full md:w-11/12 max-w-4xl justify-center mx-auto md:my-10">
             <div className="heading text-center font-bold text-3xl md:text-5xl m-5 text-slate-800 dark:text-slate-100">
                 공지사항 수정
             </div>
 
-            <form onSubmit={handleSubmit} className="editor mx-auto w-full flex flex-col p-4 shadow-lg rounded-lg bg-white dark:bg-slate-900 border dark:border-slate-700">
+            <form onSubmit={handleSubmit} className="editor mx-auto w-full flex flex-col p-4 md:shadow-lg md:rounded-lg bg-white dark:bg-slate-900 border dark:border-slate-700">
                 <input
                     className="title bg-gray-50 dark:bg-slate-800 border p-3 mb-4 rounded-md focus:ring-2 focus:ring-primary/50 outline-none dark:text-white"
                     value={title}
@@ -176,7 +183,7 @@ const NoticeEditPage = () => {
                         <div className="flex gap-2 items-center py-1">
                             {existingImageUrl && !isImageDeletedFlag && !previewUrl && (
                                 <div className="relative w-14 h-14 md:w-20 md:h-20 border rounded-md overflow-hidden group">
-                                    <img src={`${API_HOST}${existingImageUrl}`} className="w-full h-full object-cover opacity-80" />
+                                    <img src={existingImageUrl} className="w-full h-full object-cover opacity-80" />
                                     <button type="button" onClick={() => setIsImageDeletedFlag(true)} className="absolute top-0 right-0 bg-destructive text-white p-1 rounded-bl-md">
                                         <X size={10} />
                                     </button>

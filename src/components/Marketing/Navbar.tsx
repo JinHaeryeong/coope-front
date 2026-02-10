@@ -88,7 +88,7 @@ export const Navbar = () => {
                                     <div className="cursor-pointer hover:opacity-80 transition ml-4">
                                         <Avatar className="h-9 w-9 border">
                                             <AvatarImage
-                                                src={user?.userIcon ? `http://localhost:8080${user.userIcon}` : "/default-icon.png"}
+                                                src={user?.userIcon ? user.userIcon : "/default-icon.png"}
                                                 alt={user?.nickname}
                                             />
                                             <AvatarFallback className="bg-sky-500 text-white">

@@ -1,5 +1,5 @@
 
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Button } from "@/components/ui/button";
@@ -22,22 +22,31 @@ const NoticeWritePage = () => {
     const [content, setContent] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     const fileInput = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const { user } = useAuthStore();
 
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const isMobile = windowWidth < 768;
+
     const mdeOptions = useMemo(() => ({
         spellChecker: false,
         placeholder: "공지 내용을 마크다운으로 작성하세요...",
         status: false,
-        minHeight: "200px",
+        minHeight: isMobile ? "200px" : "350px",
         autosave: {
             enabled: true,
             uniqueId: "notice-write-cache",
             delay: 1000,
         },
-    }), []);
+    }), [isMobile]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -107,12 +116,12 @@ const NoticeWritePage = () => {
     };
 
     return (
-        <div className="w-11/12 max-w-4xl justify-center mx-auto my-10">
+        <div className="w-full md:w-11/12 md:max-w-4xl justify-center mx-auto md:my-10">
             <div className="heading text-center font-bold text-3xl md:text-5xl m-5 text-slate-800 dark:text-slate-100">
                 공지사항 작성
             </div>
 
-            <form onSubmit={handleSubmit} className="editor mx-auto w-full flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg rounded-lg bg-white dark:bg-slate-900 dark:border-slate-700">
+            <form onSubmit={handleSubmit} className="editor mx-auto w-full flex flex-col text-gray-800 border md:border-gray-300 p-4 md:shadow-lg md:rounded-lg bg-white dark:bg-slate-900 dark:border-slate-700">
                 <input
                     className="title bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 mb-4 outline-none rounded-md focus:ring-2 focus:ring-primary/50 transition dark:text-white"
                     placeholder="제목을 입력하세요"

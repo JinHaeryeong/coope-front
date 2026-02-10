@@ -69,19 +69,19 @@ const NoticeList = () => {
                 <p className="text-muted-foreground">새로운 소식과 업데이트를 확인하세요</p>
             </header>
 
-            <div className="w-full rounded-lg border p-4 min-h-100 relative">
+            <div className="w-full rounded-lg border p-4 min-h-100 relative flex flex-col">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                         <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
                         <p>데이터 로딩중...</p>
                     </div>
                 ) : notices.length === 0 ? (
-                    <div className="py-32 text-center flex flex-col items-center gap-4 box-content">
+                    <div className="flex-1 flex flex-col items-center justify-center gap-4 box-content">
                         <Clock className="w-8 h-8 text-slate-400" />
                         <p className="text-slate-500 dark:text-slate-400 text-lg font-medium">작성된 공지사항이 없어요</p>
                     </div>
                 ) : (
-                    <>
+                    <div className="flex-1">
                         <Table className="table-fixed w-full">
                             <TableHeader>
                                 <TableRow>
@@ -130,7 +130,7 @@ const NoticeList = () => {
                             </TableBody>
                         </Table>
 
-                        <div className="mt-8 flex justify-center">
+                        <div className="mt-auto pt-8 flex justify-center">
                             <Pagination>
                                 <PaginationContent>
                                     <PaginationItem>
@@ -157,6 +157,7 @@ const NoticeList = () => {
                                             </PaginationItem>
                                         ))}
 
+
                                     <PaginationItem>
                                         <PaginationNext
                                             href="#"
@@ -169,11 +170,11 @@ const NoticeList = () => {
                                 </PaginationContent>
                             </Pagination>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
             {canWrite && (
-                <div className="flex justify-end mt-4 w-full">
+                <div className="flex justify-end mt-4 w-full ">
                     <Button size="lg" className="px-8 shadow-md cursor-pointer" onClick={() => navigate("/notice/write")}>글쓰기</Button>
                 </div>
             )}
