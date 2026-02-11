@@ -1,0 +1,237 @@
+import { cn } from "@/lib/utils";
+import {
+  ChevronsLeft,
+  MenuIcon,
+  PlusCircle,
+  Search,
+  Settings,
+  Trash,
+  User,
+  UserPlus,
+} from "lucide-react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useMediaQuery } from "usehooks-ts";
+import { toast } from "sonner";
+
+import { useSearch } from "@/hooks/useSearch";
+import { useSettings } from "@/hooks/useSettings";
+import { useInvite } from "@/hooks/useInvite";
+
+
+import { Item } from "./Item";
+import { TrashBox } from "./TrashBox";
+import { Navbar } from "./Navbar";
+import InviteModal from "@/components/Main/Modal/InviteModal";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import UserItem from "./UserItem";
+import { DocumentList } from "./DocumentList";
+
+
+export const Navigation = () => {
+  const { workspaceId, documentId } = useParams(); //
+  const { pathname } = useLocation(); //
+  const navigate = useNavigate(); //
+
+  const isWorkspacePath = pathname.startsWith("/workspace");
+
+  const search = useSearch();
+  const invite = useInvite();
+  const settings = useSettings();
+
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  const navbarRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useMediaQuery("(max-width:768px)");
+
+  const [isCollapsed, setIsCollapsed] = useState(isMobile);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const MIN_WIDTH = 210;
+  const MAX_WIDTH = 700;
+
+  const toggleSidebar = useCallback(() => {
+    setIsResetting(true);
+    setIsCollapsed((prev) => !prev);
+    setTimeout(() => setIsResetting(false), 300);
+  }, []);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "\\" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        toggleSidebar();
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [toggleSidebar]);
+
+  useEffect(() => {
+    if (isMobile) setIsCollapsed(true);
+    else setIsCollapsed(false);
+  }, [isMobile]);
+
+  // 워크스페이스 아이디가 필요한 경로인데 없는 경우 처리
+  if (isWorkspacePath && !workspaceId) return null;
+
+  const handleMouseDown = (event: React.MouseEvent) => {
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = sidebarRef.current?.getBoundingClientRect().width || 240;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const newWidth = startWidth + (moveEvent.clientX - startX);
+      if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH && sidebarRef.current && navbarRef.current) {
+        sidebarRef.current.style.width = `${newWidth}px`;
+        navbarRef.current.style.left = `${newWidth}px`;
+        navbarRef.current.style.width = `calc(100% - ${newWidth}px)`;
+      }
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleAction = (callback: () => void) => {
+    callback();
+    if (isMobile) toggleSidebar();
+  };
+
+  // Convex useMutation 대신 Spring API 호출로 변경 필요
+  const handleCreate = async () => {
+    try {
+      // const response = await axiosInstance.post(`/api/workspaces/${workspaceId}/documents`, { title: "Untitled" });
+      // const documentId = response.data.id;
+
+      toast.success("새 노트가 생성되었습니다!");
+      if (isMobile) toggleSidebar();
+      // navigate(`/workspace/${workspaceId}/documents/${documentId}`);
+    } catch (error) {
+      toast.error("새 노트 생성에 실패했습니다.");
+    }
+  };
+
+  return (
+    <>
+      {!isCollapsed && isMobile && (
+        <div
+          onClick={toggleSidebar}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        />
+      )}
+
+      <aside
+        ref={sidebarRef}
+        className={cn(
+          "group/sidebar h-full bg-black overflow-y-auto relative flex flex-col z-9 md:rounded-r-xl",
+          isCollapsed ? "w-0" : "w-full md:w-60",
+          isResetting && "transition-all ease-in-out duration-300",
+          isMobile && "fixed inset-y-0 left-0 shadow-2xl"
+        )}
+      >
+        <div className={cn(
+          "w-full h-full flex flex-col transition-opacity duration-300",
+          isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
+        )}>
+          <div className="p-4 flex items-center justify-between">
+            <img
+              src="/logo-dark.png"
+              alt="Logo"
+              className="w-44 h-auto cursor-pointer hover:opacity-80 transition"
+              onClick={() => navigate("/")}
+            />
+            <div
+              role="button"
+              onClick={toggleSidebar}
+              className="h-6 w-6 text-muted-foreground rounded-sm opacity-40  group-hover/sidebar:opacity-100 transition cursor-pointer"
+            >
+              <ChevronsLeft className="h-6 w-6" />
+            </div>
+          </div>
+
+          <div className={cn(isMobile && "px-2 space-y-2")}>
+            <UserItem />
+            <Item
+              label="초대"
+              icon={UserPlus}
+              onClick={() => handleAction(invite.onOpen)}
+            />
+            {invite.isOpen && <InviteModal workspaceId={workspaceId!} />}
+            <Item
+              label="검색"
+              icon={Search}
+              isSearch
+              onClick={() => handleAction(search.onOpen)}
+            />
+            <Item
+              label="설정"
+              icon={Settings}
+              onClick={() => handleAction(settings.onOpen)}
+            />
+            <Item onClick={handleCreate} label="새 페이지" icon={PlusCircle} />
+          </div>
+          <DocumentList onItemClick={() => isMobile && toggleSidebar()} />
+
+          <div className={cn("text-white", isMobile && "px-2 space-y-2")}>
+
+            <Item
+              icon={User}
+              label="친구"
+              onClick={() => handleAction(() => navigate(`/workspace/${workspaceId}/friends`))}
+            />
+            <Popover>
+              <PopoverTrigger className="w-full mt-4">
+                <Item label="휴지통" icon={Trash} />
+              </PopoverTrigger>
+              <PopoverContent
+                className="p-0 w-72"
+                side={isMobile ? "bottom" : "right"}
+              >
+                <TrashBox />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {!isMobile && (
+            <div
+              onMouseDown={handleMouseDown}
+              className="cursor-ew-resize absolute h-full w-1 right-0 top-0 opacity-0 group-hover/sidebar:opacity-100 transition"
+            />
+          )}
+        </div>
+      </aside>
+
+      <div
+        ref={navbarRef}
+        className={cn(
+          "absolute top-0 z-9998 pointer-events-none",
+          isResetting && "transition-all ease-in-out duration-300",
+          isCollapsed ? "left-0 w-full" : isMobile ? "left-0 w-0 opacity-0" : "left-60 w-[calc(100%-240px)]"
+        )}
+      >
+        {!!documentId ? (
+          <Navbar isCollapsed={isCollapsed} onResetWidth={toggleSidebar} />
+        ) : (
+          <nav className="bg-transparent px-3 py-2 w-full">
+            {isCollapsed && (
+              <MenuIcon
+                role="button"
+                className="h-6 w-6 text-muted-foreground pointer-events-auto cursor-pointer transition"
+                onClick={toggleSidebar}
+              />
+            )}
+          </nav>
+        )}
+      </div>
+    </>
+  );
+};
