@@ -1,4 +1,4 @@
-import axiosAuthInstance from "./axiosAuthInsatance";
+import axiosAuthInstance from "./axiosAuthInstance";
 
 
 export const apiInquiries = async (page: number) => {

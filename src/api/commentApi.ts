@@ -1,4 +1,4 @@
-import axiosAuthInstance from "./axiosAuthInsatance";
+import axiosAuthInstance from "./axiosAuthInstance";
 import axiosInstance from "./axiosInstance";
 
 export interface CommentResponse {

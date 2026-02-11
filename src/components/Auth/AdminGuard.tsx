@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
 import { toast } from "sonner";
 

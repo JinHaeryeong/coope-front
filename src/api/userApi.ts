@@ -1,5 +1,5 @@
-import type { UserInfo } from '@/store/authStore';
-import axiosAuthInstance from './axiosAuthInsatance';
+import type { UserInfo } from '@/store/useAuthStore';
+import axiosAuthInstance from './axiosAuthInstance';
 import axiosInstance from './axiosInstance';
 
 interface SignUpResponse {
@@ -39,3 +39,8 @@ export const apiGetMe = async () => {
     const response = await axiosAuthInstance.get<UserInfo>("/user/me");
     return response.data;
 }
+
+export const apiRefreshToken = async () => {
+    const response = await axiosInstance.post<{ accessToken: string }>("/auth/refresh");
+    return response.data;
+};
