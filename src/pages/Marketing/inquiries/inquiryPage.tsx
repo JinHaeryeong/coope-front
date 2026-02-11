@@ -8,7 +8,7 @@ import {
 import {
     Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,
 } from "@/components/ui/pagination";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { formatDate } from "@/lib/utils";
 import { apiInquiries } from "@/api/inquiryApi";
 

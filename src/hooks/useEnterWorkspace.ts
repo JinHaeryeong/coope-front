@@ -1,32 +1,45 @@
-// src/hooks/use-enter-workspace.ts
-import { useNavigate } from "react-router-dom"; // next/navigation 대신 사용
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/useAuthStore";
+import { toast } from "sonner";
+import { apiGetMyWorkspaces, apiCreateWorkspace } from "@/api/workspaceApi";
 
 export const useEnterWorkspace = () => {
     const navigate = useNavigate();
+    const user = useAuthStore((state) => state.user);
     const [isLoading, setIsLoading] = useState(false);
 
-    // TODO: 나중에 Spring Boot API 연동 (axios/fetch)
-    const onEnter = async () => {
+    const onEnter = useCallback(async () => {
+        if (!user) {
+            toast.error("로그인이 필요합니다.");
+            return;
+        }
+
         setIsLoading(true);
         try {
-            // 현재는 워크스페이스가 없으므로 임시 ID로 이동하거나 
-            // 워크스페이스 생성 로직이 들어갈 자리입니다.
-            console.log("워크스페이스 진입 로직 실행");
+            const workspaces = await apiGetMyWorkspaces();
 
-            // 임시 워크스페이스 ID로 이동 테스트
-            const tempId = "test-workspace-id";
-            navigate(`/workspace/${tempId}/documents`);
+            if (workspaces && workspaces.length > 0) {
+                const firstWorkspace = workspaces[0];
+                navigate(`/workspace/${firstWorkspace.inviteCode}`);
+            } else {
+                const newWorkspaceName = `${user.nickname}의 워크스페이스`;
+                const newWorkspace = await apiCreateWorkspace(newWorkspaceName);
+
+                toast.success("워크스페이스가 준비되었습니다!");
+                navigate(`/workspace/${newWorkspace.inviteCode}`);
+            }
         } catch (error) {
-            console.error("Enter workspace error:", error);
+            console.error("Workspace entry error:", error);
+            toast.error("워크스페이스 정보를 확인할 수 없습니다.");
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user, navigate]);
 
     return {
         onEnter,
         isLoading,
-        user: { fullName: "임시 사용자" } // UI 확인용 가짜 데이터
+        user
     };
 };

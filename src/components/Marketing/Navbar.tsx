@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { ModeToggle } from "@/components/Common/ModeToggle";
 import { Logo } from "./Logo";
 import { useLoginModal } from "@/hooks/useLoginModal";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 import {
     Avatar,
@@ -87,10 +87,7 @@ export const Navbar = () => {
                                 <DropdownMenuTrigger asChild>
                                     <div className="cursor-pointer hover:opacity-80 transition ml-4">
                                         <Avatar className="h-9 w-9 border">
-                                            <AvatarImage
-                                                src={user?.userIcon ? user.userIcon : "/default-icon.png"}
-                                                alt={user?.nickname}
-                                            />
+                                            <AvatarImage src={user?.userIcon} alt={user?.nickname} />
                                             <AvatarFallback className="bg-sky-500 text-white">
                                                 {user?.nickname?.charAt(0) || "U"}
                                             </AvatarFallback>

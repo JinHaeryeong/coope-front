@@ -8,7 +8,7 @@ import {
     Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,
 } from "@/components/ui/pagination";
 import { Clock, Loader2 } from "lucide-react";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { apiNotices } from "@/api/noticeApi";
 import { formatDate, isToday } from "@/lib/utils";
 

@@ -11,7 +11,7 @@ export const Logo = () => {
                 width="200"
                 alt="logo"
                 loading="eager"
-                {...{ fetchpriority: "high" }}
+                {...{ fetchPriority: "high" }}
                 className="dark:hidden"
             />
             {/* 다크 모드 로고 */}
