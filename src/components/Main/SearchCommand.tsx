@@ -37,7 +37,6 @@ export function SearchCommand() {
             if (!workspaceId || !isOpen) return; // 모달이 열릴 때만 데이터를 가져오도록 최적화 가능
 
             try {
-                // 추후 /search 엔드포인트로 변경 예정
                 const data = await apiGetSidebarDocuments(workspaceId);
                 setDocuments(data);
             } catch (error) {

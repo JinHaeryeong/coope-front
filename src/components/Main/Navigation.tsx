@@ -32,6 +32,8 @@ import UserItem from "./UserItem";
 import { DocumentList } from "./DocumentList";
 import { apiCreateDocument } from "@/api/documentApi";
 import { useTrashStore } from "@/store/useTrashStore";
+import { SettingsModal } from "./Modal/SettingModal";
+import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 
 
 export const Navigation = () => {
@@ -40,6 +42,9 @@ export const Navigation = () => {
   const navigate = useNavigate(); //
 
   const isWorkspacePath = pathname.startsWith("/workspace");
+  const { workspaces } = useWorkspaceStore();
+
+  const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceId);
 
   const search = useSearch();
   const invite = useInvite();
@@ -183,6 +188,12 @@ export const Navigation = () => {
               icon={Settings}
               onClick={() => handleAction(settings.onOpen)}
             />
+            {settings.isOpen && (
+              <SettingsModal
+                workspaceId={workspaceId!}
+                initialName={currentWorkspace?.name}
+              />
+            )}
             <Item onClick={handleCreate} label="새 페이지" icon={PlusCircle} />
           </div>
           <DocumentList onItemClick={() => isMobile && toggleSidebar()} />
@@ -219,7 +230,7 @@ export const Navigation = () => {
       <div
         ref={navbarRef}
         className={cn(
-          "absolute top-0 z-9998 pointer-events-none",
+          "absolute top-0 z-1 pointer-events-none",
           isResetting && "transition-all ease-in-out duration-300",
           isCollapsed ? "left-0 w-full" : isMobile ? "left-0 w-0 opacity-0" : "left-60 w-[calc(100%-240px)]"
         )}

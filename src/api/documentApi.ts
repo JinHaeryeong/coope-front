@@ -8,7 +8,7 @@ export interface DocumentResponse {
     icon?: string;
     parentId?: number;
     hasChildren: boolean;
-    isArchived: boolean;
+    archived: boolean;
     createdAt: string;
 }
 

@@ -90,7 +90,7 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
             </nav>
 
             {/* 삭제된 문서일 경우 배너 표시 */}
-            {document.isArchived && (
+            {document.archived && (
                 // <Banner documentId={document.id} />
                 <div className="bg-rose-500 text-center text-sm p-2 text-white flex items-center justify-center gap-x-2">
                     <span className="font-semibold">주의:</span> 이 문서는 현재 휴지통에 보관되어 있습니다.

@@ -22,38 +22,30 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { apiCreateWorkspace, apiGetMyWorkspaces } from "@/api/workspaceApi";
+import { apiCreateWorkspace } from "@/api/workspaceApi";
+import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 
 
 
-interface Workspace {
-    id: number;
-    name: string;
-    inviteCode: string;
-}
 
 function UserItem() {
     const { user, signOut } = useAuthStore();
     const navigate = useNavigate();
     const { workspaceId } = useParams<{ workspaceId: string }>();
 
-    const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+    const { workspaces, fetchWorkspaces, addWorkspace } = useWorkspaceStore();
+
+    const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceId);
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [name, setName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const fetchWorkspaces = async () => {
-            try {
-                const response = await apiGetMyWorkspaces();
-                setWorkspaces(response);
-            } catch (err) {
-                console.error("워크스페이스 로딩 실패:", err);
-            }
-        };
-
-        if (user) fetchWorkspaces();
-    }, [user]);
+        if (user) {
+            fetchWorkspaces();
+        }
+    }, [user, fetchWorkspaces]);
 
     const handleCreate = async () => {
         if (!name.trim()) {
@@ -64,15 +56,14 @@ function UserItem() {
         setIsLoading(true);
         try {
             const newWorkspace = await apiCreateWorkspace(name);
-            setWorkspaces((prev) => [...prev, newWorkspace]);
+
+            addWorkspace(newWorkspace);
+
             setIsDialogOpen(false);
             setName("");
             toast.success("워크스페이스가 생성되었습니다.");
-
-            // 생성 후 해당 워크스페이스의 문서함으로 이동
             navigate(`/workspace/${newWorkspace.inviteCode}`);
         } catch (err) {
-            console.error(err);
             toast.error("워크스페이스 생성 실패");
         } finally {
             setIsLoading(false);
@@ -98,9 +89,14 @@ function UserItem() {
                                     {user?.nickname?.charAt(0) || "U"}
                                 </AvatarFallback>
                             </Avatar>
-                            <span className="text-start font-medium line-clamp-1 text-white">
-                                {user?.nickname}&apos;s Coope
-                            </span>
+                            <div className="flex flex-col text-start">
+                                <span className="text-white font-medium line-clamp-1 leading-tight">
+                                    {user?.nickname}&apos;s Coope
+                                </span>
+                                <span className="text-[13px] text-muted-foreground line-clamp-1 font-normal leading-tight">
+                                    {currentWorkspace?.name || "개인 워크스페이스"}
+                                </span>
+                            </div>
                         </div>
                         <ChevronsLeftRight className="rotate-90 ml-2 text-muted-foreground h-4 w-4 cursor-pointer" />
                     </div>

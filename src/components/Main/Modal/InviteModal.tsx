@@ -4,12 +4,10 @@ import { useInvite } from '@/hooks/useInvite';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import type { WorkspaceModalProps } from '@/types/workspace';
 
-type InviteModalProps = {
-    workspaceId: string;
-};
 
-export default function InviteModal({ workspaceId }: InviteModalProps) {
+export default function InviteModal({ workspaceId }: WorkspaceModalProps) {
     const { isOpen, onClose } = useInvite();
     const [inviteUrl, setInviteUrl] = useState('');
 

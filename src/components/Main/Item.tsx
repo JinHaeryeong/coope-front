@@ -102,7 +102,7 @@ export function Item({
             className={cn(
                 "group min-h-6.75 text-sm py-1 pr-3 w-full flex items-center rounded-md transition hover:bg-neutral-800",
                 active
-                    ? "bg-neutral-800 font-semibold"
+                    ? "bg-neutral-800 font-semibold text-white"
                     : "text-muted-foreground"
             )}
         >

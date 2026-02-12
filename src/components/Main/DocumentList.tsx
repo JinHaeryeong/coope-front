@@ -65,7 +65,6 @@ export const DocumentList = ({
                 {level === 0 && (
                     <>
                         <Item.Skeleton level={level} />
-                        <Item.Skeleton level={level} />
                     </>
                 )}
             </>
