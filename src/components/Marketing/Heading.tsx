@@ -5,7 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useEnterWorkspace } from "@/hooks/useEnterWorkspace";
 import { Logo } from "./Logo";
 import { useLoginModal } from "@/hooks/useLoginModal";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const Heading = () => {
 

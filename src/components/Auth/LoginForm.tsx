@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useLoginModal } from "@/hooks/useLoginModal";
 import axios from "axios";
 import { apiLogin } from "@/api/userApi";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 
 // 유효성 검사 규칙 정의

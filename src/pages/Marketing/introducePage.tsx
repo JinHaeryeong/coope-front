@@ -9,7 +9,7 @@ import 'swiper/swiper-bundle.css'
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useEnterWorkspace } from "@/hooks/useEnterWorkspace";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useLoginModal } from "@/hooks/useLoginModal";
 
 const IntroductionPage = () => {

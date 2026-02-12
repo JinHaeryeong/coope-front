@@ -5,8 +5,7 @@ import { ModalProvider } from './components/provider/ModalProvider';
 import MarketingPage from './pages/Marketing/marketingPage';
 import SignupPage from './pages/Marketing/signupPage';
 import { useEffect } from 'react';
-import { useAuthStore } from './store/authStore';
-import axiosInstance from './api/axiosInstance';
+import { useAuthStore } from './store/useAuthStore';
 import IntroductionPage from './pages/Marketing/introducePage';
 import SupportPage from './pages/Marketing/supportPage';
 import NoticePage from './pages/Marketing/notices/noticePage';
@@ -20,6 +19,9 @@ import { LoginSuccess } from './pages/loginSuccess';
 import { ScrollToTop } from './components/Common/ScrollToTop';
 import InquiryPage from './pages/Marketing/inquiries/inquiryPage';
 import { Spinner } from './components/ui/spinner';
+import { MainLayout } from './layouts/MainLayout';
+import DocumentsPage from './pages/Workspace/documentsPage';
+import { apiRefreshToken } from './api/userApi';
 
 function App() {
 
@@ -30,8 +32,8 @@ function App() {
     if (isLoggedIn && !accessToken) {
       const restoreLogin = async () => {
         try {
-          const response = await axiosInstance.post("/auth/refresh");
-          const { accessToken: newAccessToken } = response.data;
+          const response = await apiRefreshToken();
+          const { accessToken: newAccessToken } = response;
 
           if (user) {
             signIn(newAccessToken, user);
@@ -46,6 +48,27 @@ function App() {
       restoreLogin();
     }
   }, [isLoggedIn, accessToken, user, signIn, signOut]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !accessToken) return;
+
+    const silentRefreshInterval = setInterval(async () => {
+      try {
+        console.log("자동 토큰 갱신 시도 중...");
+        const res = await apiRefreshToken();
+        const newAccessToken = res.accessToken;
+
+        if (user) {
+          signIn(newAccessToken, user);
+          console.log("자동 토큰 갱신 성공");
+        }
+      } catch (error) {
+        console.error("자동 토큰 갱신 실패:", error);
+      }
+    }, 14 * 60 * 1000); // 14분
+
+    return () => clearInterval(silentRefreshInterval);
+  }, [isLoggedIn, accessToken, user, signIn]);
 
 
   if (isLoggedIn && !accessToken) {
@@ -78,8 +101,12 @@ function App() {
               <Route path="*" element={<UnderConstructionPage />} />
             </Route>
 
-            <Route path="/workspace/:workspaceId" element={<div>Workspace Page</div>}>
-              <Route path="documents/:documentId" element={<div>Editor Page</div>} />
+            <Route path="/workspace/:workspaceId" element={<MainLayout />}>
+              {/* /workspace/abc 접속 시 (index) */}
+              <Route index element={<DocumentsPage />} />
+
+              {/* /workspace/abc/documents/123 접속 시 */}
+              <Route path="documents/:documentId" element={<DocumentsPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

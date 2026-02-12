@@ -1,7 +1,7 @@
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
-import axiosInstance from "./axiosInstance";
 import { toast } from "sonner";
+import { apiRefreshToken } from "./userApi";
 
 const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
@@ -43,8 +43,8 @@ axiosAuthInstance.interceptors.response.use(
             console.log("액세스 토큰 만료 감지. 재발급을 시도합니다.");
 
             try {
-                const res = await axiosInstance.post<{ accessToken: string }>("/auth/refresh");
-                const newAccessToken = res.data.accessToken;
+                const res = await apiRefreshToken();
+                const newAccessToken = res.accessToken;
 
                 // Zustand 갱신
                 const currentUser = useAuthStore.getState().user;

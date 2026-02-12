@@ -4,7 +4,7 @@ import { CalendarDays, Eye, UserCog2, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiGetNoticeById, apiDeleteNotice, apiIncreaseView } from "@/api/noticeApi"; // API 함수 가정
 import { formatDate } from "@/lib/utils";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner"
 import { CommentForm } from "@/components/Marketing/Notices/CommentForm";

@@ -1,4 +1,4 @@
-import axiosAuthInstance from "@/api/axiosAuthInsatance";
+import axiosAuthInstance from "@/api/axiosAuthInstance";
 import { create } from "zustand";
 import { devtools, persist, createJSONStorage } from "zustand/middleware";
 
