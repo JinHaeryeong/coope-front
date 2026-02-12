@@ -70,7 +70,7 @@ function UserItem() {
             toast.success("워크스페이스가 생성되었습니다.");
 
             // 생성 후 해당 워크스페이스의 문서함으로 이동
-            navigate(`/workspace/${newWorkspace.inviteCode}/documents`);
+            navigate(`/workspace/${newWorkspace.inviteCode}`);
         } catch (err) {
             console.error(err);
             toast.error("워크스페이스 생성 실패");
@@ -133,7 +133,7 @@ function UserItem() {
                         {workspaces.map((workspace) => (
                             <DropdownMenuItem
                                 key={workspace.id}
-                                onClick={() => navigate(`/workspace/${workspace.inviteCode}/documents`)}
+                                onClick={() => navigate(`/workspace/${workspace.inviteCode}`)}
                                 className="cursor-pointer flex items-center justify-between"
                             >
                                 <span className="truncate">{workspace.name}</span>

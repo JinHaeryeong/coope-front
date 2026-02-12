@@ -45,11 +45,11 @@ export const apiCreateDocument = async (
 
 export const apiGetDocumentById = async (
     documentId: number,
-    workspaceId: string
+    workspaceCode: string
 ): Promise<DocumentResponse> => {
     // URL 파라미터나 쿼리 스트링으로 workspaceId를 함께 전달
     const response = await axiosAuthInstance.get(`/documents/${documentId}`, {
-        params: { workspaceId }
+        params: { workspaceCode }
     });
     return response.data;
 };

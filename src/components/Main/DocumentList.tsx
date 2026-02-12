@@ -5,10 +5,11 @@ import { FileIcon } from "lucide-react";
 import { type DocumentResponse, apiGetSidebarDocuments } from "@/api/documentApi";
 import { cn } from "@/lib/utils";
 import { Item } from "./Item";
+import { useTrashStore } from "@/store/useTrashStore";
 
 interface DocumentListProps {
     onItemClick?: () => void;
-    parentDocumentId?: number; // ✅ Id<"documents"> -> number
+    parentDocumentId?: number;
     level?: number;
 }
 
@@ -17,6 +18,7 @@ export const DocumentList = ({
     parentDocumentId,
     level = 0,
 }: DocumentListProps) => {
+    const { trashUpdateTicket } = useTrashStore();
     const params = useParams<{ workspaceId: string; documentId: string }>();
     const navigate = useNavigate();
 
@@ -41,7 +43,7 @@ export const DocumentList = ({
         };
 
         fetchDocuments();
-    }, [workspaceId, parentDocumentId]); // 워크스페이스나 부모가 바뀌면 다시 로드
+    }, [workspaceId, parentDocumentId, trashUpdateTicket]); // 워크스페이스나 부모가 바뀌면 다시 로드
 
     const onExpand = (documentId: number) => {
         setExpanded((prevExpanded) => ({

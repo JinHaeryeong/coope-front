@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/popover";
 import UserItem from "./UserItem";
 import { DocumentList } from "./DocumentList";
+import { apiCreateDocument } from "@/api/documentApi";
+import { useTrashStore } from "@/store/useTrashStore";
 
 
 export const Navigation = () => {
@@ -49,6 +51,7 @@ export const Navigation = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
   const [isResetting, setIsResetting] = useState(false);
+  const { notifyTrashUpdate } = useTrashStore();
 
   const MIN_WIDTH = 210;
   const MAX_WIDTH = 700;
@@ -106,17 +109,20 @@ export const Navigation = () => {
     if (isMobile) toggleSidebar();
   };
 
-  // Convex useMutation 대신 Spring API 호출로 변경 필요
   const handleCreate = async () => {
+    if (!workspaceId) return;
     try {
-      // const response = await axiosInstance.post(`/api/workspaces/${workspaceId}/documents`, { title: "Untitled" });
-      // const documentId = response.data.id;
+      const newDocument = await apiCreateDocument({
+        title: "제목 없음",
+        workspaceCode: workspaceId,
+      });
 
-      toast.success("새 노트가 생성되었습니다!");
+      toast.success("새 문서가 생성되었습니다!");
       if (isMobile) toggleSidebar();
-      // navigate(`/workspace/${workspaceId}/documents/${documentId}`);
+      notifyTrashUpdate();
+      navigate(`/workspace/${workspaceId}/documents/${newDocument.id}`);
     } catch (error) {
-      toast.error("새 노트 생성에 실패했습니다.");
+      toast.error("새 문서 생성에 실패했습니다.");
     }
   };
 

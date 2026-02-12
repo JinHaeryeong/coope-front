@@ -16,7 +16,6 @@ import { useTrashStore } from "@/store/useTrashStore";
 
 export function TrashBox() {
     const navigate = useNavigate();
-    const { trashUpdateTicket } = useTrashStore();
     const params = useParams<{ workspaceId: string, documentId: string }>();
     const [search, setSearch] = useState("");
     const [documents, setDocuments] = useState<DocumentResponse[] | null>(null);
@@ -24,12 +23,14 @@ export function TrashBox() {
 
     const workspaceId = params.workspaceId;
 
+    const { notifyTrashUpdate } = useTrashStore();
+
 
 
     // 워크스페이스가 바뀔 때마다 데이터 다시 읽어오기
     useEffect(() => {
         loadTrashData();
-    }, [workspaceId, trashUpdateTicket]);
+    }, [workspaceId]);
 
     const loadTrashData = async () => {
         if (!workspaceId) return;
@@ -63,7 +64,10 @@ export function TrashBox() {
     ) => {
         event.stopPropagation();
 
-        const promise = apiRestoreDocument(documentId).then(() => loadTrashData());
+        const promise = apiRestoreDocument(documentId).then(() => {
+            loadTrashData();
+            notifyTrashUpdate();
+        });
 
         toast.promise(promise, {
             loading: "노트를 복구하는 중...",

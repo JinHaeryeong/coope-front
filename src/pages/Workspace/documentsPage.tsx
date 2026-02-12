@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { apiCreateDocument } from "@/api/documentApi";
+import { useTrashStore } from "@/store/useTrashStore";
 
 function DocumentsPage() {
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ function DocumentsPage() {
 
     const user = useAuthStore((state) => state.user);
 
+    const { notifyTrashUpdate } = useTrashStore();
     // 워크스페이스 코드가 없으면 아무것도 렌더링하지 않음 (보통 가드에서 걸러지겠지만 안전용)
     if (!workspaceId) {
         return null;
@@ -33,6 +35,8 @@ function DocumentsPage() {
             });
 
             const newDoc = await promise;
+
+            notifyTrashUpdate();
 
             // 생성 성공 후 해당 문서의 에디터 페이지로 이동
             navigate(`/workspace/${workspaceId}/documents/${newDoc.id}`);

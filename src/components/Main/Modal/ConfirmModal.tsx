@@ -33,7 +33,7 @@ export function ConfirmModal({
 
         // 현재 페이지가 삭제 대상일 때만 이동
         if (documentId && pathname.includes(String(documentId))) {
-            navigate(`/workspace/${workspaceId}/documents`);
+            navigate(`/workspace/${workspaceId}`);
         }
 
         onConfirm();

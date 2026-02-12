@@ -13,7 +13,7 @@ import {
     DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 
-// ✅ API 함수 불러오기
+// API 함수 불러오기
 import { apiCreateDocument, apiArchiveDocument } from "@/api/documentApi";
 import { useTrashStore } from "@/store/useTrashStore";
 
@@ -54,7 +54,7 @@ export function Item({
 
         const promise = apiArchiveDocument(id).then(() => {
             notifyTrashUpdate();
-            navigate(`/workspace/${workspaceId}/documents`);
+            navigate(`/workspace/${workspaceId}`);
         });
 
         toast.promise(promise, {
@@ -70,11 +70,12 @@ export function Item({
         if (!id || !workspaceId) return;
 
         const promise = apiCreateDocument({
-            title: "Untitled",
+            title: "제목 없음",
             parentId: id,
             workspaceCode: workspaceId
         })
             .then((doc) => {
+                notifyTrashUpdate();
                 if (!expanded) onExpand?.();
                 navigate(`/workspace/${workspaceId}/documents/${doc.id}`);
             });
