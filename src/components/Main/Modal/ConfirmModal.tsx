@@ -25,7 +25,6 @@ export function ConfirmModal({
     onConfirm,
     documentId,
     workspaceCode,
-    onOpenChange
 }: ConfirmModalProps) {
     const navigate = useNavigate();
     const { pathname } = useLocation();

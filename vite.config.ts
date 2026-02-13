@@ -18,15 +18,15 @@ export default defineConfig({
       svg: {
         multipass: true,
         plugins: [
-          { name: 'removeViewBox', active: false },
+          { name: 'removeViewBox' },
           { name: 'sortAttrs' },
         ],
       },
       png: { quality: 80 },
       jpeg: { quality: 80 },
       jpg: { quality: 80 },
-      webp: { lossy: true, quality: 80 },
-      avif: { lossy: true, quality: 70 },
+      webp: { quality: 80 },
+      avif: { quality: 70 },
     }),
   ],
   resolve: {
