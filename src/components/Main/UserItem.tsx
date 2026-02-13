@@ -31,11 +31,11 @@ import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 function UserItem() {
     const { user, signOut } = useAuthStore();
     const navigate = useNavigate();
-    const { workspaceId } = useParams<{ workspaceId: string }>();
+    const { workspaceCode } = useParams<{ workspaceCode: string }>();
 
     const { workspaces, fetchWorkspaces, addWorkspace } = useWorkspaceStore();
 
-    const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceId);
+    const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [name, setName] = useState("");
@@ -133,7 +133,7 @@ function UserItem() {
                                 className="cursor-pointer flex items-center justify-between"
                             >
                                 <span className="truncate">{workspace.name}</span>
-                                {workspace.inviteCode === workspaceId && (
+                                {workspace.inviteCode === workspaceCode && (
                                     <Check className="h-4 w-4 text-green-600" />
                                 )}
                             </DropdownMenuItem>

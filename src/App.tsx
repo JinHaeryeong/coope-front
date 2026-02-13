@@ -22,6 +22,7 @@ import { Spinner } from './components/ui/spinner';
 import { MainLayout } from './layouts/MainLayout';
 import DocumentsPage from './pages/Workspace/documentsPage';
 import { apiRefreshToken } from './api/userApi';
+import FriendsPage from './pages/Workspace/Friend/FriendsPage';
 
 function App() {
 
@@ -101,12 +102,13 @@ function App() {
               <Route path="*" element={<UnderConstructionPage />} />
             </Route>
 
-            <Route path="/workspace/:workspaceId" element={<MainLayout />}>
+            <Route path="/workspace/:workspaceCode" element={<MainLayout />}>
               {/* /workspace/abc 접속 시 (index) */}
               <Route index element={<DocumentsPage />} />
 
               {/* /workspace/abc/documents/123 접속 시 */}
               <Route path="documents/:documentId" element={<DocumentsPage />} />
+              <Route path="friends" element={<FriendsPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

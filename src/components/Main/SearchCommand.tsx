@@ -16,8 +16,8 @@ import { toast } from "sonner";
 
 export function SearchCommand() {
     const navigate = useNavigate();
-    const params = useParams<{ workspaceId: string }>();
-    const workspaceId = params.workspaceId;
+    const params = useParams<{ workspaceCode: string }>();
+    const workspaceCode = params.workspaceCode;
 
     const user = useAuthStore((state) => state.user);
 
@@ -34,10 +34,10 @@ export function SearchCommand() {
 
     useEffect(() => {
         const fetchSearchDocs = async () => {
-            if (!workspaceId || !isOpen) return; // 모달이 열릴 때만 데이터를 가져오도록 최적화 가능
+            if (!workspaceCode || !isOpen) return; // 모달이 열릴 때만 데이터를 가져오도록 최적화 가능
 
             try {
-                const data = await apiGetSidebarDocuments(workspaceId);
+                const data = await apiGetSidebarDocuments(workspaceCode);
                 setDocuments(data);
             } catch (error) {
                 toast.error("문서 목록을 불러오지 못했습니다. 다시 시도해 주세요.");
@@ -45,7 +45,7 @@ export function SearchCommand() {
         };
 
         fetchSearchDocs();
-    }, [workspaceId, isOpen]);
+    }, [workspaceCode, isOpen]);
 
     // 단축키 설정 (Ctrl+K / Cmd+K)
     useEffect(() => {
@@ -60,7 +60,7 @@ export function SearchCommand() {
     }, [toggle]);
 
     const onSelect = (documentId: number) => {
-        navigate(`/workspace/${workspaceId}/documents/${documentId}`);
+        navigate(`/workspace/${workspaceCode}/documents/${documentId}`);
         onClose();
     };
 

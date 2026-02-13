@@ -1,3 +1,3 @@
 export interface WorkspaceModalProps {
-    workspaceId: string;
+    workspaceCode: string;
 }

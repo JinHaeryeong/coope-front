@@ -7,16 +7,16 @@ import { toast } from 'sonner';
 import type { WorkspaceModalProps } from '@/types/workspace';
 
 
-export default function InviteModal({ workspaceId }: WorkspaceModalProps) {
+export default function InviteModal({ workspaceCode }: WorkspaceModalProps) {
     const { isOpen, onClose } = useInvite();
     const [inviteUrl, setInviteUrl] = useState('');
 
-    // 컴포넌트 마운트 및 workspaceId 변경 시 초대 링크 생성
+    // 컴포넌트 마운트 및 workspaceCode 변경 시 초대 링크 생성
     useEffect(() => {
 
         const origin = window.location.origin;
-        setInviteUrl(`${origin}/invite?workspace=${workspaceId}`);
-    }, [workspaceId]);
+        setInviteUrl(`${origin}/invite?workspace=${workspaceCode}`);
+    }, [workspaceCode]);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(inviteUrl);

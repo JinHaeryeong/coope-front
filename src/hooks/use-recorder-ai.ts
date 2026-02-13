@@ -20,7 +20,7 @@
 
 //     // 사이드바 목록을 가져와서 "통화 녹음" 부모 폴더가 있는지 확인용
 //     const getSidebar = useQuery(api.documents.getSidebar, {
-//         workspaceId: params.workspaceId as string,
+//         workspaceCode: params.workspaceCode as string,
 //         parentDocument: undefined
 //     });
 
@@ -102,7 +102,7 @@
 //                     { id: "5", type: "paragraph", content: [{ type: "text", text: sttData.transcript, styles: {} }] }
 //                 ]);
 
-//                 const workspaceId = params.workspaceId as string;
+//                 const workspaceCode = params.workspaceCode as string;
 
 //                 // "통화 녹음" 부모 문서(폴더) 찾기 또는 생성
 //                 const parentTitle = "통화 녹음";
@@ -112,20 +112,20 @@
 //                 if (!existingParentDoc) {
 //                     parentDocId = await createDocument({
 //                         title: parentTitle,
-//                         workspaceId,
+//                         workspaceCode,
 //                     });
 //                 }
 
 //                 // 최종 문서 생성
 //                 const documentId = await createDocument({
 //                     title,
-//                     workspaceId,
+//                     workspaceCode,
 //                     parentDocument: parentDocId,
 //                     content,
 //                 });
 
 //                 // 생성된 페이지로 이동
-//                 router.push(`/workspace/${workspaceId}/documents/${documentId}`);
+//                 router.push(`/workspace/${workspaceCode}/documents/${documentId}`);
 
 //             } catch (error) {
 //                 console.error('AI 처리 중 오류:', error);
@@ -138,7 +138,7 @@
 //         };
 
 //         processAudio();
-//     }, [processing, pendingAudio, getSidebar, params.workspaceId, createDocument, router]);
+//     }, [processing, pendingAudio, getSidebar, params.workspaceCode, createDocument, router]);
 
 //     return {
 //         recording,

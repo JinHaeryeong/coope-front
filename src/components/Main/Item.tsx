@@ -45,16 +45,16 @@ export function Item({
     const { user } = useAuthStore();
     const { notifyTrashUpdate } = useTrashStore();
     const navigate = useNavigate();
-    const { workspaceId } = useParams<{ workspaceId: string }>();
+    const { workspaceCode } = useParams<{ workspaceCode: string }>();
 
     // 문서 삭제(아카이브) 로직 완성
     const onArchive = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
-        if (!id || !workspaceId) return;
+        if (!id || !workspaceCode) return;
 
         const promise = apiArchiveDocument(id).then(() => {
             notifyTrashUpdate();
-            navigate(`/workspace/${workspaceId}`);
+            navigate(`/workspace/${workspaceCode}`);
         });
 
         toast.promise(promise, {
@@ -67,17 +67,17 @@ export function Item({
     // 문서 생성 로직 완성
     const onCreate = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
-        if (!id || !workspaceId) return;
+        if (!id || !workspaceCode) return;
 
         const promise = apiCreateDocument({
             title: "제목 없음",
             parentId: id,
-            workspaceCode: workspaceId
+            workspaceCode: workspaceCode
         })
             .then((doc) => {
                 notifyTrashUpdate();
                 if (!expanded) onExpand?.();
-                navigate(`/workspace/${workspaceId}/documents/${doc.id}`);
+                navigate(`/workspace/${workspaceCode}/documents/${doc.id}`);
             });
 
         toast.promise(promise, {

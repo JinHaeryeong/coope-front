@@ -22,6 +22,13 @@ export interface LoginResponse {
     role: string;
 }
 
+export interface UserSearchResponse {
+    id: number;
+    email: string;
+    nickname: string;
+    userIcon: string;
+}
+
 // 회원가입
 export const apiSignUp = async (formData: FormData) => {
     const response = await axiosInstance.post<SignUpResponse>("/user/signup", formData);
@@ -44,3 +51,23 @@ export const apiRefreshToken = async () => {
     const response = await axiosInstance.post<{ accessToken: string }>("/auth/refresh");
     return response.data;
 };
+
+export const apiSearchUser = async (nickname: string) => {
+    const response = await axiosAuthInstance.get<UserSearchResponse>(`/user/search`, {
+        params: { nickname }
+    });
+    return response.data;
+}
+
+export const apiSendFriendRequest = async (friendId: number) => {
+    const response = await axiosAuthInstance.post(`/friends/request`, null, {
+        params: { friendId }
+    });
+    return response.data;
+}
+
+// 친구 요청 목록 가져오기 (PENDING 상태)
+export const apiGetFriendRequests = async () => {
+    const response = await axiosAuthInstance.get<UserSearchResponse[]>("/friends/requests");
+    return response.data;
+}

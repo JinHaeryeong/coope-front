@@ -35,21 +35,23 @@ interface SettingsModalProps extends WorkspaceModalProps {
     initialName?: string;
 }
 
-export function SettingsModal({ workspaceId, initialName }: SettingsModalProps) {
+export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps) {
     const settings = useSettings();
     const navigate = useNavigate();
 
-    const { workspaces, updateWorkspaceName, deleteWorkspaceFromStore } = useWorkspaceStore();
-    const isLastWorkspace = workspaces.length <= 1;
+    const { workspaces, isLoading, updateWorkspaceName, deleteWorkspaceFromStore } = useWorkspaceStore();
+    const isLastWorkspace = !isLoading && workspaces.length <= 1;
 
-    const [name, setName] = useState(initialName || "");
+    const [name, setName] = useState(initialName ?? "");
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
-        if (settings.isOpen && initialName) {
+        if (settings.isOpen && initialName !== undefined) {
             setName(initialName);
         }
     }, [settings.isOpen, initialName]);
+
+    const isNameUnchanged = name === initialName;
 
     // 이름 변경
     const handleRename = async () => {
@@ -59,9 +61,9 @@ export function SettingsModal({ workspaceId, initialName }: SettingsModalProps) 
         }
 
         try {
-            await apiUpdateWorkspace(workspaceId, name);
+            await apiUpdateWorkspace(workspaceCode, name);
 
-            updateWorkspaceName(workspaceId, name);
+            updateWorkspaceName(workspaceCode, name);
 
             toast.success("워크스페이스 이름이 변경되었습니다.");
             settings.onClose();
@@ -75,11 +77,11 @@ export function SettingsModal({ workspaceId, initialName }: SettingsModalProps) 
 
         setIsDeleting(true);
         try {
-            await apiDeleteWorkspace(workspaceId);
+            await apiDeleteWorkspace(workspaceCode);
 
-            const remainingWorkspaces = workspaces.filter(w => w.inviteCode !== workspaceId);
+            const remainingWorkspaces = workspaces.filter(w => w.inviteCode !== workspaceCode);
 
-            deleteWorkspaceFromStore(workspaceId);
+            deleteWorkspaceFromStore(workspaceCode);
 
             toast.success("삭제 완료");
             settings.onClose();
@@ -121,7 +123,11 @@ export function SettingsModal({ workspaceId, initialName }: SettingsModalProps) 
                         onChange={(e) => setName(e.target.value)}
                         placeholder="이름을 입력하세요"
                     />
-                    <Button onClick={handleRename} className="mt-2 w-full">
+                    <Button
+                        onClick={handleRename}
+                        className="mt-2 w-full"
+                        disabled={!name.trim() || isNameUnchanged}
+                    >
                         이름 변경
                     </Button>
                 </div>
@@ -139,7 +145,7 @@ export function SettingsModal({ workspaceId, initialName }: SettingsModalProps) 
                             <Button
                                 variant="destructive"
                                 className="w-full"
-                                disabled={isDeleting || isLastWorkspace}
+                                disabled={isDeleting || isLastWorkspace || isLoading}
                             >
                                 {isLastWorkspace ? "삭제 불가" : "워크스페이스 삭제"}
                             </Button>
@@ -156,6 +162,7 @@ export function SettingsModal({ workspaceId, initialName }: SettingsModalProps) 
                                 <AlertDialogCancel>취소</AlertDialogCancel>
                                 <AlertDialogAction
                                     onClick={handleDelete}
+                                    disabled={isDeleting}
                                     className="bg-destructive hover:bg-destructive/90 text-white"
                                 >
                                     삭제

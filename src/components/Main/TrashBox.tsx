@@ -14,14 +14,18 @@ import { Input } from "@/components/ui/input";
 import { ConfirmModal } from "@/components/Main/Modal/ConfirmModal";
 import { useTrashStore } from "@/store/useTrashStore";
 
-export function TrashBox() {
+interface TrashBoxProps {
+    onClose?: () => void;
+}
+
+export function TrashBox({ onClose }: TrashBoxProps) {
     const navigate = useNavigate();
-    const params = useParams<{ workspaceId: string, documentId: string }>();
+    const params = useParams<{ workspaceCode: string, documentId: string }>();
     const [search, setSearch] = useState("");
     const [documents, setDocuments] = useState<DocumentResponse[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const workspaceId = params.workspaceId;
+    const workspaceCode = params.workspaceCode;
 
     const { notifyTrashUpdate } = useTrashStore();
 
@@ -30,13 +34,13 @@ export function TrashBox() {
     // 워크스페이스가 바뀔 때마다 데이터 다시 읽어오기
     useEffect(() => {
         loadTrashData();
-    }, [workspaceId]);
+    }, [workspaceCode]);
 
     const loadTrashData = async () => {
-        if (!workspaceId) return;
+        if (!workspaceCode) return;
         try {
             setIsLoading(true);
-            const data = await apiGetTrashDocuments(workspaceId);
+            const data = await apiGetTrashDocuments(workspaceCode);
             setDocuments(data);
         } catch (error) {
             console.error("휴지통 조회 실패:", error);
@@ -54,7 +58,8 @@ export function TrashBox() {
     }, [documents, search]);
 
     const onClick = (documentId: number) => {
-        navigate(`/workspace/${workspaceId}/documents/${documentId}`);
+        navigate(`/workspace/${workspaceCode}/documents/${documentId}`);
+        if (onClose) onClose();
     };
 
     // 문서 복구 로직
@@ -67,6 +72,7 @@ export function TrashBox() {
         const promise = apiRestoreDocument(documentId).then(() => {
             loadTrashData();
             notifyTrashUpdate();
+            if (onClose) onClose()
         });
 
         toast.promise(promise, {
@@ -82,7 +88,7 @@ export function TrashBox() {
             loadTrashData();
             // 현재 보고 있는 문서가 삭제된 경우 이동
             if (Number(params.documentId) === documentId) {
-                navigate(`/workspace/${workspaceId}`);
+                navigate(`/workspace/${workspaceCode}`);
             }
         });
 
