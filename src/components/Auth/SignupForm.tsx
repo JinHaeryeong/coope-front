@@ -15,13 +15,22 @@ import { apiSignUp } from "@/api/userApi";
 import axios from "axios";
 import { toast } from "sonner";
 
+
+const nicknameRegex = /^[a-zA-Z0-9가-힣\s]{2,20}$/;
 const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 
 // 회원가입 유효성 검사 스키마
 const signupSchema = z.object({
-    name: z.string().min(2, "이름은 2자 이상 입력해주세요."),
-    nickname: z.string().min(2, "닉네임은 2자 이상 입력해주세요."),
+    name: z
+        .string()
+        .min(2, "이름은 2자 이상 입력해주세요.")
+        .max(10, "이름은 10자 이내로 입력해주세요."),
+    nickname: z
+        .string()
+        .min(2, "닉네임은 2자 이상 입력해주세요.")
+        .max(10, "닉네임은 10자 이내로 입력해주세요.")
+        .regex(nicknameRegex, "닉네임은 특수문자를 제외한 한글, 영문, 숫자만 가능합니다."),
     email: z.string().email("올바른 이메일 형식을 입력해주세요."),
     password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다.").regex(
         passwordRegex,
@@ -88,7 +97,9 @@ export function SignupForm() {
                 {/* 이름 필드 */}
                 <Field>
                     <FieldLabel>이름</FieldLabel>
-                    <Input {...form.register("name")} placeholder="홍길동" />
+                    <Input {...form.register("name")}
+                        placeholder="홍길동 (최대 20자)"
+                        maxLength={20} />
                     {form.formState.errors.name && (
                         <p className="text-xs text-red-500 mt-1">{form.formState.errors.name.message}</p>
                     )}
@@ -114,7 +125,9 @@ export function SignupForm() {
                 {/* 닉네임 필드 */}
                 <Field>
                     <FieldLabel>닉네임</FieldLabel>
-                    <Input {...form.register("nickname")} placeholder="닉네임" />
+                    <Input {...form.register("nickname")}
+                        placeholder="닉네임 (최대 20자)"
+                        maxLength={20} />
                     {form.formState.errors.nickname && (
                         <p className="text-xs text-red-500 mt-1">{form.formState.errors.nickname.message}</p>
                     )}

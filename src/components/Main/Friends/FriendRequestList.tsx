@@ -72,7 +72,7 @@ const FriendRequestList = ({ onSuccess }: FriendRequestListProps) => {
                                 나에게 온 요청을 확인하고 수락해보세요.
                             </p>
                         </div>
-                        <div className="grid gap-2 max-h-75 overflow-y-auto">
+                        <div className="grid gap-2 max-h-72 overflow-y-auto">
                             {isLoading ? (
                                 <div className="flex justify-center p-4">
                                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

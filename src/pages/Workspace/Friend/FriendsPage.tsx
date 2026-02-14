@@ -48,7 +48,7 @@ const FriendsPage = () => {
     if (!friends || friends.length === 0) {
         return (
             <div className="h-full flex flex-col items-center justify-center space-y-4 bg-background">
-                <div className="relative w-75 h-75">
+                <div className="relative w-72 h-72">
                     <img
                         src="/robot.png"
                         className="object-contain dark:hidden w-full h-full"

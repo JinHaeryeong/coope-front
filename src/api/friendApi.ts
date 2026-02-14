@@ -28,13 +28,6 @@ export const apiGetReceivedRequests = async (): Promise<FriendResponse[]> => {
     return response.data;
 };
 
-export const apiSearchUser = async (nickname: string) => {
-    const response = await axiosAuthInstance.get<FriendResponse>(`/user/search`, {
-        params: { nickname }
-    });
-    return response.data;
-};
-
 
 // 친구 요청 수락
 export const apiAcceptFriend = async (friendId: number) => {
@@ -44,6 +37,12 @@ export const apiAcceptFriend = async (friendId: number) => {
     return response.data;
 };
 
+export const apiSendFriendRequest = async (friendId: number) => {
+    const response = await axiosAuthInstance.post(`/friends/request`, null, {
+        params: { friendId }
+    });
+    return response.data;
+}
 
 // 친구 요청 거절 또는 친구 삭제
 export const apiDeleteFriend = async (friendId: number) => {
@@ -52,3 +51,4 @@ export const apiDeleteFriend = async (friendId: number) => {
     });
     return response.data;
 };
+

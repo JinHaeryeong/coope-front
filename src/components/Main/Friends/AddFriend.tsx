@@ -71,7 +71,7 @@ const AddFriend = ({ onSuccess }: AddFriendProps) => {
                     </Button>
                 </div>
 
-                <div className="py-6 min-h-37.5 flex flex-col justify-center border-y my-4">
+                <div className="py-6 min-h-36 flex flex-col justify-center border-y my-4">
                     {isSearched ? (
                         <UserList nickname={searchNickname} onActionSuccess={onSuccess} />
                     ) : (

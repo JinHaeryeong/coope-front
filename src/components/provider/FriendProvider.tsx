@@ -38,7 +38,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const bottomRef = useRef<HTMLDivElement | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     // 방이 선택될 때마다 과거 메시지 내역 로드 (MySQL 조회)
     useEffect(() => {
@@ -69,11 +69,9 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         }
     }, [messages]);
 
-    // 친구 클릭 시 채팅방 열기 (1:1)
     const onFriendClick = async (friend: FriendResponse) => {
         if (!user) return;
         try {
-            // Spring Boot API 호출: 방이 없으면 생성, 있으면 조회
             const roomData = await apiCreateOrGet1on1Room(friend.friendId);
 
             setSelectedRoom({
@@ -87,7 +85,6 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         }
     };
 
-    // 메시지 전송 로직 (REST 혹은 WebSocket)
     const handleSendMessage = async () => {
         if (!messageInput.trim() || !selectedRoom?.roomId || !user) return;
 

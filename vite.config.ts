@@ -18,7 +18,7 @@ export default defineConfig({
       svg: {
         multipass: true,
         plugins: [
-          { name: 'removeViewBox' },
+          // { name: 'removeViewBox' },
           { name: 'sortAttrs' },
         ],
       },

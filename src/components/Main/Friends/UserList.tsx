@@ -5,7 +5,8 @@ import { UserRoundPlus, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
-import { apiSearchUser, apiSendFriendRequest, type UserSearchResponse } from "@/api/userApi";
+import { apiSearchUser, type UserSearchResponse } from "@/api/userApi";
+import { apiSendFriendRequest } from "@/api/friendApi";
 
 interface UserListProps {
     nickname: string; // 검색할 닉네임
@@ -17,6 +18,7 @@ const UserList = ({ nickname, onActionSuccess }: UserListProps) => {
     const [searchedUser, setSearchedUser] = useState<UserSearchResponse | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+    const [isAlreadyRelated, setIsAlreadyRelated] = useState(false);
 
     useEffect(() => {
         const search = async () => {
@@ -27,6 +29,12 @@ const UserList = ({ nickname, onActionSuccess }: UserListProps) => {
 
                 const data = await apiSearchUser(nickname);
                 setSearchedUser(data);
+
+                if (data.status && data.status !== "NONE") {
+                    setIsAlreadyRelated(true);
+                } else {
+                    setIsAlreadyRelated(false);
+                }
             } catch (err: any) {
                 console.error("검색 실패:", err);
                 setSearchedUser(null);
@@ -63,6 +71,9 @@ const UserList = ({ nickname, onActionSuccess }: UserListProps) => {
             // 백엔드에서 던진 "이미 친구입니다" 등의 에러 메시지 처리
             const message = err.response?.data?.message || "친구 신청에 실패했습니다.";
             toast.error(message);
+            if (message.includes("이미") || message.includes("관계")) {
+                setIsAlreadyRelated(true);
+            }
         }
     };
 
@@ -93,16 +104,20 @@ const UserList = ({ nickname, onActionSuccess }: UserListProps) => {
                     </Avatar>
                     <div className="flex flex-col">
                         <span className="text-sm font-semibold">{searchedUser.nickname}</span>
-                        <span className="text-xs text-muted-foreground">{searchedUser.email}</span>
                     </div>
                 </div>
                 <Button
                     size="sm"
                     variant="ghost"
                     onClick={handleAddFriend}
+                    disabled={isAlreadyRelated}
                     className="hover:bg-primary/10 hover:text-primary"
                 >
-                    <UserRoundPlus className="h-5 w-5" />
+                    {isAlreadyRelated ? (
+                        <span className="text-xs font-normal">신청됨</span>
+                    ) : (
+                        <UserRoundPlus className="h-5 w-5" />
+                    )}
                 </Button>
             </div>
             {error && <div className="text-xs text-destructive text-center">{error}</div>}

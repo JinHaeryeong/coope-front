@@ -24,9 +24,9 @@ export interface LoginResponse {
 
 export interface UserSearchResponse {
     id: number;
-    email: string;
     nickname: string;
     userIcon: string;
+    status: string;
 }
 
 // 회원가입
@@ -59,15 +59,4 @@ export const apiSearchUser = async (nickname: string) => {
     return response.data;
 }
 
-export const apiSendFriendRequest = async (friendId: number) => {
-    const response = await axiosAuthInstance.post(`/friends/request`, null, {
-        params: { friendId }
-    });
-    return response.data;
-}
 
-// 친구 요청 목록 가져오기 (PENDING 상태)
-export const apiGetFriendRequests = async () => {
-    const response = await axiosAuthInstance.get<UserSearchResponse[]>("/friends/requests");
-    return response.data;
-}
