@@ -22,6 +22,13 @@ export interface LoginResponse {
     role: string;
 }
 
+export interface UserSearchResponse {
+    id: number;
+    nickname: string;
+    userIcon: string;
+    status: string;
+}
+
 // 회원가입
 export const apiSignUp = async (formData: FormData) => {
     const response = await axiosInstance.post<SignUpResponse>("/user/signup", formData);
@@ -44,3 +51,12 @@ export const apiRefreshToken = async () => {
     const response = await axiosInstance.post<{ accessToken: string }>("/auth/refresh");
     return response.data;
 };
+
+export const apiSearchUser = async (nickname: string) => {
+    const response = await axiosAuthInstance.get<UserSearchResponse>(`/user/search`, {
+        params: { nickname }
+    });
+    return response.data;
+}
+
+

@@ -16,14 +16,17 @@ type ConfirmModalProps = {
     children: React.ReactNode;
     onConfirm: () => void;
     documentId?: number;
-    workspaceId?: string;
+    workspaceCode?: string;
+    onOpenChange?: (open: boolean) => void;
 };
 
 export function ConfirmModal({
     children,
     onConfirm,
     documentId,
-    workspaceId
+    workspaceCode,
+    onOpenChange
+
 }: ConfirmModalProps) {
     const navigate = useNavigate();
     const { pathname } = useLocation();
@@ -32,15 +35,15 @@ export function ConfirmModal({
         e.stopPropagation();
 
         // 현재 페이지가 삭제 대상일 때만 이동
-        if (documentId && pathname.includes(String(documentId))) {
-            navigate(`/workspace/${workspaceId}`);
+        if (documentId && workspaceCode && pathname.includes(String(documentId))) {
+            navigate(`/workspace/${workspaceCode}`);
         }
 
         onConfirm();
     };
 
     return (
-        <AlertDialog>
+        <AlertDialog onOpenChange={onOpenChange}>
             <AlertDialogTrigger onClick={e => e.stopPropagation()} asChild>
                 {children}
             </AlertDialogTrigger>

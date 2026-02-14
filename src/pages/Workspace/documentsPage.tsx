@@ -9,14 +9,14 @@ import { useTrashStore } from "@/store/useTrashStore";
 
 function DocumentsPage() {
     const navigate = useNavigate();
-    const params = useParams<{ workspaceId: string }>();
-    const workspaceId = params.workspaceId;
+    const params = useParams<{ workspaceCode: string }>();
+    const workspaceCode = params.workspaceCode;
 
     const user = useAuthStore((state) => state.user);
 
     const { notifyTrashUpdate } = useTrashStore();
     // 워크스페이스 코드가 없으면 아무것도 렌더링하지 않음 (보통 가드에서 걸러지겠지만 안전용)
-    if (!workspaceId) {
+    if (!workspaceCode) {
         return null;
     }
 
@@ -25,7 +25,7 @@ function DocumentsPage() {
             // Axios 기반의 문서 생성 API 호출
             const promise = apiCreateDocument({
                 title: "제목 없음",
-                workspaceCode: workspaceId,
+                workspaceCode: workspaceCode,
             });
 
             toast.promise(promise, {
@@ -39,7 +39,7 @@ function DocumentsPage() {
             notifyTrashUpdate();
 
             // 생성 성공 후 해당 문서의 에디터 페이지로 이동
-            navigate(`/workspace/${workspaceId}/documents/${newDoc.id}`);
+            navigate(`/workspace/${workspaceCode}/documents/${newDoc.id}`);
         } catch (err) {
             console.error("문서 생성 중 오류 발생:", err);
         }

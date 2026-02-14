@@ -32,14 +32,19 @@ import UserItem from "./UserItem";
 import { DocumentList } from "./DocumentList";
 import { apiCreateDocument } from "@/api/documentApi";
 import { useTrashStore } from "@/store/useTrashStore";
+import { SettingsModal } from "./Modal/SettingModal";
+import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 
 
 export const Navigation = () => {
-  const { workspaceId, documentId } = useParams(); //
+  const { workspaceCode, documentId } = useParams(); //
   const { pathname } = useLocation(); //
   const navigate = useNavigate(); //
 
   const isWorkspacePath = pathname.startsWith("/workspace");
+  const { workspaces } = useWorkspaceStore();
+
+  const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
 
   const search = useSearch();
   const invite = useInvite();
@@ -52,6 +57,8 @@ export const Navigation = () => {
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
   const [isResetting, setIsResetting] = useState(false);
   const { notifyTrashUpdate } = useTrashStore();
+  const [isTrashOpen, setIsTrashOpen] = useState(false);
+
 
   const MIN_WIDTH = 210;
   const MAX_WIDTH = 700;
@@ -79,7 +86,7 @@ export const Navigation = () => {
   }, [isMobile]);
 
   // 워크스페이스 아이디가 필요한 경로인데 없는 경우 처리
-  if (isWorkspacePath && !workspaceId) return null;
+  if (isWorkspacePath && !workspaceCode) return null;
 
   const handleMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -110,17 +117,17 @@ export const Navigation = () => {
   };
 
   const handleCreate = async () => {
-    if (!workspaceId) return;
+    if (!workspaceCode) return;
     try {
       const newDocument = await apiCreateDocument({
         title: "제목 없음",
-        workspaceCode: workspaceId,
+        workspaceCode: workspaceCode,
       });
 
       toast.success("새 문서가 생성되었습니다!");
       if (isMobile) toggleSidebar();
       notifyTrashUpdate();
-      navigate(`/workspace/${workspaceId}/documents/${newDocument.id}`);
+      navigate(`/workspace/${workspaceCode}/documents/${newDocument.id}`);
     } catch (error) {
       toast.error("새 문서 생성에 실패했습니다.");
     }
@@ -171,7 +178,7 @@ export const Navigation = () => {
               icon={UserPlus}
               onClick={() => handleAction(invite.onOpen)}
             />
-            {invite.isOpen && <InviteModal workspaceId={workspaceId!} />}
+            {invite.isOpen && <InviteModal workspaceCode={workspaceCode!} />}
             <Item
               label="검색"
               icon={Search}
@@ -183,6 +190,12 @@ export const Navigation = () => {
               icon={Settings}
               onClick={() => handleAction(settings.onOpen)}
             />
+            {settings.isOpen && (
+              <SettingsModal
+                workspaceCode={workspaceCode!}
+                initialName={currentWorkspace?.name}
+              />
+            )}
             <Item onClick={handleCreate} label="새 페이지" icon={PlusCircle} />
           </div>
           <DocumentList onItemClick={() => isMobile && toggleSidebar()} />
@@ -192,9 +205,9 @@ export const Navigation = () => {
             <Item
               icon={User}
               label="친구"
-              onClick={() => handleAction(() => navigate(`/workspace/${workspaceId}/friends`))}
+              onClick={() => handleAction(() => navigate(`/workspace/${workspaceCode}/friends`))}
             />
-            <Popover>
+            <Popover open={isTrashOpen} onOpenChange={setIsTrashOpen}>
               <PopoverTrigger className="w-full mt-4">
                 <Item label="휴지통" icon={Trash} />
               </PopoverTrigger>
@@ -202,7 +215,7 @@ export const Navigation = () => {
                 className="p-0 w-72"
                 side={isMobile ? "bottom" : "right"}
               >
-                <TrashBox />
+                <TrashBox onClose={() => setIsTrashOpen(false)} />
               </PopoverContent>
             </Popover>
           </div>
@@ -219,7 +232,7 @@ export const Navigation = () => {
       <div
         ref={navbarRef}
         className={cn(
-          "absolute top-0 z-9998 pointer-events-none",
+          "absolute top-0 z-10 pointer-events-none",
           isResetting && "transition-all ease-in-out duration-300",
           isCollapsed ? "left-0 w-full" : isMobile ? "left-0 w-0 opacity-0" : "left-60 w-[calc(100%-240px)]"
         )}

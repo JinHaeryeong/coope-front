@@ -4,11 +4,9 @@ import { useState, useEffect } from "react";
 
 import { apiGetDocumentById, type DocumentResponse } from "@/api/documentApi";
 import { Title } from "./Title";
+import { Banner } from "./Banner";
+import { useTrashStore } from "@/store/useTrashStore";
 
-// TODO: 나중에 만들 컴포넌트들이 완성되면 주석을 해제
-// import { Title } from "./workspace/title";
-// import { Banner } from "./banner";
-// import { Menu } from "./workspace/menu";
 
 interface NavbarProps {
     isCollapsed: boolean;
@@ -16,21 +14,22 @@ interface NavbarProps {
 }
 
 export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
-    const { workspaceId, documentId } = useParams<{
-        workspaceId: string;
+    const { workspaceCode, documentId } = useParams<{
+        workspaceCode: string;
         documentId: string
     }>();
 
+    const { trashUpdateTicket } = useTrashStore();
     const [document, setDocument] = useState<DocumentResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchDocument = async () => {
-            if (!documentId || !workspaceId) return;
+            if (!documentId || !workspaceCode) return;
 
             try {
                 setIsLoading(true);
-                const data = await apiGetDocumentById(Number(documentId), workspaceId);
+                const data = await apiGetDocumentById(Number(documentId), workspaceCode);
 
                 setDocument(data);
             } catch (error) {
@@ -42,7 +41,7 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
         };
 
         fetchDocument();
-    }, [documentId, workspaceId]);
+    }, [documentId, workspaceCode, trashUpdateTicket]);
 
     // 로딩 중일 때의 UI
     if (isLoading) {
@@ -79,7 +78,6 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
                     />
                 )}
                 <div className="flex justify-between items-center w-full">
-                    {/* Title 컴포넌트가 완성되면 아래 주석을 풀고 <span> 제거하기 */}
                     <Title initialData={document} />
 
                     <div className="flex gap-x-2 items-center">
@@ -90,11 +88,8 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
             </nav>
 
             {/* 삭제된 문서일 경우 배너 표시 */}
-            {document.isArchived && (
-                // <Banner documentId={document.id} />
-                <div className="bg-rose-500 text-center text-sm p-2 text-white flex items-center justify-center gap-x-2">
-                    <span className="font-semibold">주의:</span> 이 문서는 현재 휴지통에 보관되어 있습니다.
-                </div>
+            {document.archived && (
+                <Banner documentId={document.id} />
             )}
         </>
     );

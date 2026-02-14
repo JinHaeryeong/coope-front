@@ -8,7 +8,7 @@ export interface DocumentResponse {
     icon?: string;
     parentId?: number;
     hasChildren: boolean;
-    isArchived: boolean;
+    archived: boolean;
     createdAt: string;
 }
 
@@ -47,7 +47,7 @@ export const apiGetDocumentById = async (
     documentId: number,
     workspaceCode: string
 ): Promise<DocumentResponse> => {
-    // URL 파라미터나 쿼리 스트링으로 workspaceId를 함께 전달
+    // URL 파라미터나 쿼리 스트링으로 workspaceCode 함께 전달
     const response = await axiosAuthInstance.get(`/documents/${documentId}`, {
         params: { workspaceCode }
     });

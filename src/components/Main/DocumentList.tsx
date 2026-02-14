@@ -19,7 +19,7 @@ export const DocumentList = ({
     level = 0,
 }: DocumentListProps) => {
     const { trashUpdateTicket } = useTrashStore();
-    const params = useParams<{ workspaceId: string; documentId: string }>();
+    const params = useParams<{ workspaceCode: string; documentId: string }>();
     const navigate = useNavigate();
 
     // 확장 상태 관리
@@ -27,15 +27,15 @@ export const DocumentList = ({
     // 문서 데이터 상태 관리
     const [documents, setDocuments] = useState<DocumentResponse[] | null>(null);
 
-    const workspaceId = params.workspaceId;
+    const workspaceCode = params.workspaceCode;
 
     // 데이터 페칭 로직
     useEffect(() => {
         const fetchDocuments = async () => {
-            if (!workspaceId) return;
+            if (!workspaceCode) return;
 
             try {
-                const data = await apiGetSidebarDocuments(workspaceId, parentDocumentId);
+                const data = await apiGetSidebarDocuments(workspaceCode, parentDocumentId);
                 setDocuments(data);
             } catch (error) {
                 console.error("문서 목록을 불러오지 못했습니다:", error);
@@ -43,7 +43,7 @@ export const DocumentList = ({
         };
 
         fetchDocuments();
-    }, [workspaceId, parentDocumentId, trashUpdateTicket]); // 워크스페이스나 부모가 바뀌면 다시 로드
+    }, [workspaceCode, parentDocumentId, trashUpdateTicket]); // 워크스페이스나 부모가 바뀌면 다시 로드
 
     const onExpand = (documentId: number) => {
         setExpanded((prevExpanded) => ({
@@ -53,7 +53,7 @@ export const DocumentList = ({
     };
 
     const onRedirect = (documentId: number) => {
-        navigate(`/workspace/${workspaceId}/documents/${documentId}`);
+        navigate(`/workspace/${workspaceCode}/documents/${documentId}`);
         if (onItemClick) onItemClick();
     };
 
@@ -64,7 +64,6 @@ export const DocumentList = ({
                 <Item.Skeleton level={level} />
                 {level === 0 && (
                     <>
-                        <Item.Skeleton level={level} />
                         <Item.Skeleton level={level} />
                     </>
                 )}
