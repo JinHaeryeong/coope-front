@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
-import { Loader2, UserCheck } from "lucide-react";
+import { Loader2, UserCheck, UserMinus2Icon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuthStore } from "@/store/useAuthStore";
-import { apiGetReceivedRequests, apiAcceptFriend, type FriendResponse } from "@/api/friendApi";
+import { apiAcceptFriend, apiDeleteFriend } from "@/api/friendApi";
+import { useFriendStore } from "@/store/useFriendStore";
 
 interface FriendRequestListProps {
     onSuccess?: () => void;
@@ -14,25 +15,11 @@ interface FriendRequestListProps {
 
 const FriendRequestList = ({ onSuccess }: FriendRequestListProps) => {
     const { user } = useAuthStore();
-    const [requests, setRequests] = useState<FriendResponse[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-
-    // 나에게 온 친구 요청(PENDING) 목록 가져오기
-    const fetchRequests = async () => {
-        try {
-            setIsLoading(true);
-            const data = await apiGetReceivedRequests();
-            setRequests(data);
-        } catch (error) {
-            console.error("요청 목록 로딩 실패:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const { requests, fetchRequests, isLoading } = useFriendStore();
 
     useEffect(() => {
         if (user) fetchRequests();
-    }, [user]);
+    }, [user, fetchRequests]);
 
     // 친구 요청 수락 로직
     const handleAccept = async (friendId: number, nickname: string) => {
@@ -40,12 +27,25 @@ const FriendRequestList = ({ onSuccess }: FriendRequestListProps) => {
             await apiAcceptFriend(friendId);
             toast.success(`${nickname}님의 친구 요청을 수락했습니다.`);
 
-            setRequests((prev) => prev.filter((req) => req.friendId !== friendId));
+            await fetchRequests();
 
             if (onSuccess) onSuccess();
         } catch (error: any) {
             const message = error.response?.data?.message || "수락 처리 중 오류가 발생했습니다.";
             toast.error(message);
+        }
+    };
+
+    const handleReject = async (friendId: number, nickname: string) => {
+        try {
+            await apiDeleteFriend(friendId);
+            toast.success(`${nickname}님의 요청을 거절(삭제)했습니다.`);
+
+            await fetchRequests();
+
+            if (onSuccess) onSuccess();
+        } catch (error: any) {
+            toast.error("처리 중 오류가 발생했습니다.");
         }
     };
 
@@ -93,13 +93,23 @@ const FriendRequestList = ({ onSuccess }: FriendRequestListProps) => {
                                                 <span className="text-sm font-medium leading-none">{request.nickname}</span>
                                             </div>
                                         </div>
-                                        <Button
-                                            size="sm"
-                                            onClick={() => handleAccept(request.friendId, request.nickname)}
-                                            className="h-8 px-3"
-                                        >
-                                            <UserCheck className="w-4 h-4" />
-                                        </Button>
+                                        <div className="flex gap-x-1">
+                                            <Button
+                                                size="sm"
+                                                onClick={() => handleAccept(request.friendId, request.nickname)}
+                                                className="h-8 px-3"
+                                            >
+                                                <UserCheck className="w-4 h-4" />
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="destructive"
+                                                onClick={() => handleReject(request.friendId, request.nickname)}
+                                                className="h-8 px-3"
+                                            >
+                                                <UserMinus2Icon className="w-4 h-4" />
+                                            </Button>
+                                        </div>
                                     </div>
                                 ))
                             )}

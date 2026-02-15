@@ -34,12 +34,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   build: {
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            return 'vendor';
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
           }
         },
       },

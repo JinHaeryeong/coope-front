@@ -1,16 +1,21 @@
 
-import { createContext, useContext, useState, useRef, type ReactNode, useEffect } from "react";
+import { createContext, useState, useRef, type ReactNode, useEffect, useContext } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { apiGetChatMessages, apiCreateOrGet1on1Room } from "@/api/chatApi";
+import { apiGetChatMessages, apiCreateOrGet1on1Room, apiGetMyChatRooms, apiUploadChatFile } from "@/api/chatApi";
 import type { FriendResponse } from "@/api/friendApi";
-import type { MessageResponse } from "@/api/chatApi";
+import type { ChatListResponse, MessageResponse } from "@/api/chatApi";
+import { useSocket } from "@/hooks/useSocket";
+import { useFriendStore } from "@/store/useFriendStore";
+import { toast } from "sonner";
+
+export type RoomType = "INDIVIDUAL" | "GROUP";
 
 // 선택된 방의 타입 (1:1 / 단체 공용)
 interface SelectedRoom {
-    roomId: number;       // MySQL PK (Long -> number)
-    title: string;        // 친구 닉네임 혹은 단체방 이름
+    roomId: number;
+    title: string;
     userIcon?: string;
-    isGroup: boolean;
+    type: RoomType;
 }
 
 interface FriendContextType {
@@ -23,44 +28,90 @@ interface FriendContextType {
     onFriendClick: (friend: FriendResponse) => Promise<void>;
     handleSendMessage: () => Promise<void>;
     bottomRef: React.RefObject<HTMLDivElement | null>;
+    selectedFile: File | null;
+    setSelectedFile: (file: File | null) => void;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
     isModalOpen: boolean;
     setIsModalOpen: (value: boolean) => void;
+    chatRooms: ChatListResponse[];
+    fetchChatRooms: (isMore?: boolean) => Promise<void>;
+    hasMoreRooms: boolean;
+
 }
 
 const FriendContext = createContext<FriendContextType | null>(null);
 
 export const FriendProvider = ({ children, initialFriends }: { children: ReactNode; initialFriends: FriendResponse[] }) => {
-    const { user } = useAuthStore(); // 💡 Spring Boot에서 인증받은 내 정보
+    const { user } = useAuthStore();
+    const { stompClient, isConnected } = useSocket();
     const [selectedRoom, setSelectedRoom] = useState<SelectedRoom | null>(null);
     const [messages, setMessages] = useState<MessageResponse[]>([]);
     const [messageInput, setMessageInput] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [chatRooms, setChatRooms] = useState<ChatListResponse[]>([]);
+    const [page, setPage] = useState(0);
+    const [hasMoreRooms, setHasMoreRooms] = useState(true);
+    const [friendsList, setFriendsList] = useState<FriendResponse[]>(initialFriends);
+    const { fetchFriends } = useFriendStore();
+    const storeFriends = useFriendStore((state) => state.friends);
 
     const bottomRef = useRef<HTMLDivElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    // 방이 선택될 때마다 과거 메시지 내역 로드 (MySQL 조회)
     useEffect(() => {
+        setFriendsList(storeFriends);
+    }, [storeFriends]);
+
+    useEffect(() => {
+        if (user && isConnected) {
+            fetchChatRooms();
+            fetchFriends(true);
+        }
+    }, [user, isConnected, fetchFriends]);
+    // 방이 선택될 때마다 실행되는 통합 로직
+    useEffect(() => {
+        if (!selectedRoom?.roomId) {
+            setMessages([]);
+            return;
+        }
+
+        // 과거 메시지 로드
         const fetchMessages = async () => {
-            if (!selectedRoom?.roomId) {
-                setMessages([]);
-                return;
-            }
             try {
                 const data = await apiGetChatMessages(selectedRoom.roomId);
                 setMessages(data);
-
-                // 여기서 WebSocket(STOMP) 구독 로직이 추가될 자리입니다!
             } catch (error) {
                 console.error("메시지 로딩 실패:", error);
             }
         };
 
         fetchMessages();
-    }, [selectedRoom?.roomId]);
 
-    // 새 메시지 올 때마다 자동 스크롤
+        // 실시간 메시지 구독 (STOMP)
+        let subscription: any;
+        if (isConnected && stompClient) {
+            console.log(`${selectedRoom.roomId}번 방 구독 시작`);
+            subscription = stompClient.subscribe(
+                `/topic/chat/${selectedRoom.roomId}`,
+                (message) => {
+                    console.log("실시간 메시지 수신 성공:", message.body);
+                    const newMessage: MessageResponse = JSON.parse(message.body);
+                    setMessages((prev) => [...prev, newMessage]);
+                }
+            );
+        }
+
+        // Cleanup: 방을 나갈 때 구독 해제
+        return () => {
+            if (subscription) {
+                console.log(`${selectedRoom.roomId}번 방 구독 해제`);
+                subscription.unsubscribe();
+            }
+        };
+    }, [selectedRoom?.roomId, stompClient, isConnected]); // 의존성 합치기
+
+    // 자동 스크롤
     useEffect(() => {
         if (messages.length > 0) {
             setTimeout(() => {
@@ -69,40 +120,93 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         }
     }, [messages]);
 
+    // 친구 클릭 시 방 입장
     const onFriendClick = async (friend: FriendResponse) => {
         if (!user) return;
         try {
             const roomData = await apiCreateOrGet1on1Room(friend.friendId);
-
             setSelectedRoom({
-                roomId: roomData.id,
-                title: friend.nickname,
+                roomId: roomData.roomId,
+                title: roomData.title,
                 userIcon: friend.userIcon,
-                isGroup: false
+                type: "INDIVIDUAL"
             });
         } catch (error) {
             console.error("방 입장 에러:", error);
         }
     };
 
+    const fetchChatRooms = async (isMore = false) => {
+        try {
+            const currentPage = isMore ? page + 1 : 0;
+            const data = await apiGetMyChatRooms(currentPage, 10);
+
+            const content = (data as any).content as ChatListResponse[];
+            const isLast = (data as any).last as boolean;
+
+            if (isMore) {
+                setChatRooms(prev => [...prev, ...content]);
+                setPage(currentPage);
+            } else {
+                setChatRooms(content);
+                setPage(0);
+            }
+
+            setHasMoreRooms(!isLast);
+        } catch (error) {
+            console.error("채팅방 목록 로드 실패:", error);
+        }
+    };
+
+    // 메시지 전송 (publish 사용)
     const handleSendMessage = async () => {
-        if (!messageInput.trim() || !selectedRoom?.roomId || !user) return;
+        if ((!messageInput.trim() && !selectedFile) || !selectedRoom?.roomId || !user || !stompClient) return;
 
         try {
-            // 실제 서비스에선 여기서 STOMP(WebSocket) publish를 쓰겠지만, 
-            // 일단 구조만 잡아둡니다.
-            console.log(`${selectedRoom.roomId}번 방으로 전송: ${messageInput}`);
+            let fileUrl: string | undefined = undefined;
+            let fileName: string | undefined = undefined;
+            let fileFormat: string | undefined = undefined;
 
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append("file", selectedFile);
+
+                const uploadRes = await apiUploadChatFile(formData);
+                fileUrl = uploadRes.fileUrl;
+                fileName = uploadRes.fileName;
+                fileFormat = uploadRes.fileFormat;
+            }
+
+            const chatPayload = {
+                roomId: selectedRoom.roomId,
+                senderId: user.id,
+                content: messageInput,
+                fileUrl: fileUrl,
+                fileName: fileName,
+                fileFormat: fileFormat,
+            };
+
+            // STOMP를 통해 실시간 전송
+            stompClient.publish({
+                destination: "/app/chat/send",
+                body: JSON.stringify(chatPayload),
+            });
+
+            // 성공 시 초기화
             setMessageInput("");
-            // 전송 후 스크롤 하단으로
-            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+            setSelectedFile(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+
         } catch (error) {
-            console.error("메시지 전송 실패:", error);
+            console.error("전송 에러:", error);
+            toast.error("메시지 전송에 실패했습니다.");
         }
     };
 
     const value: FriendContextType = {
-        friendsList: initialFriends,
+        friendsList,
         selectedRoom,
         setSelectedRoom,
         messages,
@@ -111,9 +215,14 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         onFriendClick,
         handleSendMessage,
         bottomRef,
+        selectedFile,
+        setSelectedFile,
         fileInputRef,
         isModalOpen,
         setIsModalOpen,
+        chatRooms,
+        fetchChatRooms,
+        hasMoreRooms,
     };
 
     return <FriendContext.Provider value={value}>{children}</FriendContext.Provider>;
@@ -121,6 +230,11 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
 
 export const useFriend = () => {
     const context = useContext(FriendContext);
-    if (!context) throw new Error("useFriend must be used within a FriendProvider");
+
+    // 만약 Provider 밖에서 이 훅을 쓰려고 하면 에러를 던져서 알려줌
+    if (!context) {
+        throw new Error("useFriend는 반드시 FriendProvider 안에서 사용해야 합니다!");
+    }
+
     return context;
 };
