@@ -1,32 +1,17 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/store/useAuthStore";
-import { apiGetFriends, type FriendResponse } from "@/api/friendApi";
+import { useFriendStore } from "@/store/useFriendStore";
 
-
-
-// import FriendPageContent from "./FriendPageContent";
 import AddFriend from "@/components/Main/Friends/AddFriend";
 import FriendRequestList from "@/components/Main/Friends/FriendRequestList";
 import { FriendProvider } from "@/components/provider/FriendProvider";
+import FriendPageContent from "@/components/Main/Friends/FriendPageContent";
 
 const FriendsPage = () => {
     const { user } = useAuthStore();
-    const [friends, setFriends] = useState<FriendResponse[] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const { friends, isLoading, fetchFriends } = useFriendStore();
 
-    const fetchFriends = async () => {
-        try {
-            setIsLoading(true);
-            // 백엔드에서 "ACCEPTED" 상태인 친구
-            const data = await apiGetFriends("ACCEPTED");
-            setFriends(data);
-        } catch (error) {
-            console.error("친구 목록 로딩 실패:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     useEffect(() => {
         if (user) fetchFriends();
@@ -75,8 +60,7 @@ const FriendsPage = () => {
     return (
         <div className="h-full bg-background overflow-hidden">
             <FriendProvider initialFriends={friends}>
-                {/* <FriendPageContent /> */}
-                <div>ㅈㅁ</div>
+                <FriendPageContent />
             </FriendProvider>
         </div>
     );

@@ -81,9 +81,20 @@ export const Navigation = () => {
   }, [toggleSidebar]);
 
   useEffect(() => {
-    if (isMobile) setIsCollapsed(true);
-    else setIsCollapsed(false);
-  }, [isMobile]);
+    const shouldCollapse = pathname.includes("/friends");
+
+    if (shouldCollapse) {
+      setIsResetting(true); // 애니메이션 효과를 위해 true
+      setIsCollapsed(true);
+
+      const timer = setTimeout(() => setIsResetting(false), 300);
+      return () => clearTimeout(timer);
+    }
+
+    else if (!isMobile && !pathname.includes("/friends")) {
+      setIsCollapsed(false);
+    }
+  }, [pathname, isMobile]);
 
   // 워크스페이스 아이디가 필요한 경로인데 없는 경우 처리
   if (isWorkspacePath && !workspaceCode) return null;

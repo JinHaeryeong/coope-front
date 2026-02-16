@@ -1,10 +1,10 @@
 import { type FC, useEffect } from "react";
-import { X } from "lucide-react"; // X 아이콘 사용
+import { X } from "lucide-react";
 
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
-    imageUrl: string;
+    imageUrl?: string;
 }
 
 const ImageModal: FC<ModalProps> = ({ isOpen, onClose, imageUrl }) => {
@@ -21,7 +21,7 @@ const ImageModal: FC<ModalProps> = ({ isOpen, onClose, imageUrl }) => {
 
     return (
         <div
-            className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-zoom-out"
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
             onClick={onClose}
         >
             <div
@@ -31,7 +31,7 @@ const ImageModal: FC<ModalProps> = ({ isOpen, onClose, imageUrl }) => {
                 <img
                     src={imageUrl}
                     alt="확대 이미지"
-                    className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200"
+                    className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200 bg-white"
                 />
 
                 <button

@@ -16,7 +16,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 
-const nicknameRegex = /^[a-zA-Z0-9가-힣\s]{2,20}$/;
+const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,20}$/;
 const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 
