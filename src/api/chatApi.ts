@@ -1,6 +1,12 @@
 import type { RoomType } from "@/components/provider/FriendProvider";
 import axiosAuthInstance from "./axiosAuthInstance";
+import type { PageResponse } from "@/types/common";
 
+
+export interface Slice<T> {
+    content: T[];
+    last: boolean;
+}
 export interface MessageResponse {
     id: number;
     roomId: number;
@@ -43,13 +49,15 @@ export const apiCreateGroupRoom = async (userIds: number[], roomName: string) =>
     return response.data;
 };
 
-export const apiGetChatMessages = async (roomId: number) => {
-    const response = await axiosAuthInstance.get<MessageResponse[]>(`/chat/room/${roomId}/messages`);
+export const apiGetChatMessages = async (roomId: number, page: number = 0, size: number = 20) => {
+    const response = await axiosAuthInstance.get<Slice<MessageResponse>>(`/chat/room/${roomId}/messages`, {
+        params: { page, size }
+    });
     return response.data;
 };
 
 export const apiGetMyChatRooms = async (page: number = 0, size: number = 10) => {
-    const response = await axiosAuthInstance.get<ChatListResponse[]>(`/chat/rooms`, {
+    const response = await axiosAuthInstance.get<PageResponse<ChatListResponse>>(`/chat/rooms`, {
         params: { page, size }
     });
     return response.data;

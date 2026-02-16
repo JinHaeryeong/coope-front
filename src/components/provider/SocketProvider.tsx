@@ -3,11 +3,11 @@ import { Client } from "@stomp/stompjs";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useFriendStore } from "@/store/useFriendStore";
 import { SocketContext } from "@/lib/socketContext";
+import { toast } from "sonner";
 
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const { user, accessToken } = useAuthStore();
-    // const { fetchFriends, fetchRequests } = useFriendStore();
 
     const [isConnected, setIsConnected] = useState(false);
     const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -46,6 +46,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
             onStompError: (frame) => {
                 console.error("STOMP 에러:", frame.headers["message"]);
+                toast.error("서버 연결에 문제가 발생했습니다. 실시간 알림이 지연될 수 있습니다.");
             },
         });
 
@@ -57,7 +58,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             setIsConnected(false);
             setStompClient(null);
         };
-    }, [user, accessToken]);
+    }, [user?.id, accessToken]);
 
     return (
         <SocketContext.Provider value={{ stompClient, isConnected }}>

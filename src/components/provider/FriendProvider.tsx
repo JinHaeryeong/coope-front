@@ -6,6 +6,7 @@ import type { FriendResponse } from "@/api/friendApi";
 import type { ChatListResponse, MessageResponse } from "@/api/chatApi";
 import { useSocket } from "@/hooks/useSocket";
 import { useFriendStore } from "@/store/useFriendStore";
+import { type StompSubscription } from "@stomp/stompjs";
 import { toast } from "sonner";
 
 export type RoomType = "INDIVIDUAL" | "GROUP";
@@ -68,7 +69,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
             fetchChatRooms();
             fetchFriends(true);
         }
-    }, [user, isConnected, fetchFriends]);
+    }, [user, isConnected]);
     // 방이 선택될 때마다 실행되는 통합 로직
     useEffect(() => {
         if (!selectedRoom?.roomId) {
@@ -80,36 +81,49 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         const fetchMessages = async () => {
             try {
                 const data = await apiGetChatMessages(selectedRoom.roomId);
-                setMessages(data);
+                setMessages(data.content);
             } catch (error) {
                 console.error("메시지 로딩 실패:", error);
+                toast.error("이전 메시지를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
             }
         };
 
         fetchMessages();
 
         // 실시간 메시지 구독 (STOMP)
-        let subscription: any;
-        if (isConnected && stompClient) {
-            console.log(`${selectedRoom.roomId}번 방 구독 시작`);
-            subscription = stompClient.subscribe(
-                `/topic/chat/${selectedRoom.roomId}`,
-                (message) => {
-                    console.log("실시간 메시지 수신 성공:", message.body);
-                    const newMessage: MessageResponse = JSON.parse(message.body);
-                    setMessages((prev) => [...prev, newMessage]);
-                }
-            );
+        let subscription: StompSubscription | undefined;
+        if (isConnected && stompClient && selectedRoom?.roomId) {
+            try {
+                console.log(`${selectedRoom.roomId}번 방 구독 시작`);
+
+                subscription = stompClient.subscribe(
+                    `/topic/chat/${selectedRoom.roomId}`,
+                    (message) => {
+                        const newMessage: MessageResponse = JSON.parse(message.body);
+
+                        setMessages((prev) => {
+                            const isAlreadyExists = prev.some((msg) => msg.id === newMessage.id);
+                            if (isAlreadyExists) return prev; // 이미 있으면 추가 안 함
+                            return [...prev, newMessage];
+                        });
+                    }
+                );
+            } catch (error) {
+                console.error(`${selectedRoom.roomId}번 방 구독 중 오류:`, error);
+                toast.error("실시간 연결에 실패했습니다. 메시지 수신이 늦어질 수 있습니다.");
+            }
+        } else if (!isConnected && selectedRoom?.roomId) {
+            console.warn("WebSocket 연결 대기 중...");
         }
 
         // Cleanup: 방을 나갈 때 구독 해제
         return () => {
             if (subscription) {
                 console.log(`${selectedRoom.roomId}번 방 구독 해제`);
-                subscription.unsubscribe();
+                subscription?.unsubscribe();
             }
         };
-    }, [selectedRoom?.roomId, stompClient, isConnected]); // 의존성 합치기
+    }, [selectedRoom?.roomId, stompClient, isConnected]);
 
     // 자동 스크롤
     useEffect(() => {
@@ -133,6 +147,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
             });
         } catch (error) {
             console.error("방 입장 에러:", error);
+            toast.error("방 입장에 실패했습니다. 잠시 후 다시 시도해주세요.");
         }
     };
 
@@ -141,8 +156,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
             const currentPage = isMore ? page + 1 : 0;
             const data = await apiGetMyChatRooms(currentPage, 10);
 
-            const content = (data as any).content as ChatListResponse[];
-            const isLast = (data as any).last as boolean;
+            const { content, last: isLast } = data;
 
             if (isMore) {
                 setChatRooms(prev => [...prev, ...content]);
@@ -155,6 +169,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
             setHasMoreRooms(!isLast);
         } catch (error) {
             console.error("채팅방 목록 로드 실패:", error);
+            toast.error("채팅방 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
         }
     };
 

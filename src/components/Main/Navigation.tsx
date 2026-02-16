@@ -94,7 +94,7 @@ export const Navigation = () => {
     else if (!isMobile && !pathname.includes("/friends")) {
       setIsCollapsed(false);
     }
-  }, [pathname, isMobile])
+  }, [pathname, isMobile]);
 
   // 워크스페이스 아이디가 필요한 경로인데 없는 경우 처리
   if (isWorkspacePath && !workspaceCode) return null;

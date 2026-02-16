@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useAuthStore } from "@/store/useAuthStore";
 import { apiAcceptFriend, apiDeleteFriend } from "@/api/friendApi";
 import { useFriendStore } from "@/store/useFriendStore";
+import axios from "axios";
 
 interface FriendRequestListProps {
     onSuccess?: () => void;
@@ -19,7 +20,7 @@ const FriendRequestList = ({ onSuccess }: FriendRequestListProps) => {
 
     useEffect(() => {
         if (user) fetchRequests();
-    }, [user, fetchRequests]);
+    }, [user]);
 
     // 친구 요청 수락 로직
     const handleAccept = async (friendId: number, nickname: string) => {
@@ -30,8 +31,13 @@ const FriendRequestList = ({ onSuccess }: FriendRequestListProps) => {
             await fetchRequests();
 
             if (onSuccess) onSuccess();
-        } catch (error: any) {
-            const message = error.response?.data?.message || "수락 처리 중 오류가 발생했습니다.";
+        } catch (error: unknown) {
+            let message = "수락 처리 중 오류가 발생했습니다.";
+
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message || message;
+            }
+
             toast.error(message);
         }
     };

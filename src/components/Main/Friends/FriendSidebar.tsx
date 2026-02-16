@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { apiCreateGroupRoom } from "@/api/chatApi";
+import { useFriendStore } from "@/store/useFriendStore";
+import { toast } from "sonner";
 
 export const FriendSidebar = () => {
     const {
@@ -28,6 +30,14 @@ export const FriendSidebar = () => {
     const [selectedFriendIds, setSelectedFriendIds] = useState<number[]>([]);
 
     const [newRoomName, setNewRoomName] = useState("");
+
+    const filteredFriends = friendsList?.filter(friend =>
+        friend.nickname.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const filteredChatRooms = chatRooms?.filter(room =>
+        room.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     const handleCreateGroup = async () => {
         if (selectedFriendIds.length === 0) return;
 
@@ -49,6 +59,7 @@ export const FriendSidebar = () => {
             fetchChatRooms();
         } catch (error) {
             console.error("그룹 방 생성 실패:", error);
+            toast.error("그룹방 생성을 실패했습니다. 잠시  후 다시 시도해주세요.")
         }
     };
 
@@ -87,7 +98,7 @@ export const FriendSidebar = () => {
                         isSelectionMode ? (
                             <Button variant="link" size="sm" onClick={() => { setIsSelectionMode(false); setSelectedFriendIds([]); }}>취소</Button>
                         ) : (
-                            <FriendRequestList />
+                            <FriendRequestList onSuccess={() => useFriendStore.getState().fetchFriends()} />
                         )
                     )}
                 </div>
@@ -107,7 +118,7 @@ export const FriendSidebar = () => {
             <ScrollArea className="flex-1 -mx-2 px-2">
                 {activeTab === "FRIENDS" ? (
                     <div className="space-y-1">
-                        {friendsList?.map((friend: any) => (
+                        {filteredFriends?.map((friend: any) => (
                             <FriendListItem
                                 key={friend.friendId}
                                 friend={friend}
@@ -121,11 +132,11 @@ export const FriendSidebar = () => {
                     </div>
                 ) : (
                     <div className="space-y-1">
-                        {chatRooms.length > 0 ? (
+                        {filteredChatRooms?.length > 0 ? (
                             chatRooms.map((room) => (
                                 <div
                                     key={room.roomId}
-                                    onClick={() => setSelectedRoom(room as any)} // Context의 selectedRoom 형식에 맞춰 선택
+                                    onClick={() => setSelectedRoom(room as NonNullable<typeof selectedRoom>)}
                                     className={cn(
                                         "group flex items-center gap-x-3 p-3 rounded-xl cursor-pointer transition-all",
                                         "hover:bg-accent/50",
@@ -197,7 +208,7 @@ export const FriendSidebar = () => {
                                 {activeTab === "FRIENDS" ? <>새로운 인연을<br />찾아보세요</> : <>새로운 대화방을<br />열어보세요</>}
                             </div>
                             {activeTab === "FRIENDS" ? (
-                                <AddFriend />
+                                <AddFriend onSuccess={() => useFriendStore.getState().fetchFriends()} />
                             ) : (
                                 <Button onClick={() => { setActiveTab("FRIENDS"); setIsSelectionMode(true); }}>
                                     <UsersRound />

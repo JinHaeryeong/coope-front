@@ -28,7 +28,7 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
     const user = useAuthStore((state) => state.user);
 
     if (!selectedRoom) {
-        return;
+        return null;
     }
 
     return (
@@ -77,7 +77,7 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
             {/* 메시지 목록 피드 */}
             <div className="flex-1 min-h-0 relative bg-[#F8F9FA] dark:bg-transparent">
                 <ScrollArea className="h-full w-full">
-                    <div className="p-6 flex flex-col gap-y-2">
+                    <div className="px-6 py-2 flex flex-col gap-y-2">
                         {messages?.map((message, index) => (
                             <MessageItem
                                 key={message.id}

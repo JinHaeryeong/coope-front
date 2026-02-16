@@ -20,7 +20,7 @@ const DesktopFriendView = () => {
 
     return (
         <div className="flex h-full overflow-hidden">
-            <div className="w-80 h-full border-r shrink-0 bg-white">
+            <div className="w-80 h-full border-r dark:border-gray-800 shrink-0 bg-white">
                 <FriendSidebar />
             </div>
 

@@ -31,6 +31,8 @@ const FriendListItem = ({
                 <input
                     type="checkbox"
                     className="w-4 h-4 rounded border-gray-300 accent-primary"
+                    // 부모로부터 받은 선택 상태를 강제로 동기화
+                    checked={!!isSelected}
                     onChange={(e) => onCheckboxChange?.(e.target.checked)}
                     onClick={(e) => e.stopPropagation()}
                 />

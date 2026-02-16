@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import { CheckCircle2, Clock, ChevronRight, Loader2, MessageSquare, Plus, Search } from "lucide-react"; // Plus 아이콘 추가
+import { CheckCircle2, Clock, ChevronRight, Loader2, Plus, Search } from "lucide-react"; // Plus 아이콘 추가
 import { Button } from "@/components/ui/button";
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -67,10 +67,6 @@ const InquiryPage = () => {
             <div className="max-w-8xl mx-auto w-full">
                 <header className="flex flex-col md:flex-row md:items-end gap-6 mb-12 justify-center">
                     <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-blue-600 font-bold text-sm uppercase tracking-wider">
-                            <MessageSquare size={16} />
-                            <span>Customer Support</span>
-                        </div>
                         <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">
                             {isAdmin ? "문의 관리" : "내 문의 내역"}
                         </h1>

@@ -131,7 +131,7 @@ const NoticeWritePage = () => {
                     required
                 />
 
-                <div className="custom-mde prose dark:prose-invert max-w-none mb-4">
+                <div className="custom-mde max-w-none mb-4">
                     <SimpleMDE
                         value={content}
                         onChange={(value) => setContent(value)}

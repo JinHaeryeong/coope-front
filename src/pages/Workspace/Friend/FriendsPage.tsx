@@ -15,7 +15,7 @@ const FriendsPage = () => {
 
     useEffect(() => {
         if (user) fetchFriends();
-    }, [user, fetchFriends]);
+    }, [user]);
 
     if (!user) return null;
 
@@ -61,7 +61,6 @@ const FriendsPage = () => {
         <div className="h-full bg-background overflow-hidden">
             <FriendProvider initialFriends={friends}>
                 <FriendPageContent />
-                {/* <div>ㅈㅁ</div> */}
             </FriendProvider>
         </div>
     );
