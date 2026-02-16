@@ -37,7 +37,9 @@ interface FriendContextType {
     chatRooms: ChatListResponse[];
     fetchChatRooms: (isMore?: boolean) => Promise<void>;
     hasMoreRooms: boolean;
-
+    fetchMoreMessages: () => Promise<void>;
+    hasMoreMessages: boolean;
+    isFetchingMore: boolean;
 }
 
 const FriendContext = createContext<FriendContextType | null>(null);
@@ -59,6 +61,10 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
     const bottomRef = useRef<HTMLDivElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [messagePage, setMessagePage] = useState(0);
+    const [hasMoreMessages, setHasMoreMessages] = useState(true);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const isInitialLoadRef = useRef(true);
 
     useEffect(() => {
         setFriendsList(storeFriends);
@@ -70,25 +76,33 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
             fetchFriends(true);
         }
     }, [user, isConnected]);
+
     // 방이 선택될 때마다 실행되는 통합 로직
     useEffect(() => {
         if (!selectedRoom?.roomId) {
             setMessages([]);
+            setMessagePage(0);
+            setHasMoreMessages(true);
+            isInitialLoadRef.current = true;
             return;
         }
 
-        // 과거 메시지 로드
-        const fetchMessages = async () => {
+        const fetchInitialMessages = async () => {
+            setIsFetchingMore(true);
             try {
-                const data = await apiGetChatMessages(selectedRoom.roomId);
-                setMessages(data.content);
+                const data = await apiGetChatMessages(selectedRoom.roomId, 0);
+                setMessages([...data.content].reverse());
+                setMessagePage(0);
+                setHasMoreMessages(!data.last);
             } catch (error) {
-                console.error("메시지 로딩 실패:", error);
-                toast.error("이전 메시지를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+                console.error(error);
+            } finally {
+                setIsFetchingMore(false);
+                isInitialLoadRef.current = false;
             }
         };
 
-        fetchMessages();
+        fetchInitialMessages();
 
         // 실시간 메시지 구독 (STOMP)
         let subscription: StompSubscription | undefined;
@@ -125,14 +139,24 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         };
     }, [selectedRoom?.roomId, stompClient, isConnected]);
 
-    // 자동 스크롤
-    useEffect(() => {
-        if (messages.length > 0) {
-            setTimeout(() => {
-                bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-            }, 100);
+    const fetchMoreMessages = async () => {
+        if (!hasMoreMessages || isFetchingMore || !selectedRoom?.roomId) return;
+
+        setIsFetchingMore(true);
+        try {
+            const nextPage = messagePage + 1;
+            const data = await apiGetChatMessages(selectedRoom.roomId, nextPage);
+            const reversedPast = [...data.content].reverse();
+
+            setMessages(prev => [...reversedPast, ...prev]);
+            setMessagePage(nextPage);
+            setHasMoreMessages(!data.last);
+        } catch (error) {
+            console.error("이전 메시지 로드 실패:", error);
+        } finally {
+            setIsFetchingMore(false);
         }
-    }, [messages]);
+    };
 
     // 친구 클릭 시 방 입장
     const onFriendClick = async (friend: FriendResponse) => {
@@ -238,6 +262,9 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         chatRooms,
         fetchChatRooms,
         hasMoreRooms,
+        fetchMoreMessages,
+        hasMoreMessages,
+        isFetchingMore
     };
 
     return <FriendContext.Provider value={value}>{children}</FriendContext.Provider>;

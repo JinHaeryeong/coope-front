@@ -85,8 +85,9 @@ export const MessageItem = ({
                                                 ? `이미지 메시지: ${message.content}`
                                                 : `${message.fileName?.split('.')[0] || '채팅 이미지'}`
                                         }
-                                        className="w-full max-w-60 aspect-square object-cover cursor-pointer"
+                                        className="w-60 h-60 object-cover cursor-pointer"
                                         onClick={() => setIsImageModalOpen(true)}
+
                                     />
                                 ) : (
                                     <div

@@ -1,10 +1,10 @@
 import { ChevronLeft, Phone, Users, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useFriend } from "@/components/provider/FriendProvider";
 import { useAuthStore } from "@/store/useAuthStore";
 import ChatInput from "./ChatInput";
 import { MessageItem } from "./MessageItem";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 interface ChatWindowProps {
     isMobile?: boolean;
@@ -13,23 +13,103 @@ interface ChatWindowProps {
 
 export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
     const {
-        selectedRoom,
-        messages,
-        messageInput,
-        setMessageInput,
-        selectedFile,
-        setSelectedFile,
-        handleSendMessage,
-        fileInputRef,
-        bottomRef,
-        setIsModalOpen
+        selectedRoom, messages, isFetchingMore, fetchMoreMessages, hasMoreMessages, bottomRef, setIsModalOpen,
+        messageInput, setMessageInput, selectedFile, setSelectedFile, handleSendMessage, fileInputRef
     } = useFriend();
 
     const user = useAuthStore((state) => state.user);
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const topRef = useRef<HTMLDivElement>(null);
+    const prevScrollHeightRef = useRef<number>(0);
+    const isInitialScrollDone = useRef(false);
+    const [showNewMessageButton, setShowNewMessageButton] = useState(false);
+    const isUserAtBottomRef = useRef(true);
+    const lastMessage = messages[messages.length - 1];
+    const isLastMessageMine = lastMessage?.senderId === user?.id;
 
-    if (!selectedRoom) {
-        return null;
-    }
+
+    useEffect(() => {
+        const container = scrollRef.current;
+        if (!container) return;
+
+        const handleScroll = () => {
+            const threshold = 50;
+            const isAtBottom =
+                container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+
+            isUserAtBottomRef.current = isAtBottom;
+
+            if (isAtBottom) {
+                setShowNewMessageButton(false);
+            }
+        };
+
+        container.addEventListener("scroll", handleScroll);
+        return () => container.removeEventListener("scroll", handleScroll);
+    }, []);
+
+
+    useEffect(() => {
+        isInitialScrollDone.current = false;
+        prevScrollHeightRef.current = 0;
+    }, [selectedRoom?.roomId]);
+
+    useLayoutEffect(() => {
+        const container = scrollRef.current;
+        if (!container) return;
+
+        if (!isFetchingMore && prevScrollHeightRef.current > 0) {
+            container.scrollTop =
+                container.scrollHeight - prevScrollHeightRef.current;
+            prevScrollHeightRef.current = 0;
+            return;
+        }
+
+        if (!isInitialScrollDone.current && messages.length > 0) {
+            requestAnimationFrame(() => {
+                container.scrollTop = container.scrollHeight;
+            });
+            isInitialScrollDone.current = true;
+        }
+
+        if (isInitialScrollDone.current && messages.length > 0 && !isFetchingMore) {
+
+            if (isLastMessageMine) {
+                container.scrollTop = container.scrollHeight;
+                setShowNewMessageButton(false);
+                return;
+            }
+            if (isUserAtBottomRef.current) {
+                container.scrollTop = container.scrollHeight;
+            } else {
+                setShowNewMessageButton(true);
+            }
+        }
+
+    }, [messages, isFetchingMore]);
+
+
+    useEffect(() => {
+        if (!topRef.current || !scrollRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasMoreMessages && !isFetchingMore) {
+                    prevScrollHeightRef.current = scrollRef.current!.scrollHeight;
+                    fetchMoreMessages();
+                }
+            },
+            {
+                root: scrollRef.current,
+                rootMargin: "100px 0px 0px 0px"
+            }
+        );
+
+        observer.observe(topRef.current);
+        return () => observer.disconnect();
+    }, [hasMoreMessages, isFetchingMore, selectedRoom?.roomId]);
+
+    if (!selectedRoom) return null;
 
     return (
         <div className="h-full flex flex-col bg-white dark:bg-background">
@@ -41,7 +121,7 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
                             variant="ghost"
                             size="icon"
                             onClick={onBack}
-                            className="mr-1 -ml-2 shrink-0" // 위치 조절용 마진
+                            className="mr-1 -ml-2 shrink-0"
                         >
                             <ChevronLeft className="h-6 w-6" />
                         </Button>
@@ -75,10 +155,21 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
             </div>
 
             {/* 메시지 목록 피드 */}
-            <div className="flex-1 min-h-0 relative bg-[#F8F9FA] dark:bg-transparent">
-                <ScrollArea className="h-full w-full">
-                    <div className="px-6 py-2 flex flex-col gap-y-2">
-                        {messages?.map((message, index) => (
+            <div className="flex-1 min-h-0 relative bg-[#F8F9FA] dark:bg-transparent overflow-hidden">
+                <div
+                    ref={scrollRef}
+                    className="h-full w-full overflow-y-auto [overflow-anchor:none]"
+                >
+                    <div className="px-6 py-4 flex flex-col gap-y-2">
+                        <div ref={topRef} className="h-10 w-full shrink-0" />
+
+                        {isFetchingMore && (
+                            <div className="text-center text-[10px] text-muted-foreground py-2">
+                                이전 대화 불러오는 중...
+                            </div>
+                        )}
+
+                        {messages.map((message, index) => (
                             <MessageItem
                                 key={message.id}
                                 message={message}
@@ -86,9 +177,23 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
                                 isSameSender={index > 0 && messages[index - 1].senderId === message.senderId}
                             />
                         ))}
-                        <div ref={bottomRef} className="h-4" />
+                        {showNewMessageButton && (
+                            <div className="sticky bottom-4 flex justify-center">
+                                <button
+                                    onClick={() => {
+                                        scrollRef.current!.scrollTop =
+                                            scrollRef.current!.scrollHeight;
+                                        setShowNewMessageButton(false);
+                                    }}
+                                    className="bg-primary text-white text-xs px-4 py-2 rounded-full shadow-lg transition-all hover:scale-105"
+                                >
+                                    새 메시지 ▼
+                                </button>
+                            </div>
+                        )}
+                        <div ref={bottomRef} className="h-1 shrink-0" />
                     </div>
-                </ScrollArea>
+                </div>
             </div>
 
             {/* 입력 영역 */}
