@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import 'webrtc-adapter';
 import io from "socket.io-client";
 import { Device as MediaDevice } from "mediasoup-client";
 import type {
@@ -132,12 +133,16 @@ export const useMediasoup = (
         if (!socket) return;
         const transport = await createRecvTransport();
 
-        const { id, producerId, kind, rtpParameters } = await new Promise<any>((res) => {
+        const data = await new Promise<any>((res) => {
             socket.emit("consume", {
                 producerId: info.producerId,
                 rtpCapabilities: getDevice().rtpCapabilities
             }, res);
         });
+
+        if (!data) return;
+
+        const { id, producerId, kind, rtpParameters } = data;
 
         const consumer = await transport.consume({ id, producerId, kind, rtpParameters });
         const stream = new MediaStream([consumer.track]);
@@ -196,13 +201,39 @@ export const useMediasoup = (
 
             const stream = type === "camera"
                 ? await navigator.mediaDevices.getUserMedia({
-                    video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }
+                    video: {
+                        width: { ideal: 960 },
+                        height: { ideal: 540 },
+                        frameRate: { ideal: 24 }
+                    }
                 })
                 : await navigator.mediaDevices.getDisplayMedia({ video: true });
 
             const transport = await createSendTransport();
             const videoTrack = stream.getVideoTracks()[0];
-            const producer = await transport.produce({ track: videoTrack, appData: { type } });
+            let producer;
+
+            if (type === "camera") {
+                producer = await transport.produce({
+                    track: videoTrack,
+                    encodings: [
+                        { maxBitrate: 150_000 },
+                        { maxBitrate: 500_000 },
+                        { maxBitrate: 1_200_000 }
+                    ],
+                    codecOptions: {
+                        videoGoogleStartBitrate: 1000
+                    },
+                    appData: { type }
+                });
+            } else {
+                // screen share는 단일 인코딩이 더 안정적
+                producer = await transport.produce({
+                    track: videoTrack,
+                    appData: { type }
+                });
+            }
+
 
             setMyProducers(prev => ({ ...prev, [type]: producer }));
             setStreams(prev => ({ ...prev, [type]: stream }));
@@ -266,6 +297,7 @@ export const useMediasoup = (
         sock.on("connect", async () => {
             sock.emit("joinRoom", roomId, async (rtpCapabilities: RtpCapabilities) => {
                 await createDevice(rtpCapabilities);
+                await createRecvTransport();
                 sock.emit("getExistingProducers", (producers: ProducerInfo[]) => {
                     producers.forEach((p) => handleNewProducerRef.current?.(p));
                 });

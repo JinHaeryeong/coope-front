@@ -87,7 +87,7 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
         return destination.stream;
     }, [streams.mic, remoteStreams]);
 
-    const { recording, processing, handleRecord } = useRecorderAi(mixedAudioStream);
+    const { recording, processing, handleRecord, remainingTime } = useRecorderAi(mixedAudioStream);
     const [pinnedProducerId, setPinnedProducerId] = useState<string | "local">("");
 
     // 메인으로 보여줄 스트림 계산 로직
@@ -240,6 +240,13 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
                     <NotebookPen className="w-4 h-4 mr-2" />
                     {recordBtnStyles.label}
                 </Button>
+                {recording && (
+                    <span className="text-xs text-white/70 ml-2">
+                        {Math.floor(remainingTime / 60)}:
+                        {(remainingTime % 60).toString().padStart(2, "0")}
+                    </span>
+                )}
+
             </div>
         </div>
     );

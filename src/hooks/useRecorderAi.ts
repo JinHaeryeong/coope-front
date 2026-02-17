@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { apiCreateDocument, apiGetSidebarDocuments } from "@/api/documentApi";
 import { useCallStore } from "@/store/useCallStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import axiosAuthInstance from "@/api/axiosAuthInstance";
 
 export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
     const [recording, setRecording] = useState(false);
@@ -14,7 +16,13 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
     const isHandledRef = useRef(false);
 
     const navigate = useNavigate();
-    const { workspaceCode } = useCallStore(); // URL이 아닌 통화 시작 시 고정된 코드 사용
+    const { workspaceCode } = useCallStore();
+    const accessToken = useAuthStore(state => state.accessToken);
+    const autoStopTimeoutRef = useRef<number | null>(null);
+    const [remainingTime, setRemainingTime] = useState<number>(300);
+    const intervalRef = useRef<number | null>(null);
+
+
 
     const handleRecord = async () => {
         if (!recording) {
@@ -24,7 +32,6 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
             }
             audioChunksRef.current = [];
 
-            // 브라우저 지원 코덱 확인 (WebM/Opus)
             const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
                 ? 'audio/webm;codecs=opus'
                 : 'audio/ogg;codecs=opus';
@@ -43,9 +50,47 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
             mediaRecorder.start();
             mediaRecorderRef.current = mediaRecorder;
             setRecording(true);
+
+            setRemainingTime(300);
+
+            intervalRef.current = window.setInterval(() => {
+                setRemainingTime(prev => {
+                    if (prev <= 1) {
+                        if (intervalRef.current) clearInterval(intervalRef.current);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+
+            autoStopTimeoutRef.current = window.setTimeout(() => {
+                if (mediaRecorderRef.current?.state === "recording") {
+                    toast.info("5분이 지나 자동으로 녹음을 종료합니다.");
+                    setRecording(false);
+                    setProcessing(true);
+
+                    if (intervalRef.current) {
+                        clearInterval(intervalRef.current);
+                        intervalRef.current = null;
+                    }
+
+                    mediaRecorderRef.current.stop();
+                }
+            }, 5 * 60 * 1000);
         } else {
             setRecording(false);
             setProcessing(true);
+
+            if (autoStopTimeoutRef.current) {
+                clearTimeout(autoStopTimeoutRef.current);
+                autoStopTimeoutRef.current = null;
+            }
+
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+
             mediaRecorderRef.current?.stop();
         }
     };
@@ -56,6 +101,8 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
             isHandledRef.current = true;
 
             try {
+
+
                 // Spring Boot로 파일 전송 (FormData 사용)
                 const formData = new FormData();
                 formData.append("file", pendingAudio, "voice_meeting.webm");
@@ -64,13 +111,12 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
                 const SERVER_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
                 // Spring 백엔드 엔드포인트 호출 (STT + 요약 통합 처리)
-                const response = await fetch(`${SERVER_URL}/api/ai/process-voice`, {
-                    method: "POST",
-                    body: formData,
+                const response = await axiosAuthInstance.post("/ai/process-voice", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    timeout: 180000 // 넉넉하게 3분 잡았습니다 (AI 처리 대기)
                 });
 
-                if (!response.ok) throw new Error('AI 서버 응답 실패');
-                const result = await response.json();
+                const result = response.data;
 
                 // "통화 녹음" 폴더(부모 문서) 관리
                 const sidebarDocs = await apiGetSidebarDocuments(workspaceCode);
@@ -122,5 +168,5 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
         processAudio();
     }, [processing, pendingAudio, workspaceCode, navigate]);
 
-    return { recording, processing, handleRecord };
+    return { recording, processing, handleRecord, remainingTime };
 };
