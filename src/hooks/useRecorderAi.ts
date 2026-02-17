@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { apiCreateDocument, apiGetSidebarDocuments } from "@/api/documentApi";
 import { useCallStore } from "@/store/useCallStore";
-import { useAuthStore } from "@/store/useAuthStore";
 import axiosAuthInstance from "@/api/axiosAuthInstance";
 
 export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
@@ -17,7 +16,6 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
 
     const navigate = useNavigate();
     const { workspaceCode } = useCallStore();
-    const accessToken = useAuthStore(state => state.accessToken);
     const autoStopTimeoutRef = useRef<number | null>(null);
     const [remainingTime, setRemainingTime] = useState<number>(300);
     const intervalRef = useRef<number | null>(null);
@@ -108,7 +106,6 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
                 formData.append("file", pendingAudio, "voice_meeting.webm");
                 formData.append("workspaceCode", workspaceCode);
 
-                const SERVER_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
                 // Spring 백엔드 엔드포인트 호출 (STT + 요약 통합 처리)
                 const response = await axiosAuthInstance.post("/ai/process-voice", formData, {
