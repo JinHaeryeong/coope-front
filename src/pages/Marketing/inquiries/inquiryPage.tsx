@@ -65,14 +65,14 @@ const InquiryPage = () => {
     return (
         <div className="min-h-screen dark:bg-transparent flex flex-col pt-16 px-4 md:px-8 pb-20">
             <div className="max-w-8xl mx-auto w-full">
-                <header className="flex flex-col md:flex-row md:items-end gap-6 mb-12 justify-center">
+                <header className="flex flex-col md:flex-row md:items-center gap-6 mb-12 justify-center text-center">
                     <div className="space-y-2">
-                        <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+                        <h1 className="text-4xl md:text-5xl font-black tracking-tight">
                             {isAdmin ? "문의 관리" : "내 문의 내역"}
                         </h1>
-                        <p className="text-slate-500 text-lg max-w-md">
-                            {isAdmin ? "사용자들의 목소리에 귀를 기울여 주세요." : "궁금하신 점에 대해 정성껏 답변해 드립니다."}
-                        </p>
+                        <div className="text-slate-500 text-lg max-w-md">
+                            {isAdmin ? "사용자들의 목소리에 귀를 기울여 주세요" : "궁금하신 점에 대해 정성껏 답변해 드립니다"}
+                        </div>
                     </div>
                 </header>
 

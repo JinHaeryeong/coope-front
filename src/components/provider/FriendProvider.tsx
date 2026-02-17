@@ -55,7 +55,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
     const [page, setPage] = useState(0);
     const [hasMoreRooms, setHasMoreRooms] = useState(true);
     const [friendsList, setFriendsList] = useState<FriendResponse[]>(initialFriends);
-    const { fetchFriends } = useFriendStore();
+    const { fetchFriends, setIsChatActive } = useFriendStore();
     const storeFriends = useFriendStore((state) => state.friends);
 
     const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -79,6 +79,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
 
     // 방이 선택될 때마다 실행되는 통합 로직
     useEffect(() => {
+        setIsChatActive(!!selectedRoom?.roomId);
         if (!selectedRoom?.roomId) {
             setMessages([]);
             setMessagePage(0);

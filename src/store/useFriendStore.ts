@@ -8,12 +8,16 @@ interface FriendState {
     isLoading: boolean;
     fetchFriends: (silent?: boolean) => Promise<void>;
     fetchRequests: () => Promise<void>;
+    isChatActive: boolean;
+    setIsChatActive: (active: boolean) => void;
 }
 
 export const useFriendStore = create<FriendState>((set) => ({
     friends: [],
     requests: [],
     isLoading: false,
+    isChatActive: false,
+    setIsChatActive: (active: boolean) => set({ isChatActive: active }),
     fetchFriends: async (silent = false) => {
         if (!silent) set({ isLoading: true });
         try {
