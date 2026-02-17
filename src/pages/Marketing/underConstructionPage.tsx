@@ -21,3 +21,5 @@ export const UnderConstructionPage = () => {
         </div>
     );
 };
+
+export default UnderConstructionPage;

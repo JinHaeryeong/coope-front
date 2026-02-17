@@ -5,6 +5,7 @@ import axiosAuthInstance from "./axiosAuthInstance";
 export interface DocumentResponse {
     id: number;
     title: string;
+    content?: string;
     icon?: string;
     parentId?: number;
     hasChildren: boolean;
@@ -18,6 +19,7 @@ export interface DocumentCreateRequest {
     workspaceCode: string;
     parentId?: number;
     icon?: string;
+    content?: string;
 }
 
 /**

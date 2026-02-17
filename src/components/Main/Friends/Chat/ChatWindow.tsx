@@ -5,6 +5,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 import ChatInput from "./ChatInput";
 import { MessageItem } from "./MessageItem";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallStore } from "@/store/useCallStore";
+import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 interface ChatWindowProps {
     isMobile?: boolean;
@@ -13,7 +16,7 @@ interface ChatWindowProps {
 
 export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
     const {
-        selectedRoom, messages, isFetchingMore, fetchMoreMessages, hasMoreMessages, bottomRef, setIsModalOpen,
+        selectedRoom, messages, isFetchingMore, fetchMoreMessages, hasMoreMessages, bottomRef,
         messageInput, setMessageInput, selectedFile, setSelectedFile, handleSendMessage, fileInputRef
     } = useFriend();
 
@@ -26,6 +29,8 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
     const isUserAtBottomRef = useRef(true);
     const lastMessage = messages[messages.length - 1];
     const isLastMessageMine = lastMessage?.senderId === user?.id;
+    const { workspaceCode } = useParams();
+    const { openCall, roomId: activeRoomId, closeCall } = useCallStore();
 
 
     useEffect(() => {
@@ -109,6 +114,64 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
         return () => observer.disconnect();
     }, [hasMoreMessages, isFetchingMore, selectedRoom?.roomId]);
 
+    const handlePhoneClick = () => {
+        if (!selectedRoom?.roomId || !workspaceCode) {
+            toast.error("워크스페이스 정보를 찾을 수 없습니다.");
+            return;
+        }
+
+        const newRoomId = selectedRoom.roomId.toString();
+
+        // 이미 통화 중인 경우 체크
+        if (activeRoomId) {
+            // 같은 방이면 모달만 다시 열기
+            if (activeRoomId === newRoomId) {
+                openCall(newRoomId, workspaceCode);
+                return;
+            }
+
+            // 다른 방일 경우 Sonner Toast로 확인 창 띄우기
+            toast("통화 전환 안내", {
+                description: (
+                    <div className="flex flex-col w-full gap-4 mt-2">
+                        <p className="text-sm leading-relaxed text-neutral-400">
+                            이미 다른 방에서 통화 중입니다. <br />
+                            현재 통화를 종료하고 이 방에서 새 통화를 시작할까요?
+                        </p>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => {
+                                    closeCall();
+                                    setTimeout(() => {
+                                        openCall(newRoomId, workspaceCode);
+                                    }, 200);
+                                    toast.dismiss();
+                                }}
+                                className="px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-all"
+                            >
+                                시작
+                            </button>
+                            <button
+                                onClick={() => toast.dismiss()}
+                                className="px-3 py-1.5 text-xs font-medium rounded-md bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all"
+                            >
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                ),
+                duration: 6000,
+                // 기본 버튼들을 숨기기 위해 classNames 조절
+                classNames: {
+                    toast: "group-[.toaster]:p-4 group-[.toaster]:items-start",
+                }
+            });
+        } else {
+            // 통화 중이 아니면 바로 시작
+            openCall(newRoomId, workspaceCode);
+        }
+    };
+
     if (!selectedRoom) return null;
 
     return (
@@ -146,7 +209,7 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={handlePhoneClick}
                         className="rounded-full hover:bg-primary/5 text-muted-foreground hover:text-primary transition-colors"
                     >
                         <Phone className="h-4 w-4" />
