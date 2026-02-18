@@ -76,6 +76,23 @@ export const useMediasoup = (
         return deviceRef.current;
     }, []);
 
+    const handleMediaError = (type: StreamType, error: any) => {
+        console.error(`${type} 시작 실패:`, error);
+
+        if (error.name === 'NotAllowedError') {
+            toast.error(`${type === 'mic' ? '마이크' : '카메라'} 권한이 거부되었습니다.`, {
+                description: "권한을 허용해주세요!",
+                duration: 6000,
+            });
+        } else if (error.name === 'NotFoundError') {
+            toast.error("장치를 찾을 수 없습니다.", {
+                description: "카메라나 마이크가 연결되어 있는지 확인해주세요.",
+            });
+        } else {
+            toast.error(`${type} 시작을 실패했습니다. 다시 시도해주세요.`);
+        }
+    };
+
     const createDevice = async (rtpCapabilities: RtpCapabilities) => {
         if (deviceRef.current?.loaded) return deviceRef.current;
         const dev = new MediaDevice();
@@ -121,11 +138,13 @@ export const useMediasoup = (
 
     const handleNewProducer = useCallback(async (info: ProducerInfo) => {
         const socket = socketRef.current;
-        if (!deviceRef.current?.loaded) {
+        if (!deviceRef.current?.loaded || !socket?.connected) {
             const currentRetry = retryCountsRef.current[info.producerId] || 0;
             if (currentRetry > 10) return;
+
             if (retryTimersRef.current[info.producerId]) clearTimeout(retryTimersRef.current[info.producerId]);
             retryCountsRef.current[info.producerId] = currentRetry + 1;
+
             retryTimersRef.current[info.producerId] = setTimeout(() => handleNewProducer(info), 500);
             return;
         }
@@ -251,8 +270,7 @@ export const useMediasoup = (
                 if (type === "camera") setCamEnabled(false);
             };
         } catch (error) {
-            console.error(`${type} 시작 실패:`, error);
-            toast.error(`${type} 시작을 실패했습니다. 잠시 후 다시 시도해주세요.`)
+            handleMediaError(type, error);
         }
     };
 
@@ -280,8 +298,7 @@ export const useMediasoup = (
                 setStreams(prev => ({ ...prev, mic: stream }));
                 setMicEnabled(true);
             } catch (error) {
-                console.error("마이크 시작 실패:", error);
-                toast.error("마이크 시작을 실패했습니다. 잠시 후 다시 시도해주세요.")
+                handleMediaError("mic", error);
             }
         }
     };

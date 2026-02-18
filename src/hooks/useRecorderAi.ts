@@ -5,6 +5,8 @@ import { apiCreateDocument, apiGetSidebarDocuments } from "@/api/documentApi";
 import { useCallStore } from "@/store/useCallStore";
 import axiosAuthInstance from "@/api/axiosAuthInstance";
 
+const AI_PROCESS_TIMEOUT = 180000;
+
 export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
     const [recording, setRecording] = useState(false);
     const [processing, setProcessing] = useState(false);
@@ -19,6 +21,20 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
     const autoStopTimeoutRef = useRef<number | null>(null);
     const [remainingTime, setRemainingTime] = useState<number>(300);
     const intervalRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        // 컴포넌트가 사라질 때(Unmount) 실행되는 함수
+        return () => {
+            if (autoStopTimeoutRef.current) {
+                window.clearTimeout(autoStopTimeoutRef.current);
+                autoStopTimeoutRef.current = null;
+            }
+            if (intervalRef.current) {
+                window.clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+        };
+    }, []);
 
 
 
@@ -95,7 +111,7 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
 
     useEffect(() => {
         const processAudio = async () => {
-            if (!processing || !pendingAudio || isHandledRef.current || !workspaceCode) return;
+            if (!processing || !pendingAudio || isHandledRef.current || !workspaceCode?.trim()) return;
             isHandledRef.current = true;
 
             try {
@@ -110,12 +126,12 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
                 // Spring 백엔드 엔드포인트 호출 (STT + 요약 통합 처리)
                 const response = await axiosAuthInstance.post("/ai/process-voice", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
-                    timeout: 180000 // 넉넉하게 3분 잡았습니다 (AI 처리 대기)
+                    timeout: AI_PROCESS_TIMEOUT
                 });
 
                 const result = response.data;
 
-                // "통화 녹음" 폴더(부모 문서) 관리
+                // 통화 녹음 폴더(부모 문서) 관리
                 const sidebarDocs = await apiGetSidebarDocuments(workspaceCode);
                 const PARENT_TITLE = "통화 녹음";
                 const existingParent = sidebarDocs.find(doc => doc.title === PARENT_TITLE);

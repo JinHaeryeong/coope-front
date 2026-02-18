@@ -55,6 +55,15 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
 
     const audioContextRef = useRef<AudioContext | null>(null);
 
+    useEffect(() => {
+        return () => {
+            if (audioContextRef.current) {
+                audioContextRef.current.close();
+                audioContextRef.current = null;
+            }
+        };
+    }, []);
+
 
     const mixedAudioStream = useMemo(() => {
         // 마이크와 원격 스트림이 모두 없으면 null 반환

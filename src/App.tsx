@@ -29,7 +29,7 @@ const NoticeEditPage = lazy(() => import('./pages/Marketing/notices/noticeEditPa
 const DocumentsPage = lazy(() => import('./pages/Workspace/documentsPage'));
 const FriendsPage = lazy(() => import('./pages/Workspace/Friend/FriendsPage'));
 
-const CallModal = lazy(() => import('./components/Call/CallModal'));
+import CallModal from './components/Call/CallModal';
 
 function App() {
 
@@ -90,14 +90,16 @@ function App() {
           <ScrollToTop />
           <ModalProvider />
           <Toaster position='bottom-center' />
+
+          {(isOpen || isMinimized) && roomId && (
+            <CallModal
+              isOpen={isOpen}
+              roomId={roomId}
+              onClose={closeCall}
+            />
+          )}
           <Suspense fallback={<Spinner />}>
-            {(isOpen || isMinimized) && roomId && (
-              <CallModal
-                isOpen={isOpen}
-                roomId={roomId}
-                onClose={closeCall}
-              />
-            )}
+
 
             <Routes>
               <Route path="/login-success" element={<LoginSuccess />} />
