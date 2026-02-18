@@ -163,7 +163,7 @@ export const Navbar = () => {
                                 <div className="flex items-center gap-x-4 pb-4 border-b dark:border-slate-700">
                                     <Avatar className="h-12 w-12 border">
                                         <AvatarImage
-                                            src={user?.userIcon ? `${import.meta.env.VITE_API_BASE_URL}${user.userIcon}` : "/default-icon.png"}
+                                            src={user?.userIcon ? `${import.meta.env.VITE_API_BASE_URL}${user.userIcon}` : "/default-icon.webp"}
                                             alt={user?.nickname}
                                         />
                                         <AvatarFallback className="bg-sky-500 text-white">

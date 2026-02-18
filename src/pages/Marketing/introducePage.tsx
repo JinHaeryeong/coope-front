@@ -67,8 +67,12 @@ const IntroductionPage = () => {
                 <div className="w-full max-w-225 px-4">
                     <img
                         src="/introduction.webp"
-                        className="w-full h-auto"
+                        width={1200}
+                        height={675}
+                        className="w-full h-auto object-cover"
                         alt="Introduction visual"
+                        loading="eager"
+                        fetchPriority="high"
                     />
                 </div>
 
@@ -149,7 +153,7 @@ const IntroductionPage = () => {
                                     >
                                         <div className="absolute -top-10">
                                             <img
-                                                src="/universe.jpg"
+                                                src="/default-icon.webp"
                                                 className="h-24 w-24 rounded-full object-cover border-4 border-background shadow-md group-hover:scale-110 transition-transform"
                                                 alt="Profile"
                                             />

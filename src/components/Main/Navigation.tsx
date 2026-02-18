@@ -34,6 +34,7 @@ import { apiCreateDocument } from "@/api/documentApi";
 import { useTrashStore } from "@/store/useTrashStore";
 import { SettingsModal } from "./Modal/SettingModal";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useFriendStore } from "@/store/useFriendStore";
 
 
 export const Navigation = () => {
@@ -58,6 +59,9 @@ export const Navigation = () => {
   const [isResetting, setIsResetting] = useState(false);
   const { notifyTrashUpdate } = useTrashStore();
   const [isTrashOpen, setIsTrashOpen] = useState(false);
+  const isChatActive = useFriendStore((state) => state.isChatActive);
+
+  const shouldHideMenuIcon = isMobile && pathname.includes("/friends") && isChatActive;
 
 
   const MIN_WIDTH = 210;
@@ -252,11 +256,11 @@ export const Navigation = () => {
           <Navbar isCollapsed={isCollapsed} onResetWidth={toggleSidebar} />
         ) : (
           <nav className="bg-transparent px-3 py-2 w-full">
-            {isCollapsed && (
+            {isCollapsed && !shouldHideMenuIcon && (
               <MenuIcon
                 role="button"
-                className="h-6 w-6 text-muted-foreground pointer-events-auto cursor-pointer transition"
                 onClick={toggleSidebar}
+                className="h-6 w-6 text-muted-foreground pointer-events-auto cursor-pointer transition"
               />
             )}
           </nav>

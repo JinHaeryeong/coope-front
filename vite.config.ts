@@ -43,13 +43,9 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('scheduler')) {
-              return 'vendor-react';
+            if (id.includes('@blocknote')) {
+              return 'editor-bundle';
             }
-            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
-              return 'vendor-ui';
-            }
-            return 'vendor';
           }
         },
       },
