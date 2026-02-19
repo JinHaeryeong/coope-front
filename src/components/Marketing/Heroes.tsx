@@ -8,6 +8,9 @@ export const Heroes = () => {
                     <img
                         src="/documents.webp"
                         className="object-contain dark:hidden w-full h-full"
+                        fetchPriority="high"
+                        width="427"
+                        height="320"
                         alt="Documents"
                     />
                     <img
