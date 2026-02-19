@@ -20,8 +20,12 @@
 * Node.js 백엔드: https://github.com/JinHaeryeong/coope-webrtc-sfu
 
 ## 프로젝트 개요
+
 ### 목표
-* 프로젝트 기술스택 변경: 기존의 프로젝트의 기술 스택은
+* 프로젝트 기술 스택 변경: 초기 개발 단계에서는 개발 편의성을 위해 직접 구현할 부분이 적은 프레임워크를 사용했으나, 성능 최적화 등을 위해 직접 구현 비중이 높은 스택으로 전환을 결정
+* SFU 기반 미디어 서버 구축: Mesh 방식의 한계를 넘어 Mediasoup을 활용한 다자간 통신 구현
+* 실시간 데이터 동기화: 양방향 통신과 더불어, 동시 편집 및 상태 공유를 위한 로직을 설계
+* 인프라 아키텍처 실습: Vercel(Front)과 AWS EC2(Back)를 분리 배포하여 실제 서비스와 유사한 인프라 환경 구축
 
 
 ## 사용 기술
@@ -264,10 +268,11 @@ https://github.com/user-attachments/assets/2b8858a5-de5b-4666-a360-e46cec4e104b
 |  이름  | 결과  |
 |---|---|
 |  메인페이지(완성) |   ![main](https://github.com/user-attachments/assets/aa734e14-7b86-43a8-afed-5d0013b96ddd)|
-| 공지사항(완성)  |  ![notice](https://github.com/user-attachments/assets/75b5b025-86d1-427c-be09-5228931a04c1)|
-| 회사소개(완성)  |   ![introduce](https://github.com/user-attachments/assets/db9083a9-5029-451d-a388-1ac75a28423d)|
+| 소셜로그인(구글, 완성)  | ![google](https://github.com/user-attachments/assets/c82b8012-ebc8-4ba3-b1de-f1768f607dab) |
+| 공지사항(완성)  | ![notice](https://github.com/user-attachments/assets/15a0ef0a-3154-4cd4-b1f4-6564399baafd) |
+| 회사소개(완성)  | ![introduce](https://github.com/user-attachments/assets/08f211cb-88a1-438a-aa7b-e7c1a5e738fb) |
 | 고객지원(미완성)  |   ![inquiries](https://github.com/user-attachments/assets/cae4b53d-93be-409c-a42c-43fc413b6213)|
-|  AI 채팅(완성)  |   ![aiChat](https://github.com/user-attachments/assets/9ce0ca4a-a948-4832-8934-6509d8b5dc1a)|
+|  AI 채팅(완성)  |  ![aiChat](https://github.com/user-attachments/assets/603824d5-5154-473d-b218-49e262a89662) |
 | 문서 동시 편집(미완성)  |  (데스크탑, 유저1) ![share](https://github.com/user-attachments/assets/1ba15e7c-2ab7-42e7-b244-36898db06c46)(모바일, 유저2)<br/> ![share_mobile](https://github.com/user-attachments/assets/b6d74402-7acf-48e8-be6b-7987735e4f42)|
 |  채팅(완성)  | (데스크탑, 유저1) ![chat](https://github.com/user-attachments/assets/e41f96a4-5eab-4bdf-a0ea-6a1a3354a010)(모바일, 유저2)<br/> ![chat_mobile](https://github.com/user-attachments/assets/7665b4bb-9295-401e-9fb8-9598cb9918dd)|
 |  통화(완성)  |  (데스크탑, 유저1) ![webrtc](https://github.com/user-attachments/assets/9cb4fa65-4da6-483e-8a14-31a3e1fefe10)(모바일, 유저2)<br/> ![webrtc_mobile](https://github.com/user-attachments/assets/9781c9e9-0803-4c4a-b80a-e0569b60d4a2) <br />데스크탑버전이 모바일버전보다 먼저 들어가서 공유를 시작 => 몇 초이후 모바일이 들어옴이라서 둘 사이에 딜레이가 있어보이는 점 양해부탁드립니다|
