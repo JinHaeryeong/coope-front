@@ -338,6 +338,25 @@ export const useMediasoup = (
         };
     }, [roomId]);
 
+    useEffect(() => {
+        const handleDeviceChange = async () => {
+            try {
+                await navigator.mediaDevices.enumerateDevices();
+                toast.info("장치 변경 감지", {
+                    description: "마이크/카메라 장치가 변경되었습니다. 필요 시 설정을 확인하세요.",
+                    duration: 4000
+                });
+            } catch (err) {
+                console.error("Device change error:", err);
+            }
+        };
+
+        navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+        return () => {
+            navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+        };
+    }, []);
+
     return {
         streams,
         remoteStreams,

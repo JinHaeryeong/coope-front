@@ -25,7 +25,7 @@ export const apiCreateNotice = async (formData: FormData) => {
 
 // 공지사항 수정
 export const apiEditNotice = async (id: number, formData: FormData) => {
-    const response = await axiosAuthInstance.patch(`/notices/${id}`, formData);
+    const response = await axiosAuthInstance.put(`/notices/${id}`, formData);
     return response;
 };
 
