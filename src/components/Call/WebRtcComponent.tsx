@@ -43,6 +43,12 @@ function LocalVideo({ stream, className, muted = true }: { stream: MediaStream |
 export default function WebRtcComponent({ roomId }: { roomId: string }) {
     const { isFullScreen } = useCallStore();
 
+    const isMobile = useMemo(() => {
+        if (typeof window === "undefined") return false;
+        // 1. 터치 기기이면서 2. 화면공유 API가 없거나 제한적인 경우
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    }, []);
+
     const {
         streams,
         remoteStreams,
@@ -221,14 +227,16 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
                     {camEnabled ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
                 </Button>
 
-                <Button
-                    variant={streams.screen ? "default" : "outline"}
-                    size="icon"
-                    onClick={toggleScreen}
-                    className="rounded-full w-10 h-10 md:w-12 md:h-12 shadow-lg"
-                >
-                    {streams.screen ? <ScreenShareOff className="w-5 h-5" /> : <ScreenShare className="w-5 h-5" />}
-                </Button>
+                {!isMobile && (
+                    <Button
+                        variant={streams.screen ? "default" : "outline"}
+                        size="icon"
+                        onClick={toggleScreen}
+                        className="rounded-full w-10 h-10 md:w-12 md:h-12 shadow-lg"
+                    >
+                        {streams.screen ? <ScreenShareOff className="w-5 h-5" /> : <ScreenShare className="w-5 h-5" />}
+                    </Button>
+                )}
 
                 <Button
                     variant={micEnabled ? "default" : "outline"}

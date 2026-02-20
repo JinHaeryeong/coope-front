@@ -49,9 +49,16 @@ export const apiCreateGroupRoom = async (userIds: number[], roomName: string) =>
     return response.data;
 };
 
-export const apiGetChatMessages = async (roomId: number, page: number = 0, size: number = 20) => {
+export const apiGetChatMessages = async (
+    roomId: number,
+    lastMessageId: number | null = null,
+    size: number = 20
+) => {
     const response = await axiosAuthInstance.get<Slice<MessageResponse>>(`/chat/room/${roomId}/messages`, {
-        params: { page, size }
+        params: {
+            lastMessageId,
+            size
+        }
     });
     return response.data;
 };
