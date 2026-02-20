@@ -61,7 +61,6 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
     const bottomRef = useRef<HTMLDivElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [messagePage, setMessagePage] = useState(0);
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const isInitialLoadRef = useRef(true);
@@ -82,7 +81,6 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         setIsChatActive(!!selectedRoom?.roomId);
         if (!selectedRoom?.roomId) {
             setMessages([]);
-            setMessagePage(0);
             setHasMoreMessages(true);
             isInitialLoadRef.current = true;
             return;
@@ -91,9 +89,10 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         const fetchInitialMessages = async () => {
             setIsFetchingMore(true);
             try {
-                const data = await apiGetChatMessages(selectedRoom.roomId, 0);
+                // 첫 로딩 시에는 커서(lastMessageId)를 null로 보냄
+                const data = await apiGetChatMessages(selectedRoom.roomId, null);
                 setMessages([...data.content].reverse());
-                setMessagePage(0);
+
                 setHasMoreMessages(!data.last);
             } catch (error) {
                 console.error(error);
@@ -145,12 +144,14 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
 
         setIsFetchingMore(true);
         try {
-            const nextPage = messagePage + 1;
-            const data = await apiGetChatMessages(selectedRoom.roomId, nextPage);
+            const lastMessageId = messages.length > 0 ? messages[0].id : null;
+
+            const data = await apiGetChatMessages(selectedRoom.roomId, lastMessageId);
+
             const reversedPast = [...data.content].reverse();
 
             setMessages(prev => [...reversedPast, ...prev]);
-            setMessagePage(nextPage);
+
             setHasMoreMessages(!data.last);
         } catch (error) {
             console.error("이전 메시지 로드 실패:", error);
