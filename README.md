@@ -276,7 +276,7 @@ https://github.com/user-attachments/assets/2b8858a5-de5b-4666-a360-e46cec4e104b
 | 문서 동시 편집(미완성)  |  (데스크탑, 유저1) ![share](https://github.com/user-attachments/assets/1ba15e7c-2ab7-42e7-b244-36898db06c46)(모바일, 유저2)<br/> ![share_mobile](https://github.com/user-attachments/assets/b6d74402-7acf-48e8-be6b-7987735e4f42)|
 |  채팅(완성)  | (데스크탑, 유저1) ![chat](https://github.com/user-attachments/assets/e41f96a4-5eab-4bdf-a0ea-6a1a3354a010)(모바일, 유저2)<br/> ![chat_mobile](https://github.com/user-attachments/assets/7665b4bb-9295-401e-9fb8-9598cb9918dd)|
 |  통화(완성)  |  (데스크탑, 유저1) ![webrtc](https://github.com/user-attachments/assets/9cb4fa65-4da6-483e-8a14-31a3e1fefe10)(모바일, 유저2)<br/> ![webrtc_mobile](https://github.com/user-attachments/assets/9781c9e9-0803-4c4a-b80a-e0569b60d4a2) <br />데스크탑버전이 모바일버전보다 먼저 들어가서 공유를 시작 => 몇 초이후 모바일이 들어옴이라서 둘 사이에 딜레이가 있어보이는 점 양해부탁드립니다|
-|  STT(완성)   |![stt](https://github.com/user-attachments/assets/a8857a28-16ca-4fef-89b5-ef5ba8363ca3) 읽은 문장은 친절한 SQL 튜닝 21p를 읽었습니다. 길게 읽어서 GIF가 길고, 중간에 기록 중지가 빨간색으로 바뀔 때가 있는데 덜 읽었을 때라서 기다려주세요|
+|  STT(완성)   |![stt](https://github.com/user-attachments/assets/a8857a28-16ca-4fef-89b5-ef5ba8363ca3) 읽은 문장은 친절한 SQL 튜닝 21p를 읽었습니다. 길게 읽어서 GIF가 길고, 중간에 기록 중지가 빨간색으로 바뀔 때가 있는데 덜 읽었을 때라서 기다려주세요 => 현재 문서 페이지가 완성되지않아 STT가 완료된 결과를 보실 수 없습니다.. DB에는 들어오는데 빠른 시일내에 볼 수 있도록 하겠습니다|
 
 ---
 
