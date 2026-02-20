@@ -38,14 +38,14 @@
 * Framework: React
 * Deployment: Vercel
 * Communication: Axios (REST API), Socket.io-client (Signaling/Chat)
-* Real-time: WebRTC (Mediasoup-client), Yjs (Shared Editing)
+* Real-time: WebRTC (Mediasoup-client), Yjs (Shared Editing)(예정)
 
 ### Backend
 * Core: Spring Boot 3.x (Java 21+)
 * Media Server: Node.js (Mediasoup / SFU Architecture)
 * Database: AWS RDS (MySQL 8.0)
-* In-Memory DB: Redis (JWT Blacklist, Session, Pub/Sub)
-* Storage: AWS S3 (Audio & Image files)
+* In-Memory DB: Redis (JWT Blacklist, Cache)
+* Storage: AWS S3
 
 ---
 ## 📁 프로젝트 구조
