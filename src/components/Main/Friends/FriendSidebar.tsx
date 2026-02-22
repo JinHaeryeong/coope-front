@@ -38,28 +38,30 @@ export const FriendSidebar = () => {
     const filteredChatRooms = chatRooms?.filter(room =>
         room.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
     const handleCreateGroup = async () => {
         if (selectedFriendIds.length === 0) return;
 
         try {
-            // 백엔드 API 호출 (우리가 만든 DTO 규격 그대로!)
             const roomData = await apiCreateGroupRoom(selectedFriendIds, newRoomName);
 
-            // 생성된 방으로 바로 이동
             setSelectedRoom({
                 roomId: roomData.roomId,
                 title: roomData.title,
                 type: "GROUP"
             });
 
-            // 초기화
             setIsSelectionMode(false);
             setSelectedFriendIds([]);
             setNewRoomName("");
-            fetchChatRooms();
+
+            await fetchChatRooms();
+
+            setActiveTab("CHATS");
+
         } catch (error) {
             console.error("그룹 방 생성 실패:", error);
-            toast.error("그룹방 생성을 실패했습니다. 잠시  후 다시 시도해주세요.")
+            toast.error("그룹방 생성을 실패했습니다.");
         }
     };
 
@@ -78,7 +80,6 @@ export const FriendSidebar = () => {
 
     return (
         <div className="h-full p-3 pt-8 relative flex flex-col bg-card">
-            {/* 상단 탭 전환 메뉴 */}
             <div className="flex gap-2 mb-6 p-1 bg-muted rounded-lg">
                 <Button variant={activeTab === "FRIENDS" ? "default" : "ghost"} className="flex-1 text-xs" size="sm" onClick={() => handleTabChange("FRIENDS")}>
                     <Users className="w-4 h-4 mr-2" /> 친구
@@ -88,7 +89,6 @@ export const FriendSidebar = () => {
                 </Button>
             </div>
 
-            {/* 헤더 부분: 선택 모드일 때 '취소' 버튼 노출 */}
             <div className="flex items-center mb-4 h-9">
                 <div className="font-bold text-lg">
                     {activeTab === "FRIENDS" ? "내 친구" : "채팅 목록"}
@@ -115,7 +115,7 @@ export const FriendSidebar = () => {
             </div>
 
             {/* 리스트 영역 */}
-            <ScrollArea className="flex-1 -mx-2 px-2">
+            <ScrollArea className="flex-1 h-0 -mx-2 px-2">
                 {activeTab === "FRIENDS" ? (
                     <div className="space-y-1">
                         {filteredFriends?.map((friend: any) => (
@@ -133,7 +133,7 @@ export const FriendSidebar = () => {
                 ) : (
                     <div className="space-y-1">
                         {filteredChatRooms?.length > 0 ? (
-                            chatRooms.map((room) => (
+                            filteredChatRooms.map((room) => (
                                 <div
                                     key={room.roomId}
                                     onClick={() => setSelectedRoom(room as NonNullable<typeof selectedRoom>)}

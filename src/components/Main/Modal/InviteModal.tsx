@@ -15,7 +15,7 @@ export default function InviteModal({ workspaceCode }: WorkspaceModalProps) {
     useEffect(() => {
 
         const origin = window.location.origin;
-        setInviteUrl(`${origin}/invite?workspace=${workspaceCode}`);
+        setInviteUrl(`${origin}/invite/${workspaceCode}`);
     }, [workspaceCode]);
 
     const handleCopy = () => {
