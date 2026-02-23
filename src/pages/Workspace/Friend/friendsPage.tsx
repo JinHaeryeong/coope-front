@@ -59,7 +59,7 @@ const FriendsPage = () => {
 
     return (
         <div className="h-full bg-background overflow-hidden">
-            <FriendProvider initialFriends={friends}>
+            <FriendProvider>
                 <FriendPageContent />
             </FriendProvider>
         </div>

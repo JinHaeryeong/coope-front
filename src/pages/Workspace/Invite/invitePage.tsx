@@ -9,9 +9,9 @@ function InviteContent() {
     const { isLoggedIn } = useAuthStore();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
-    const hasJoined = useRef(false);
 
     const { workspaceCode } = useParams<{ workspaceCode: string }>();
+    const lastJoinedCode = useRef<string | null>(null);
 
     useEffect(() => {
         if (!workspaceCode) {
@@ -27,10 +27,10 @@ function InviteContent() {
             return;
         }
 
-        if (hasJoined.current) return;
+        if (lastJoinedCode.current === workspaceCode) return;
 
         const joinWorkspace = async () => {
-            hasJoined.current = true;
+            lastJoinedCode.current = workspaceCode;
             setIsLoading(true);
 
             try {
