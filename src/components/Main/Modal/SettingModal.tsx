@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // 💡 Next.js의 useRouter 대신 사용
+import { useNavigate } from "react-router-dom";
 import {
     Dialog,
     DialogContent,
@@ -40,6 +40,9 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
     const navigate = useNavigate();
 
     const { workspaces, isLoading, updateWorkspaceName, deleteWorkspaceFromStore } = useWorkspaceStore();
+
+    const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
+    const isOwner = currentWorkspace?.role === 'OWNER';
     const isLastWorkspace = !isLoading && workspaces.length <= 1;
 
     const [name, setName] = useState(initialName ?? "");
@@ -122,32 +125,46 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="이름을 입력하세요"
+                        disabled={!isOwner}
                     />
+                    {!isOwner && (
+                        <p className="text-[0.75rem] text-neutral-500  font-medium">
+                            이름 변경은 소유자(Owner)만 가능합니다.
+                        </p>
+                    )}
                     <Button
                         onClick={handleRename}
                         className="mt-2 w-full"
-                        disabled={!name.trim() || isNameUnchanged}
+                        disabled={!isOwner || !name.trim() || isNameUnchanged}
                     >
-                        이름 변경
+                        {isOwner ? "이름 변경" : "수정 권한 없음"}
                     </Button>
                 </div>
 
                 <div className="pt-6">
                     <Label className="text-destructive font-bold">Danger Zone</Label>
-                    <p className="text-sm text-muted-foreground mb-2">
-                        {isLastWorkspace
-                            ? "마지막 워크스페이스는 삭제할 수 없습니다. (최소 1개 유지 필요)"
-                            : "삭제하면 복구할 수 없습니다."}
-                    </p>
+                    <div className="bg-destructive/5 border border-destructive/10 rounded-md p-3 mt-2 mb-4">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            {!isOwner
+                                ? "워크스페이스 삭제 권한이 없습니다. 소유자에게 문의하세요."
+                                : isLastWorkspace
+                                    ? "보안을 위해 마지막 워크스페이스는 삭제할 수 없습니다. 최소 1개의 워크스페이스가 필요합니다."
+                                    : "워크스페이스를 삭제하면 모든 데이터가 즉시 파기되며 복구할 수 없습니다."}
+                        </p>
+                    </div>
 
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button
                                 variant="destructive"
                                 className="w-full"
-                                disabled={isDeleting || isLastWorkspace || isLoading}
+                                disabled={!isOwner || isDeleting || isLastWorkspace || isLoading}
                             >
-                                {isLastWorkspace ? "삭제 불가" : "워크스페이스 삭제"}
+                                {!isOwner
+                                    ? "삭제 권한 없음"
+                                    : isLastWorkspace
+                                        ? "삭제 불가"
+                                        : "워크스페이스 삭제"}
                             </Button>
                         </AlertDialogTrigger>
 

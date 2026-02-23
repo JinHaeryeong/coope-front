@@ -100,6 +100,38 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
         fetchFriends(true);
     }, [user, fetchChatRooms, fetchFriends]);
 
+    useEffect(() => {
+        if (!isConnected || !stompClient || !user) return;
+
+        const globalSub = stompClient.subscribe(
+            `/user/queue/chat/updates`,
+            (message) => {
+                const updatedRoomInfo = JSON.parse(message.body);
+
+                setChatRooms(prev => {
+                    const roomExists = prev.find(r => r.roomId === updatedRoomInfo.roomId);
+                    const others = prev.filter(r => r.roomId !== updatedRoomInfo.roomId);
+
+                    if (roomExists) {
+                        return [
+                            {
+                                ...roomExists,
+                                lastMessage: updatedRoomInfo.lastMessage,
+                                lastMessageTime: updatedRoomInfo.lastMessageTime
+                            },
+                            ...others
+                        ];
+                    } else {
+                        fetchChatRooms(false);
+                        return prev;
+                    }
+                });
+            }
+        );
+
+        return () => globalSub.unsubscribe();
+    }, [isConnected, stompClient, user, fetchChatRooms]);
+
     // 방이 선택될 때마다 실행되는 통합 로직
     useEffect(() => {
         setIsChatActive(!!selectedRoom?.roomId);
