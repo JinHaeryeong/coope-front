@@ -72,7 +72,7 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
                 flex gap-x-4 items-center pointer-events-auto">
                 {isCollapsed && (
                     <MenuIcon
-                        className="w-6 h-6 text-muted-foreground"
+                        className="w-6 h-6 text-muted-foreground cursor-pointer"
                         role="button"
                         onClick={onResetWidth}
                     />

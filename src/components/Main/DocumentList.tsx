@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FileIcon } from "lucide-react";
 
-import { type DocumentResponse, apiGetSidebarDocuments } from "@/api/documentApi";
+import { apiGetSidebarDocuments } from "@/api/documentApi";
 import { cn } from "@/lib/utils";
 import { Item } from "./Item";
 import { useTrashStore } from "@/store/useTrashStore";
+import { useDocumentStore } from "@/store/useDocumentStore";
 
 interface DocumentListProps {
     onItemClick?: () => void;
@@ -22,28 +23,42 @@ export const DocumentList = ({
     const params = useParams<{ workspaceCode: string; documentId: string }>();
     const navigate = useNavigate();
 
+    const { documents, upsertDocument } = useDocumentStore();
     // 확장 상태 관리
     const [expanded, setExpanded] = useState<Record<number, boolean>>({});
     // 문서 데이터 상태 관리
-    const [documents, setDocuments] = useState<DocumentResponse[] | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const workspaceCode = params.workspaceCode;
 
-    // 데이터 페칭 로직
+    const filteredDocuments = documents.filter((doc) => {
+        if (!parentDocumentId) return !doc.parentId;
+        return doc.parentId === parentDocumentId;
+    });
+
+
+
     useEffect(() => {
         const fetchDocuments = async () => {
             if (!workspaceCode) return;
 
             try {
+                setLoading(true);
                 const data = await apiGetSidebarDocuments(workspaceCode, parentDocumentId);
-                setDocuments(data);
+
+                data.forEach(newDoc => {
+                    upsertDocument(newDoc);
+                });
+
             } catch (error) {
-                console.error("문서 목록을 불러오지 못했습니다:", error);
+                console.error("문서 목록 로드 실패:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchDocuments();
-    }, [workspaceCode, parentDocumentId, trashUpdateTicket]); // 워크스페이스나 부모가 바뀌면 다시 로드
+    }, [workspaceCode, parentDocumentId, trashUpdateTicket, upsertDocument]);
 
     const onExpand = (documentId: number) => {
         setExpanded((prevExpanded) => ({
@@ -58,15 +73,11 @@ export const DocumentList = ({
     };
 
     // 로딩 중 스켈레톤 UI
-    if (documents === null) {
+    if (loading && documents.length === 0) {
         return (
             <>
                 <Item.Skeleton level={level} />
-                {level === 0 && (
-                    <>
-                        <Item.Skeleton level={level} />
-                    </>
-                )}
+                {level === 0 && <Item.Skeleton level={level} />}
             </>
         );
     }
@@ -74,26 +85,23 @@ export const DocumentList = ({
     return (
         <div className="py-2">
             <p
-                style={{
-                    paddingLeft: level ? `${level * 12 + 25}px` : undefined,
-                }}
+                style={{ paddingLeft: level ? `${level * 12 + 25}px` : undefined }}
                 className={cn(
                     "hidden text-sm font-medium text-muted-foreground/80",
-                    // documents가 비어있을 때 "하위 페이지 없음" 표시
-                    documents.length === 0 && level !== 0 && "block",
+                    filteredDocuments.length === 0 && level !== 0 && "block",
                     level === 0 && "hidden"
                 )}
             >
                 하위 페이지 없음
             </p>
-            {documents.length === 0 && level === 0 && (
-                <div className="items-center justify-center px-4 opacity-50">
-                    <div className="text-sm font-medium text-muted-foreground">
-                        아직 생성된 문서가 없습니다.
-                    </div>
+
+            {filteredDocuments.length === 0 && level === 0 && (
+                <div className="px-4 opacity-50 text-sm font-medium text-muted-foreground">
+                    아직 생성된 문서가 없습니다.
                 </div>
             )}
-            {documents.map((document) => (
+
+            {filteredDocuments.map((document) => (
                 <div key={document.id}>
                     <Item
                         id={document.id}
@@ -106,7 +114,6 @@ export const DocumentList = ({
                         onExpand={() => onExpand(document.id)}
                         expanded={expanded[document.id]}
                     />
-                    {/* 재귀 호출: 확장된 상태라면 자기 자신을 다시 렌더링 */}
                     {expanded[document.id] && (
                         <DocumentList
                             parentDocumentId={document.id}

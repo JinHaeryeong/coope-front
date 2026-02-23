@@ -26,11 +26,13 @@ const NoticeWritePage = lazy(() => import('./pages/Marketing/notices/noticeWrite
 const NoticeEditPage = lazy(() => import('./pages/Marketing/notices/noticeEditPage'));
 
 
-const DocumentsPage = lazy(() => import('./pages/Workspace/documentsPage'));
 const FriendsPage = lazy(() => import('./pages/Workspace/Friend/friendsPage'));
 const InvitePage = lazy(() => import('./pages/Workspace/Invite/invitePage'));
-
+const DocumentsWelcomePage = lazy(() => import('./pages/Workspace/Document/documentsWelcomePage'))
 import CallModal from './components/Call/CallModal';
+import DocumentsPage from './pages/Workspace/Document/DocumentPage';
+
+
 
 function App() {
 
@@ -124,7 +126,7 @@ function App() {
 
               <Route path="/workspace/:workspaceCode" element={<MainLayout />}>
                 {/* /workspace/abc 접속 시 (index) */}
-                <Route index element={<DocumentsPage />} />
+                <Route index element={<DocumentsWelcomePage />} />
 
                 {/* /workspace/abc/documents/123 접속 시 */}
                 <Route path="documents/:documentId" element={<DocumentsPage />} />
