@@ -1,6 +1,5 @@
 import type { RoomType } from "@/components/provider/FriendProvider";
 import axiosAuthInstance from "./axiosAuthInstance";
-import type { PageResponse } from "@/types/common";
 
 
 export interface Slice<T> {
@@ -34,6 +33,16 @@ export interface ChatListResponse {
     unreadCount: number; // 안 읽은 메시지 수 (나중에 구현!)
 }
 
+export interface SliceResponse<T> {
+    content: T[];
+    last: boolean;
+    size: number;
+    number: number;
+    first: boolean;
+    numberOfElements: number;
+    empty: boolean;
+}
+
 export const apiCreateOrGet1on1Room = async (friendId: number) => {
     const response = await axiosAuthInstance.post<ChatRoomResponse>(`/chat/room/individual`, null, {
         params: { friendId }
@@ -64,7 +73,7 @@ export const apiGetChatMessages = async (
 };
 
 export const apiGetMyChatRooms = async (page: number = 0, size: number = 10) => {
-    const response = await axiosAuthInstance.get<PageResponse<ChatListResponse>>(`/chat/rooms`, {
+    const response = await axiosAuthInstance.get<SliceResponse<ChatListResponse>>(`/chat/rooms`, {
         params: { page, size }
     });
     return response.data;

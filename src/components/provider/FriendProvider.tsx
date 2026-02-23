@@ -1,5 +1,5 @@
 
-import { createContext, useState, useRef, type ReactNode, useEffect, useContext } from "react";
+import { createContext, useState, useRef, type ReactNode, useEffect, useContext, useCallback } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { apiGetChatMessages, apiCreateOrGet1on1Room, apiGetMyChatRooms, apiUploadChatFile } from "@/api/chatApi";
 import type { FriendResponse } from "@/api/friendApi";
@@ -35,6 +35,7 @@ interface FriendContextType {
     isModalOpen: boolean;
     setIsModalOpen: (value: boolean) => void;
     chatRooms: ChatListResponse[];
+    setChatRooms: React.Dispatch<React.SetStateAction<ChatListResponse[]>>;
     fetchChatRooms: (isMore?: boolean) => Promise<void>;
     hasMoreRooms: boolean;
     fetchMoreMessages: () => Promise<void>;
@@ -44,7 +45,7 @@ interface FriendContextType {
 
 const FriendContext = createContext<FriendContextType | null>(null);
 
-export const FriendProvider = ({ children, initialFriends }: { children: ReactNode; initialFriends: FriendResponse[] }) => {
+export const FriendProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useAuthStore();
     const { stompClient, isConnected } = useSocket();
     const [selectedRoom, setSelectedRoom] = useState<SelectedRoom | null>(null);
@@ -52,11 +53,9 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
     const [messageInput, setMessageInput] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [chatRooms, setChatRooms] = useState<ChatListResponse[]>([]);
-    const [page, setPage] = useState(0);
     const [hasMoreRooms, setHasMoreRooms] = useState(true);
-    const [friendsList, setFriendsList] = useState<FriendResponse[]>(initialFriends);
-    const { fetchFriends, setIsChatActive } = useFriendStore();
-    const storeFriends = useFriendStore((state) => state.friends);
+    const friendsList = useFriendStore(state => state.friends);
+    const { fetchFriends: fetchFriendsFromStore, setIsChatActive } = useFriendStore();
 
     const bottomRef = useRef<HTMLDivElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -64,17 +63,74 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const isInitialLoadRef = useRef(true);
+    const pageRef = useRef(0);
 
-    useEffect(() => {
-        setFriendsList(storeFriends);
-    }, [storeFriends]);
+    const fetchFriends = useCallback(async (silent = false) => {
+        await fetchFriendsFromStore(silent);
+    }, [fetchFriendsFromStore]);
 
-    useEffect(() => {
-        if (user && isConnected) {
-            fetchChatRooms();
-            fetchFriends(true);
+
+    const fetchChatRooms = useCallback(async (isMore = false) => {
+        try {
+            const targetPage = isMore ? pageRef.current + 1 : 0;
+            const data = await apiGetMyChatRooms(targetPage, 10);
+            const { content, last: isLast } = data;
+
+            if (isMore) {
+                setChatRooms(prev => {
+                    const newRooms = content.filter(
+                        room => !prev.some(r => r.roomId === room.roomId)
+                    );
+                    return [...prev, ...newRooms];
+                });
+                pageRef.current = targetPage;
+            } else {
+                setChatRooms(content);
+                pageRef.current = 0;
+            }
+            setHasMoreRooms(!isLast);
+        } catch (error) {
+            console.error("채팅방 목록 로드 실패:", error);
         }
-    }, [user, isConnected]);
+    }, []);
+    useEffect(() => {
+        if (!user) return;
+
+        fetchChatRooms();
+        fetchFriends(true);
+    }, [user, fetchChatRooms, fetchFriends]);
+
+    useEffect(() => {
+        if (!isConnected || !stompClient || !user) return;
+
+        const globalSub = stompClient.subscribe(
+            `/user/queue/chat/updates`,
+            (message) => {
+                const updatedRoomInfo = JSON.parse(message.body);
+
+                setChatRooms(prev => {
+                    const roomExists = prev.find(r => r.roomId === updatedRoomInfo.roomId);
+                    const others = prev.filter(r => r.roomId !== updatedRoomInfo.roomId);
+
+                    if (roomExists) {
+                        return [
+                            {
+                                ...roomExists,
+                                lastMessage: updatedRoomInfo.lastMessage,
+                                lastMessageTime: updatedRoomInfo.lastMessageTime
+                            },
+                            ...others
+                        ];
+                    } else {
+                        fetchChatRooms(false);
+                        return prev;
+                    }
+                });
+            }
+        );
+
+        return () => globalSub.unsubscribe();
+    }, [isConnected, stompClient, user, fetchChatRooms]);
 
     // 방이 선택될 때마다 실행되는 통합 로직
     useEffect(() => {
@@ -117,8 +173,25 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
 
                         setMessages((prev) => {
                             const isAlreadyExists = prev.some((msg) => msg.id === newMessage.id);
-                            if (isAlreadyExists) return prev; // 이미 있으면 추가 안 함
+                            if (isAlreadyExists) return prev;
                             return [...prev, newMessage];
+                        });
+
+                        setChatRooms(prev => {
+                            const updatedRoom = prev.find(r => r.roomId === newMessage.roomId);
+
+                            if (!updatedRoom) return prev;
+
+                            const others = prev.filter(r => r.roomId !== newMessage.roomId);
+
+                            return [
+                                {
+                                    ...updatedRoom,
+                                    lastMessage: newMessage.content,
+                                    lastMessageTime: newMessage.createdAt,
+                                },
+                                ...others
+                            ];
                         });
                     }
                 );
@@ -165,6 +238,8 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         if (!user) return;
         try {
             const roomData = await apiCreateOrGet1on1Room(friend.friendId);
+
+            await fetchChatRooms(false);
             setSelectedRoom({
                 roomId: roomData.roomId,
                 title: roomData.title,
@@ -177,27 +252,6 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         }
     };
 
-    const fetchChatRooms = async (isMore = false) => {
-        try {
-            const currentPage = isMore ? page + 1 : 0;
-            const data = await apiGetMyChatRooms(currentPage, 10);
-
-            const { content, last: isLast } = data;
-
-            if (isMore) {
-                setChatRooms(prev => [...prev, ...content]);
-                setPage(currentPage);
-            } else {
-                setChatRooms(content);
-                setPage(0);
-            }
-
-            setHasMoreRooms(!isLast);
-        } catch (error) {
-            console.error("채팅방 목록 로드 실패:", error);
-            toast.error("채팅방 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
-        }
-    };
 
     // 메시지 전송 (publish 사용)
     const handleSendMessage = async () => {
@@ -262,6 +316,7 @@ export const FriendProvider = ({ children, initialFriends }: { children: ReactNo
         isModalOpen,
         setIsModalOpen,
         chatRooms,
+        setChatRooms,
         fetchChatRooms,
         hasMoreRooms,
         fetchMoreMessages,

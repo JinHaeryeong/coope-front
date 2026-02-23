@@ -35,3 +35,9 @@ export const apiDeleteWorkspace = async (inviteCode: string): Promise<void> => {
     await axiosAuthInstance.delete(`/workspaces/${inviteCode}`);
 };
 
+// 워크스페이스 참여 요청 추가
+export const apiJoinWorkspace = async (inviteCode: string): Promise<{ status: string; workspaceId: number }> => {
+    const response = await axiosAuthInstance.post('/workspaces/join', { inviteCode });
+    return response.data;
+};
+

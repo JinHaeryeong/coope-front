@@ -27,7 +27,8 @@ const NoticeEditPage = lazy(() => import('./pages/Marketing/notices/noticeEditPa
 
 
 const DocumentsPage = lazy(() => import('./pages/Workspace/documentsPage'));
-const FriendsPage = lazy(() => import('./pages/Workspace/Friend/FriendsPage'));
+const FriendsPage = lazy(() => import('./pages/Workspace/Friend/friendsPage'));
+const InvitePage = lazy(() => import('./pages/Workspace/Invite/invitePage'));
 
 import CallModal from './components/Call/CallModal';
 
@@ -103,6 +104,7 @@ function App() {
 
             <Routes>
               <Route path="/login-success" element={<LoginSuccess />} />
+              <Route path="/invite/:workspaceCode" element={<InvitePage />} />
 
               <Route element={<MarketingLayout />}>
                 <Route path="/" element={<MarketingPage />} />
