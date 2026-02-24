@@ -58,7 +58,7 @@ const FriendsPage = () => {
     }
 
     return (
-        <div className="h-full bg-background overflow-hidden">
+        <div className="h-full bg-background overflow-hidden border-t dark:border-gray-800">
             <FriendProvider>
                 <FriendPageContent />
             </FriendProvider>

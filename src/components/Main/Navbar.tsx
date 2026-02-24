@@ -46,7 +46,7 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
     // 로딩 중일 때의 UI
     if (isLoading) {
         return (
-            <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center justify-between">
+            <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-3 w-full flex items-center justify-between">
                 <div className="flex items-center gap-x-4 w-full">
                     {isCollapsed && (
                         <MenuIcon
@@ -68,7 +68,7 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
 
     return (
         <>
-            <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full
+            <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-3 w-full
                 flex gap-x-4 items-center pointer-events-auto">
                 {isCollapsed && (
                     <MenuIcon
@@ -79,11 +79,6 @@ export function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
                 )}
                 <div className="flex justify-between items-center w-full">
                     <Title initialData={document} />
-
-                    <div className="flex gap-x-2 items-center">
-                        {/* Menu 컴포넌트(삭제, 이동 등)가 완성되면 주석 해제 */}
-                        {/* <Menu documentId={document.id} /> */}
-                    </div>
                 </div>
             </nav>
 
