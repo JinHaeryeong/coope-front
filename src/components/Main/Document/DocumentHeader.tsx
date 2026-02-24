@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { apiUpdateDocument, type DocumentResponse } from "@/api/documentApi";
 import { useDocumentStore } from "@/store/useDocumentStore";
-import axiosAuthInstance from "@/api/axiosAuthInstance";
 import { toast } from "sonner";
 import { apiFileUpload } from "@/api/fileApi";
 
