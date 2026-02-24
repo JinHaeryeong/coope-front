@@ -5,8 +5,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 export const useWorkspaceSocket = () => {
     const { stompClient, isConnected } = useSocket();
-    const { fetchWorkspaces } = useWorkspaceStore();
-    const { user } = useAuthStore();
+    const fetchWorkspaces = useWorkspaceStore((s) => s.fetchWorkspaces);
+    const user = useAuthStore((s) => s.user);
 
     useEffect(() => {
         if (!isConnected || !stompClient || !user?.id) return;
