@@ -81,7 +81,7 @@ const DocumentsPage = () => {
                 isViewer={!isEditable}
             />
 
-            <div className="max-w-4xl mx-auto w-full px-0 md:px-14">
+            <div className="max-w-4xl mx-auto w-full px-0 md:px-14 pb-72">
                 <Editor
                     key={documentId}
                     onChange={onEditorChange}

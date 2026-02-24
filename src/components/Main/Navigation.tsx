@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
 import { useInvite } from "@/hooks/useInvite";
-import { useSidebarStore } from "@/store/useSidebarStore"; // 추가
+import { useSidebarStore } from "@/store/useSidebarStore";
 
 import { Item } from "./Item";
 import { TrashBox } from "./TrashBox";
@@ -146,7 +146,7 @@ export const Navigation = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-black overflow-y-auto relative flex flex-col md:rounded-r-xl",
+          "group/sidebar h-full bg-black relative flex flex-col md:rounded-r-xl",
           isCollapsed ? "w-0" : "w-full md:w-60",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "fixed inset-y-0 left-0 shadow-2xl z-[99]"
@@ -156,19 +156,10 @@ export const Navigation = () => {
           "w-full h-full flex flex-col transition-opacity duration-300",
           isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
         )}>
-          <div className="p-4 flex items-center justify-between">
-            <img
-              src="/logo-dark.png"
-              alt="Logo"
-              className="w-44 h-auto cursor-pointer hover:opacity-80 transition"
-              onClick={() => navigate("/")}
-            />
-            <div
-              role="button"
-              onClick={toggleSidebar}
-              className="h-6 w-6 text-muted-foreground rounded-sm opacity-40 group-hover/sidebar:opacity-100 transition cursor-pointer"
-            >
-              <ChevronsLeft className="h-6 w-6" />
+          <div className="flex-none p-4 flex items-center justify-between">
+            <img src="/logo-dark.png" alt="Logo" className="w-44 h-auto cursor-pointer" onClick={() => navigate("/")} />
+            <div role="button" onClick={toggleSidebar} className="h-6 w-6 opacity-40 hover:opacity-100 transition">
+              <ChevronsLeft className="h-6 w-6 text-muted-foreground" />
             </div>
           </div>
           <div className={cn(isMobile && "px-2 space-y-2")}>
@@ -180,23 +171,24 @@ export const Navigation = () => {
             {settings.isOpen && (
               <SettingsModal workspaceCode={workspaceCode!} initialName={currentWorkspace?.name} />
             )}
-            <Item onClick={handleCreate} label="새 노트" icon={PlusCircle} />
-          </div>
-          <DocumentList onItemClick={() => isMobile && toggleSidebar()} />
-          <div className={cn("text-white", isMobile && "px-2 space-y-2")}>
+
             <Item
               icon={User}
               label="친구"
               onClick={() => handleAction(() => navigate(`/workspace/${workspaceCode}/friends`))}
             />
             <Popover open={isTrashOpen} onOpenChange={setIsTrashOpen}>
-              <PopoverTrigger className="w-full mt-4">
+              <PopoverTrigger className="w-full">
                 <Item label="휴지통" icon={Trash} />
               </PopoverTrigger>
               <PopoverContent className="p-0 w-72" side={isMobile ? "bottom" : "right"}>
                 <TrashBox onClose={() => setIsTrashOpen(false)} />
               </PopoverContent>
             </Popover>
+            <Item onClick={handleCreate} label="새 노트" icon={PlusCircle} />
+          </div>
+          <div className="flex-1 overflow-y-auto mt-4">
+            <DocumentList />
           </div>
           {!isMobile && (
             <div

@@ -15,6 +15,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { Navbar } from '@/components/Main/Navbar';
 import { useDocumentSocket } from '@/hooks/useDocumentSocket';
 import { useDocumentStore } from '@/store/useDocumentStore';
+import { useWorkspaceSocket } from '@/hooks/useWorkspaceSocket';
 
 export const MainLayout = () => {
   const { isLoggedIn, accessToken } = useAuthStore();
@@ -24,6 +25,7 @@ export const MainLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  useWorkspaceSocket();
 
   useEffect(() => {
     if (workspaceCode) {
