@@ -187,8 +187,8 @@ export const Navigation = () => {
             </Popover>
             <Item onClick={handleCreate} label="새 노트" icon={PlusCircle} />
           </div>
-          <div className="flex-1 overflow-y-auto mt-4">
-            <DocumentList />
+          <div className="flex-1 min-h-0 overflow-y-auto mt-4">
+            <DocumentList onItemClick={() => isMobile && toggleSidebar()} />
           </div>
           {!isMobile && (
             <div
