@@ -12,6 +12,8 @@ import {
 
 import { ko } from "@blocknote/core/locales";
 import { useEffect } from "react";
+import { apiFileUpload } from "@/api/fileApi";
+import { toast } from "sonner";
 
 interface EditorProps {
     onChange: (value: string) => void;
@@ -19,7 +21,7 @@ interface EditorProps {
     editable?: boolean;
 }
 
-const { video, audio, ...restBlockSpecs } = defaultBlockSpecs;
+const { video, audio, file, ...restBlockSpecs } = defaultBlockSpecs;
 
 const schema = BlockNoteSchema.create({
     blockSpecs: {
@@ -28,12 +30,36 @@ const schema = BlockNoteSchema.create({
     },
 });
 
+const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+
 const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
     const { theme } = useTheme();
+
+    const handleUpload = async (file: File) => {
+
+        if (!allowedTypes.includes(file.type)) {
+            toast.error("허용되지 않은 파일 형식입니다.");
+            throw new Error("Invalid file type");
+        }
+        const MAX_SIZE = 10 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            toast.error("에디터 파일은 최대 10MB까지만 업로드 가능합니다.");
+            throw new Error("File too large");
+        }
+        try {
+            const data = await apiFileUpload(file, "DOCUMENT");
+            return data.fileUrl;
+        } catch (error) {
+            console.error("에디터 파일 업로드 실패:", error);
+            throw error;
+        }
+    };
 
     const editor = useCreateBlockNote({
         schema,
         dictionary: ko,
+        uploadFile: handleUpload,
         initialContent: initialContent
             ? JSON.parse(initialContent)
             : undefined,

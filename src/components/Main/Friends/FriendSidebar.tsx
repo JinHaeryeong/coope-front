@@ -79,7 +79,7 @@ export const FriendSidebar = () => {
     };
 
     return (
-        <div className="h-full p-3 pt-8 relative flex flex-col bg-card">
+        <div className="h-full p-3 relative flex flex-col bg-card">
             <div className="flex gap-2 mb-6 p-1 bg-muted rounded-lg">
                 <Button variant={activeTab === "FRIENDS" ? "default" : "ghost"} className="flex-1 text-xs" size="sm" onClick={() => handleTabChange("FRIENDS")}>
                     <Users className="w-4 h-4 mr-2" /> 친구

@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { apiUpdateDocument, type DocumentResponse } from "@/api/documentApi";
 import { useDocumentStore } from "@/store/useDocumentStore";
-import axiosAuthInstance from "@/api/axiosAuthInstance";
 import { toast } from "sonner";
+import { apiFileUpload } from "@/api/fileApi";
 
 interface DocumentHeaderProps {
     initialData: DocumentResponse;
@@ -49,11 +49,8 @@ export const DocumentHeader = ({ initialData, workspaceCode, isViewer }: Documen
             const formData = new FormData();
             formData.append("file", file);
 
-            const uploadRes = await axiosAuthInstance.post("/files/upload/COVER", formData, {
-                headers: { "Content-Type": "multipart/form-data" }
-            });
-
-            const newImageUrl = uploadRes.data.fileUrl;
+            const data = await apiFileUpload(file, "COVER");
+            const newImageUrl = data.fileUrl;
 
             await apiUpdateDocument(initialData.id, {
                 coverImage: newImageUrl,
