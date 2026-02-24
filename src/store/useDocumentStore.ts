@@ -9,6 +9,7 @@ interface DocumentStore {
     addDocument: (newDoc: DocumentResponse) => void;
     upsertDocument: (newDoc: DocumentResponse) => void;
     removeDocument: (docId: number) => void;
+    clearDocuments: () => void;
 }
 
 export const useDocumentStore = create<DocumentStore>((set) => ({
@@ -64,4 +65,5 @@ export const useDocumentStore = create<DocumentStore>((set) => ({
     removeDocument: (docId: number) => set((state) => ({
         documents: state.documents.filter((d) => d.id !== docId)
     })),
+    clearDocuments: () => set({ documents: [] }),
 }));

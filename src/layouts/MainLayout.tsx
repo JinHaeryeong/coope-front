@@ -21,7 +21,7 @@ export const MainLayout = () => {
   const { isLoggedIn, accessToken } = useAuthStore();
   const { isCollapsed, isResetting, toggle } = useSidebarStore();
   const { workspaceCode, documentId } = useParams<{ workspaceCode: string; documentId: string }>();
-  const { setDocuments } = useDocumentStore();
+  const { clearDocuments } = useDocumentStore();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -29,9 +29,9 @@ export const MainLayout = () => {
 
   useEffect(() => {
     if (workspaceCode) {
-      setDocuments([]);
+      clearDocuments();
     }
-  }, [workspaceCode, setDocuments]);
+  }, [workspaceCode, clearDocuments]);
 
   useDocumentSocket(workspaceCode);
   const isMobile = useMediaQuery("(max-width:768px)");
