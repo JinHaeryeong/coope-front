@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { apiCreateDocument } from "@/api/documentApi";
 import { useTrashStore } from "@/store/useTrashStore";
+import { useDocumentStore } from "@/store/useDocumentStore";
 
-function DocumentsPage() {
+function DocumentsWelcomePage() {
     const navigate = useNavigate();
     const params = useParams<{ workspaceCode: string }>();
     const workspaceCode = params.workspaceCode;
@@ -15,6 +16,8 @@ function DocumentsPage() {
     const user = useAuthStore((state) => state.user);
 
     const { notifyTrashUpdate } = useTrashStore();
+
+    const addDocumentToStore = useDocumentStore((state) => state.addDocument);
     // 워크스페이스 코드가 없으면 아무것도 렌더링하지 않음 (보통 가드에서 걸러지겠지만 안전용)
     if (!workspaceCode) {
         return null;
@@ -22,7 +25,6 @@ function DocumentsPage() {
 
     const onCreate = async () => {
         try {
-            // Axios 기반의 문서 생성 API 호출
             const promise = apiCreateDocument({
                 title: "제목 없음",
                 workspaceCode: workspaceCode,
@@ -35,6 +37,8 @@ function DocumentsPage() {
             });
 
             const newDoc = await promise;
+
+            addDocumentToStore(newDoc);
 
             notifyTrashUpdate();
 
@@ -74,4 +78,4 @@ function DocumentsPage() {
     );
 }
 
-export default DocumentsPage;
+export default DocumentsWelcomePage;

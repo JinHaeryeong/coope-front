@@ -1,11 +1,9 @@
 import { create } from 'zustand';
 import { apiGetMyWorkspaces, type WorkspaceResponse } from "@/api/workspaceApi";
 
-// 스토어의 상태와 액션에 대한 타입 정의
 interface WorkspaceState {
     workspaces: WorkspaceResponse[];
     isLoading: boolean;
-    // 액션들
     fetchWorkspaces: () => Promise<void>;
     addWorkspace: (workspace: WorkspaceResponse) => void;
     updateWorkspaceName: (inviteCode: string, newName: string) => void;

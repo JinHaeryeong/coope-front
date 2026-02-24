@@ -29,7 +29,7 @@ export const ScrollToTop = () => {
     return (
         <>
             {showButton &&
-                <Button type="button" className="fixed bottom-20 z-99 right-10 rounded-full" onClick={scrollToTop}><ArrowUp /></Button>
+                <Button type="button" className="fixed bottom-20 z-[99] right-10 rounded-full" onClick={scrollToTop}><ArrowUp /></Button>
             }
         </>
     );

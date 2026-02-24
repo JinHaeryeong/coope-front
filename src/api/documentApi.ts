@@ -7,9 +7,12 @@ export interface DocumentResponse {
     title: string;
     content?: string;
     icon?: string;
+    coverImage?: string;
     parentId?: number;
     hasChildren: boolean;
     archived: boolean;
+    published: boolean;
+    lastEditedBy: string;
     createdAt: string;
 }
 
@@ -19,6 +22,7 @@ export interface DocumentCreateRequest {
     workspaceCode: string;
     parentId?: number;
     icon?: string;
+    coverImage?: string;
     content?: string;
 }
 
@@ -95,4 +99,12 @@ export const apiHardDeleteDocument = async (
     documentId: number
 ): Promise<void> => {
     await axiosAuthInstance.delete(`/documents/${documentId}`);
+};
+
+export const apiUpdateDocument = async (
+    documentId: number,
+    request: Partial<DocumentCreateRequest>
+): Promise<DocumentResponse> => {
+    const response = await axiosAuthInstance.patch(`/documents/${documentId}`, request);
+    return response.data;
 };

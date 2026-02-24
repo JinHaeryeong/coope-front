@@ -25,16 +25,16 @@ import { Button } from "@/components/ui/button";
 import { apiCreateWorkspace } from "@/api/workspaceApi";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 
+interface UserItemProps {
+    onOpenDialog: (callback: () => void) => void;
+}
 
-
-
-function UserItem() {
+function UserItem({ onOpenDialog }: UserItemProps) {
     const { user, signOut } = useAuthStore();
     const navigate = useNavigate();
     const { workspaceCode } = useParams<{ workspaceCode: string }>();
 
     const { workspaces, fetchWorkspaces, addWorkspace } = useWorkspaceStore();
-
     const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,6 +47,10 @@ function UserItem() {
         }
     }, [user, fetchWorkspaces]);
 
+    const handleWorkspaceCreateClick = () => {
+        onOpenDialog(() => setIsDialogOpen(true));
+    };
+
     const handleCreate = async () => {
         if (!name.trim()) {
             toast.error("이름을 입력해주세요.");
@@ -56,12 +60,12 @@ function UserItem() {
         setIsLoading(true);
         try {
             const newWorkspace = await apiCreateWorkspace(name);
-
             addWorkspace(newWorkspace);
 
             setIsDialogOpen(false);
             setName("");
             toast.success("워크스페이스가 생성되었습니다.");
+
             navigate(`/workspace/${newWorkspace.inviteCode}`);
         } catch (err) {
             toast.error("워크스페이스 생성 실패");
@@ -69,9 +73,14 @@ function UserItem() {
             setIsLoading(false);
         }
     };
+
     const onSignOut = () => {
         signOut();
         navigate("/");
+    };
+
+    const handleWorkspaceSelect = (inviteCode: string) => {
+        navigate(`/workspace/${inviteCode}`);
     };
 
     return (
@@ -80,7 +89,7 @@ function UserItem() {
                 <DropdownMenuTrigger asChild>
                     <div
                         role="button"
-                        className="flex items-center text-sm p-3 w-full transition justify-between"
+                        className="flex items-center text-sm p-3 w-full transition justify-between hover:bg-white/5 rounded-lg"
                     >
                         <div className="flex items-center md:max-w-37.5 gap-x-2">
                             <Avatar className="h-5 w-5 rounded-full">
@@ -102,7 +111,7 @@ function UserItem() {
                     </div>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent className="w-80" align="start" alignOffset={11} forceMount>
+                <DropdownMenuContent className="w-80 z-[1001]" align="start" alignOffset={11} forceMount>
                     <div className="flex flex-col space-y-4 p-2">
                         <p className="text-xs font-medium leading-none text-muted-foreground">
                             {user?.email}
@@ -124,12 +133,11 @@ function UserItem() {
 
                     <DropdownMenuSeparator />
 
-                    {/* 워크스페이스 리스트 영역 */}
                     <div className="max-h-50 overflow-y-auto">
                         {workspaces.map((workspace) => (
                             <DropdownMenuItem
                                 key={workspace.id}
-                                onClick={() => navigate(`/workspace/${workspace.inviteCode}`)}
+                                onClick={() => handleWorkspaceSelect(workspace.inviteCode)}
                                 className="cursor-pointer flex items-center justify-between"
                             >
                                 <span className="truncate">{workspace.name}</span>
@@ -142,9 +150,8 @@ function UserItem() {
 
                     <DropdownMenuSeparator />
 
-                    {/* 워크스페이스 생성 버튼 */}
                     <DropdownMenuItem
-                        onClick={() => setIsDialogOpen(true)}
+                        onClick={handleWorkspaceCreateClick}
                         className="cursor-pointer font-medium text-primary hover:bg-primary/10"
                     >
                         <Plus className="h-4 w-4 mr-2 text-primary" />
@@ -153,7 +160,6 @@ function UserItem() {
 
                     <DropdownMenuSeparator />
 
-                    {/* 로그아웃 버튼 */}
                     <DropdownMenuItem
                         className="w-full cursor-pointer text-destructive"
                         onClick={onSignOut}
@@ -164,9 +170,8 @@ function UserItem() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* 워크스페이스 생성 Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
+                <DialogContent className="z-[999]">
                     <DialogHeader>
                         <DialogTitle>새 워크스페이스 만들기</DialogTitle>
                     </DialogHeader>
