@@ -56,7 +56,7 @@ export const Navbar = () => {
             "z-50 bg-background dark:bg-[#1F1F1F] sticky top-0 flex items-center w-full",
             scrolled && "border-b shadow-sm"
         )}>
-            <div className="relative z-60 flex items-center justify-between w-full p-2 md:p-6 bg-background dark:bg-[#1F1F1F]">
+            <div className="relative z-[60] flex items-center justify-between w-full p-2 md:p-6 bg-background dark:bg-[#1F1F1F]">
                 {/* Link의 href를 to로 변경 */}
                 <Link to="/"><Logo /></Link>
 

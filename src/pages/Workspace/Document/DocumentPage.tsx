@@ -14,7 +14,7 @@ const DocumentsPage = () => {
     const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
 
     const documentData = documents.find(d => d.id === Number(documentId));
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -24,7 +24,9 @@ const DocumentsPage = () => {
     useEffect(() => {
         const fetchDoc = async () => {
             if (!documentId || !workspaceCode) return;
-            setIsLoading(true);
+            if (!documentData || documentData.content === undefined) {
+                setIsLoading(true);
+            }
             try {
                 const data = await apiGetDocumentById(Number(documentId), workspaceCode);
                 upsertDocument(data);
@@ -39,7 +41,7 @@ const DocumentsPage = () => {
         return () => {
             if (timerRef.current) clearTimeout(timerRef.current);
         };
-    }, [documentId, workspaceCode, upsertDocument]);
+    }, [documentId, workspaceCode]);
 
     const onEditorChange = (content: string) => {
         if (!isEditable) return;
@@ -63,8 +65,12 @@ const DocumentsPage = () => {
         }, 1500);
     };
 
-    if (isLoading) return <Spinner />;
-    if (!documentData) return null;
+    if (isLoading && !documentData) {
+        return <Spinner />;
+    }
+    if (!documentData) {
+        return <div className="p-20 text-center">문서를 찾을 수 없습니다.</div>;
+    }
 
     return (
         <div className="flex flex-col min-h-full pb-40">

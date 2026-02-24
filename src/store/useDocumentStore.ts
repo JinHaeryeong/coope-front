@@ -13,39 +13,51 @@ interface DocumentStore {
 
 export const useDocumentStore = create<DocumentStore>((set) => ({
     documents: [],
-    setDocuments: (documents) => set({ documents }),
+
+    setDocuments: (newDocs) => set((state) => {
+        const merged = [...state.documents];
+
+        newDocs.forEach(newDoc => {
+            const index = merged.findIndex(d => d.id === newDoc.id);
+            if (index !== -1) {
+                merged[index] = { ...merged[index], ...newDoc };
+            } else {
+                merged.push(newDoc);
+            }
+        });
+
+        merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+        return { documents: merged };
+    }),
+
     updateDocumentTitle: (id, title) => set((state) => ({
         documents: state.documents.map((doc) =>
             doc.id === id ? { ...doc, title } : doc
         )
     })),
+
     addDocument: (newDoc) => set((state) => {
         const exists = state.documents.find((d) => d.id === newDoc.id);
         if (exists) return state;
 
-        const nextDocs = [...state.documents, newDoc];
+        const nextDocs = [newDoc, ...state.documents];
         nextDocs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         return { documents: nextDocs };
     }),
-    upsertDocument: (newDoc: DocumentResponse) => set((state) => {
-        const exists = state.documents.find((d) => d.id === newDoc.id);
-        let nextDocs;
 
-        if (exists) {
-            nextDocs = state.documents.map((d) =>
-                d.id === newDoc.id ? { ...d, ...newDoc } : d
-            );
-        } else {
-            nextDocs = [...state.documents, newDoc];
+    upsertDocument: (newDoc) => set((state) => {
+        const index = state.documents.findIndex((d) => d.id === newDoc.id);
+
+        if (index !== -1) {
+            const nextDocs = [...state.documents];
+            nextDocs[index] = { ...nextDocs[index], ...newDoc };
+            return { documents: nextDocs };
         }
 
-        nextDocs.sort((a, b) => {
-            const dateA = new Date(a.createdAt).getTime();
-            const dateB = new Date(b.createdAt).getTime();
-            return dateB - dateA;
-        });
-
+        const nextDocs = [...state.documents, newDoc];
+        nextDocs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         return { documents: nextDocs };
     }),
 

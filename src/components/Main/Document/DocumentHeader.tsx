@@ -15,6 +15,7 @@ interface DocumentHeaderProps {
 }
 
 export const DocumentHeader = ({ initialData, workspaceCode, isViewer }: DocumentHeaderProps) => {
+    const [isDirty, setIsDirty] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -22,7 +23,7 @@ export const DocumentHeader = ({ initialData, workspaceCode, isViewer }: Documen
 
 
     useEffect(() => {
-        if (isViewer) return;
+        if (isViewer || !isDirty) return;
 
         const timer = setTimeout(() => {
             if (!initialData.title.trim()) return;
@@ -30,11 +31,14 @@ export const DocumentHeader = ({ initialData, workspaceCode, isViewer }: Documen
             apiUpdateDocument(initialData.id, {
                 title: initialData.title,
                 workspaceCode
-            }).then(() => console.log("제목 서버 저장 완료"));
+            }).then(() => {
+                console.log("제목 서버 저장 완료");
+                setIsDirty(false);
+            });
         }, 1500);
 
         return () => clearTimeout(timer);
-    }, [initialData.title, initialData.id, workspaceCode, isViewer]);
+    }, [initialData.title, initialData.id, workspaceCode, isViewer, isDirty]);
 
     const onCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -69,6 +73,7 @@ export const DocumentHeader = ({ initialData, workspaceCode, isViewer }: Documen
 
     const onTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newTitle = e.target.value;
+        setIsDirty(true);
         upsertDocument({ ...initialData, title: newTitle });
     };
 
@@ -124,6 +129,7 @@ export const DocumentHeader = ({ initialData, workspaceCode, isViewer }: Documen
                         placeholder="제목 없음"
                         onBlur={(e) => {
                             if (!e.target.value.trim()) {
+                                setIsDirty(true);
                                 upsertDocument({ ...initialData, title: "제목 없음" });
                             }
                         }}

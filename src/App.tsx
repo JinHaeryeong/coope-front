@@ -30,7 +30,7 @@ const FriendsPage = lazy(() => import('./pages/Workspace/Friend/friendsPage'));
 const InvitePage = lazy(() => import('./pages/Workspace/Invite/invitePage'));
 const DocumentsWelcomePage = lazy(() => import('./pages/Workspace/Document/documentsWelcomePage'))
 import CallModal from './components/Call/CallModal';
-import DocumentsPage from './pages/Workspace/Document/DocumentPage';
+const DocumentsPage = lazy(() => import('./pages/Workspace/Document/DocumentPage'));
 
 
 

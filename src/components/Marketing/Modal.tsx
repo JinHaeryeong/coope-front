@@ -12,7 +12,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-999">
+    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-[999]">
       <div className="bg-background dark:bg-[#1F1F1F] p-6 rounded-xl w-full max-w-md shadow-2xl border border-border">
         <div className="flex justify-between items-center mb-6 ">
           <h2 className="text-xl font-bold text-foreground">{title}</h2>

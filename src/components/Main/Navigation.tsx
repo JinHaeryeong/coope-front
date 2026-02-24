@@ -140,7 +140,7 @@ export const Navigation = () => {
       {!isCollapsed && isMobile && (
         <div
           onClick={toggleSidebar}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity z-99"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity z-[99]"
         />
       )}
       <aside
@@ -149,7 +149,7 @@ export const Navigation = () => {
           "group/sidebar h-full bg-black overflow-y-auto relative flex flex-col md:rounded-r-xl",
           isCollapsed ? "w-0" : "w-full md:w-60",
           isResetting && "transition-all ease-in-out duration-300",
-          isMobile && "fixed inset-y-0 left-0 shadow-2xl z-99"
+          isMobile && "fixed inset-y-0 left-0 shadow-2xl z-[99]"
         )}
       >
         <div className={cn(

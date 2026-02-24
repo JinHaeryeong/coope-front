@@ -111,7 +111,7 @@ function UserItem({ onOpenDialog }: UserItemProps) {
                     </div>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent className="w-80 z-1001" align="start" alignOffset={11} forceMount>
+                <DropdownMenuContent className="w-80 z-[1001]" align="start" alignOffset={11} forceMount>
                     <div className="flex flex-col space-y-4 p-2">
                         <p className="text-xs font-medium leading-none text-muted-foreground">
                             {user?.email}
@@ -171,7 +171,7 @@ function UserItem({ onOpenDialog }: UserItemProps) {
             </DropdownMenu>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="z-999">
+                <DialogContent className="z-[999]">
                     <DialogHeader>
                         <DialogTitle>새 워크스페이스 만들기</DialogTitle>
                     </DialogHeader>
