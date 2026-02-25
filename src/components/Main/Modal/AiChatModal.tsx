@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 import { useChatStore, type Message } from "@/store/useChatStore";
 import type { SyntaxHighlighterProps } from "react-syntax-highlighter";
 import { apiStreamChat } from "@/api/aiChatApi";
+import { useAiUsageStore } from "@/store/useAiUsageStore";
+import { toast } from "sonner";
 
 const style = vscDarkPlus as SyntaxHighlighterProps["style"];
 
@@ -36,6 +38,7 @@ export const AIChatModal = ({
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
+    const { chatRemaining, setUsage } = useAiUsageStore();
 
     const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -132,6 +135,10 @@ export const AIChatModal = ({
     const handleStop = () => {
         if (abortControllerRef.current) {
             abortControllerRef.current.abort();
+            const nextCount = Math.max(0, chatRemaining - 1);
+            setUsage("CHAT", nextCount);
+
+            toast.info("답변 생성을 중단했습니다. (횟수 1회 소모)");
         }
     };
 
@@ -200,23 +207,33 @@ export const AIChatModal = ({
                     <div ref={messagesEndRef} />
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-4 border-t flex gap-2">
-                    <Input
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="메시지를 입력하세요..."
-                        disabled={isLoading}
-                        className="flex-1 h-11"
-                    />
-                    {isLoading ? (
-                        <Button type="button" onClick={handleStop} variant="outline" className="shrink-0 h-11 border-rose-200 text-rose-600 hover:bg-rose-50 px-4">
-                            <Square className="h-4 w-4 fill-current" />
-                        </Button>
-                    ) : (
-                        <Button type="submit" disabled={!input.trim()} className="h-11 px-4">
-                            <Send className="h-4 w-4" />
-                        </Button>
-                    )}
+                <form onSubmit={handleSubmit} className="p-4 border-t flex flex-col gap-2">
+                    <div className="flex justify-end pr-1">
+                        <span className={cn(
+                            "text-[10px] font-medium px-2 py-0.5 rounded-full",
+                            chatRemaining > 1 ? "bg-slate-100 text-slate-500" : "bg-rose-100 text-rose-600 animate-pulse"
+                        )}>
+                            오늘 남은 질문: {chatRemaining}회
+                        </span>
+                    </div>
+                    <div className="flex gap-2">
+                        <Input
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            disabled={isLoading || chatRemaining <= 0}
+                            placeholder={chatRemaining <= 0 ? "오늘 사용량을 모두 소모했습니다." : "메시지를 입력하세요..."}
+                            className="flex-1 h-11"
+                        />
+                        {isLoading ? (
+                            <Button type="button" onClick={handleStop} variant="outline" className="shrink-0 h-11 border-rose-200 text-rose-600 hover:bg-rose-50 px-4">
+                                <Square className="h-4 w-4 fill-current" />
+                            </Button>
+                        ) : (
+                            <Button type="submit" disabled={!input.trim() || chatRemaining <= 0} className="h-11 px-4">
+                                <Send className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
                 </form>
             </DialogContent>
         </Dialog>

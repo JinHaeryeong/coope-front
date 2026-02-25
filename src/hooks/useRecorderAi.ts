@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { apiCreateDocument, apiGetSidebarDocuments } from "@/api/documentApi";
 import { useCallStore } from "@/store/useCallStore";
 import axiosAuthInstance from "@/api/axiosAuthInstance";
+import { useAiUsageStore } from "@/store/useAiUsageStore";
 
 const AI_PROCESS_TIMEOUT = 180000;
 
@@ -128,6 +129,16 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
                     headers: { "Content-Type": "multipart/form-data" },
                     timeout: AI_PROCESS_TIMEOUT
                 });
+
+                const remainingHeader = response.headers["x-ai-remaining"];
+
+                if (remainingHeader !== undefined && remainingHeader !== null) {
+                    const remainingValue = parseInt(String(remainingHeader), 10);
+
+                    if (!Number.isNaN(remainingValue)) {
+                        useAiUsageStore.getState().setUsage("STT", remainingValue);
+                    }
+                }
 
                 const result = response.data;
 

@@ -18,6 +18,7 @@ import { useDocumentStore } from '@/store/useDocumentStore';
 import { useWorkspaceSocket } from '@/hooks/useWorkspaceSocket';
 import { useWorkspaceStore } from '@/store/useWorkspaceStore';
 import { toast } from 'sonner';
+import { useFetchAiUsage } from '@/hooks/useFetchAiUsage';
 
 export const MainLayout = () => {
   const { isLoggedIn, accessToken } = useAuthStore();
@@ -28,6 +29,7 @@ export const MainLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const { fetchUsage } = useFetchAiUsage();
   useWorkspaceSocket();
 
   useEffect(() => {
@@ -35,6 +37,10 @@ export const MainLayout = () => {
       clearDocuments();
     }
   }, [workspaceCode, clearDocuments]);
+
+  useEffect(() => {
+    fetchUsage();
+  }, []);
 
   useDocumentSocket(workspaceCode);
   const isMobile = useMediaQuery("(max-width:768px)");
