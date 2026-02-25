@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { apiCreateDocument, apiGetSidebarDocuments } from "@/api/documentApi";
 import { useCallStore } from "@/store/useCallStore";
 import axiosAuthInstance from "@/api/axiosAuthInstance";
+import { useAiUsageStore } from "@/store/useAiUsageStore";
 
 const AI_PROCESS_TIMEOUT = 180000;
 
@@ -128,6 +129,13 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
                     headers: { "Content-Type": "multipart/form-data" },
                     timeout: AI_PROCESS_TIMEOUT
                 });
+
+                const remaining = response.headers["x-ai-remaining"];
+
+                if (remaining) {
+                    // Zustand 스토어 업데이트
+                    useAiUsageStore.getState().setUsage("STT", parseInt(remaining, 10));
+                }
 
                 const result = response.data;
 

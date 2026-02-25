@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useCallStore } from "@/store/useCallStore";
 import { useMediasoup, type RemoteStreamInfo } from "@/hooks/useMediasoup";
 import { useRecorderAi } from "@/hooks/useRecorderAi";
+import { useAiUsageStore } from "@/store/useAiUsageStore";
 
 /**
  * 상대방 영상 렌더링 컴포넌트
@@ -60,6 +61,7 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
     } = useMediasoup(roomId);
 
     const audioContextRef = useRef<AudioContext | null>(null);
+    const { sttRemaining } = useAiUsageStore();
 
     useEffect(() => {
         return () => {
@@ -149,7 +151,8 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
     const recordBtnStyles = useMemo(() => {
         if (processing) return { color: "bg-orange-500", label: "요약 중..." };
         if (recording) return { color: "bg-red-600 animate-pulse", label: "기록 중지" };
-        return { color: "bg-black", label: "AI 기록 시작" };
+        if (sttRemaining <= 0) return { color: "bg-neutral-800 text-neutral-500 cursor-not-allowed", label: "오늘 횟수 소진" };
+        return { color: "bg-black", label: `AI 기록 (${sttRemaining}회 남음)` };
     }, [processing, recording]);
 
     return (
@@ -251,7 +254,7 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
 
                 <Button
                     onClick={handleRecordWithContext}
-                    disabled={processing}
+                    disabled={processing || sttRemaining <= 0}
                     className={`rounded-full px-4 md:px-6 h-10 md:h-12 text-xs md:text-sm font-semibold transition-all shadow-xl ${recordBtnStyles.color}`}
                 >
                     <NotebookPen className="w-4 h-4 mr-2" />

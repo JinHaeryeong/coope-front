@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store/useAuthStore";
+import { useAiUsageStore } from "@/store/useAiUsageStore";
 
 export const apiStreamChat = async (message: string, previousMessages: any[], signal: AbortSignal) => {
     // Zustand 스토어에서 최신 액세스 토큰 가져오기
@@ -28,6 +29,12 @@ export const apiStreamChat = async (message: string, previousMessages: any[], si
             console.error("인증이 만료되었습니다.");
         }
         throw new Error("AI 응답을 가져오는데 실패했습니다.");
+    }
+
+    const remaining = response.headers.get("X-AI-Remaining");
+    if (remaining !== null) {
+        // Zustand 스토어 업데이트 (문자열을 숫자로 바꿔서!)
+        useAiUsageStore.getState().setUsage("CHAT", parseInt(remaining, 10));
     }
 
     if (!response.body) throw new Error("응답 본문이 비어있습니다.");
