@@ -22,7 +22,9 @@ export const useDocumentSocket = (workspaceCode: string | undefined) => {
                 switch (event.type) {
                     case "UPSERT":
                         upsertDocument(event.data);
-                        notifyTrashUpdate();
+                        if (event.data && event.data.archived === false) {
+                            notifyTrashUpdate();
+                        }
                         break;
                     case "ARCHIVE":
                     case "DELETE": {

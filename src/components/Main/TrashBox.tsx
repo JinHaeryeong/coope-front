@@ -71,7 +71,6 @@ export function TrashBox({ onClose }: TrashBoxProps) {
         event.stopPropagation();
 
         const promise = apiRestoreDocument(documentId).then(() => {
-            loadTrashData();
             notifyTrashUpdate();
             if (onClose) onClose()
         });
@@ -86,7 +85,7 @@ export function TrashBox({ onClose }: TrashBoxProps) {
     // 영구 삭제 로직
     const onRemove = async (documentId: number) => {
         const promise = apiHardDeleteDocument(documentId).then(() => {
-            loadTrashData();
+            notifyTrashUpdate();
             // 현재 보고 있는 문서가 삭제된 경우 이동
             if (Number(params.documentId) === documentId) {
                 navigate(`/workspace/${workspaceCode}`);
