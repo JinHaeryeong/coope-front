@@ -130,11 +130,14 @@ export const useRecorderAi = (mixedAudioStream: MediaStream | null) => {
                     timeout: AI_PROCESS_TIMEOUT
                 });
 
-                const remaining = response.headers["x-ai-remaining"];
+                const remainingHeader = response.headers["x-ai-remaining"];
 
-                if (remaining) {
-                    // Zustand 스토어 업데이트
-                    useAiUsageStore.getState().setUsage("STT", parseInt(remaining, 10));
+                if (remainingHeader !== undefined && remainingHeader !== null) {
+                    const remainingValue = parseInt(String(remainingHeader), 10);
+
+                    if (!Number.isNaN(remainingValue)) {
+                        useAiUsageStore.getState().setUsage("STT", remainingValue);
+                    }
                 }
 
                 const result = response.data;

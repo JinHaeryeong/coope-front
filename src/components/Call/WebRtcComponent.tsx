@@ -153,7 +153,7 @@ export default function WebRtcComponent({ roomId }: { roomId: string }) {
         if (recording) return { color: "bg-red-600 animate-pulse", label: "기록 중지" };
         if (sttRemaining <= 0) return { color: "bg-neutral-800 text-neutral-500 cursor-not-allowed", label: "오늘 횟수 소진" };
         return { color: "bg-black", label: `AI 기록 (${sttRemaining}회 남음)` };
-    }, [processing, recording]);
+    }, [processing, recording, sttRemaining]);
 
     return (
         <div className={`relative w-full h-full rounded-md md:rounded-2xl overflow-hidden bg-neutral-950 flex flex-col items-center justify-center transition-all duration-500 ${isEmptyMain && !isFullScreen ? "aspect-video min-h-100" : ""

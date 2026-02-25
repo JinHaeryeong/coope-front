@@ -1,5 +1,8 @@
 import { create } from "zustand";
 
+const CHAT_MAX_USAGE = 5;
+const STT_MAX_USAGE = 2;
+
 interface AiUsageState {
     chatRemaining: number;
     sttRemaining: number;
@@ -12,8 +15,8 @@ interface AiUsageState {
 }
 
 export const useAiUsageStore = create<AiUsageState>((set) => ({
-    chatRemaining: 5,
-    sttRemaining: 2,
+    chatRemaining: CHAT_MAX_USAGE,
+    sttRemaining: STT_MAX_USAGE,
 
     setUsage: (type, remaining) => set((state) => ({
         ...state,
