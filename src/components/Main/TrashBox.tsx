@@ -25,16 +25,17 @@ export function TrashBox({ onClose }: TrashBoxProps) {
     const [documents, setDocuments] = useState<DocumentResponse[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
+
     const workspaceCode = params.workspaceCode;
 
-    const { notifyTrashUpdate } = useTrashStore();
+    const { notifyTrashUpdate, trashUpdateTicket } = useTrashStore();
 
 
 
     // 워크스페이스가 바뀔 때마다 데이터 다시 읽어오기
     useEffect(() => {
         loadTrashData();
-    }, [workspaceCode]);
+    }, [workspaceCode, trashUpdateTicket]);
 
     const loadTrashData = async () => {
         if (!workspaceCode) return;
@@ -70,7 +71,6 @@ export function TrashBox({ onClose }: TrashBoxProps) {
         event.stopPropagation();
 
         const promise = apiRestoreDocument(documentId).then(() => {
-            loadTrashData();
             notifyTrashUpdate();
             if (onClose) onClose()
         });
@@ -85,7 +85,7 @@ export function TrashBox({ onClose }: TrashBoxProps) {
     // 영구 삭제 로직
     const onRemove = async (documentId: number) => {
         const promise = apiHardDeleteDocument(documentId).then(() => {
-            loadTrashData();
+            notifyTrashUpdate();
             // 현재 보고 있는 문서가 삭제된 경우 이동
             if (Number(params.documentId) === documentId) {
                 navigate(`/workspace/${workspaceCode}`);
