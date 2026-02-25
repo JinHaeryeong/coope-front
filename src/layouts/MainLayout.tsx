@@ -16,10 +16,13 @@ import { Navbar } from '@/components/Main/Navbar';
 import { useDocumentSocket } from '@/hooks/useDocumentSocket';
 import { useDocumentStore } from '@/store/useDocumentStore';
 import { useWorkspaceSocket } from '@/hooks/useWorkspaceSocket';
+import { useWorkspaceStore } from '@/store/useWorkspaceStore';
+import { toast } from 'sonner';
 
 export const MainLayout = () => {
   const { isLoggedIn, accessToken } = useAuthStore();
   const { isCollapsed, isResetting, toggle } = useSidebarStore();
+  const { workspaces } = useWorkspaceStore();
   const { workspaceCode, documentId } = useParams<{ workspaceCode: string; documentId: string }>();
   const { clearDocuments } = useDocumentStore();
   const navigate = useNavigate();
@@ -41,8 +44,17 @@ export const MainLayout = () => {
   useEffect(() => {
     if (!isLoggedIn) {
       navigate('/');
+      return;
     }
-  }, [isLoggedIn, navigate]);
+    if (workspaceCode && workspaces.length > 0) {
+      const isValid = workspaces.some(w => w.inviteCode === workspaceCode);
+
+      if (!isValid) {
+        toast.error("존재하지 않거나 접근 권한이 없는 워크스페이스입니다.");
+        navigate('/');
+      }
+    }
+  }, [isLoggedIn, workspaceCode, workspaces, navigate]);
 
   if (isLoggedIn && !accessToken) {
     return (

@@ -25,16 +25,17 @@ export function TrashBox({ onClose }: TrashBoxProps) {
     const [documents, setDocuments] = useState<DocumentResponse[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
+
     const workspaceCode = params.workspaceCode;
 
-    const { notifyTrashUpdate } = useTrashStore();
+    const { notifyTrashUpdate, trashUpdateTicket } = useTrashStore();
 
 
 
     // 워크스페이스가 바뀔 때마다 데이터 다시 읽어오기
     useEffect(() => {
         loadTrashData();
-    }, [workspaceCode]);
+    }, [workspaceCode, trashUpdateTicket]);
 
     const loadTrashData = async () => {
         if (!workspaceCode) return;

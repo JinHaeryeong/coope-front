@@ -32,6 +32,7 @@ export const DocumentList = ({
     const workspaceCode = params.workspaceCode;
 
     const filteredDocuments = documents.filter((doc) => {
+        if (doc.archived) return false;
         if (!parentDocumentId) return !doc.parentId;
         return doc.parentId === parentDocumentId;
     });
