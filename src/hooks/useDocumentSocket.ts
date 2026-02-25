@@ -25,7 +25,7 @@ export const useDocumentSocket = (workspaceCode: string | undefined) => {
                         notifyTrashUpdate();
                         break;
                     case "ARCHIVE":
-                    case "DELETE":
+                    case "DELETE": {
                         const deletedId = Number(event.data);
                         removeDocument(deletedId);
                         notifyTrashUpdate();
@@ -34,6 +34,7 @@ export const useDocumentSocket = (workspaceCode: string | undefined) => {
                             navigate(`/workspace/${workspaceCode}`);
                         }
                         break;
+                    }
                 }
             }
         );

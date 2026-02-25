@@ -66,7 +66,7 @@ const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
     });
 
     useEffect(() => {
-        if (initialContent) {
+        if (!editable && initialContent) {
             const blocks = JSON.parse(initialContent);
             editor.replaceBlocks(editor.document, blocks);
         }
