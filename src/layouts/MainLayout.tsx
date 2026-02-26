@@ -39,8 +39,10 @@ export const MainLayout = () => {
   }, [workspaceCode, clearDocuments]);
 
   useEffect(() => {
-    fetchUsage();
-  }, []);
+    if (isLoggedIn && accessToken) {
+      fetchUsage();
+    }
+  }, [isLoggedIn, accessToken, fetchUsage]);
 
   useDocumentSocket(workspaceCode);
   const isMobile = useMediaQuery("(max-width:768px)");

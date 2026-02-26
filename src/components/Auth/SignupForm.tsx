@@ -11,9 +11,10 @@ import {
     FieldGroup,
     FieldDescription
 } from "@/components/ui/field";
-import { apiSignUp } from "@/api/userApi";
+import { apiSendEmail, apiSignUp, apiVerifyEmail } from "@/api/userApi";
 import axios from "axios";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 
 const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,20}$/;
@@ -46,6 +47,22 @@ const signupSchema = z.object({
 export function SignupForm() {
     const navigate = useNavigate();
 
+    const [isEmailSent, setIsEmailSent] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+    const [authCode, setAuthCode] = useState("");
+
+    const [timeLeft, setTimeLeft] = useState(0);
+
+    useEffect(() => {
+        if (timeLeft <= 0) return;
+
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [timeLeft]);
+
     const form = useForm<z.infer<typeof signupSchema>>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -54,11 +71,47 @@ export function SignupForm() {
             email: "",
             password: "",
             confirmPassword: "",
-
         },
     });
 
+    const formatTime = (seconds: number) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s < 10 ? `0${s}` : s}`;
+    };
+
+    const handleSendCode = async () => {
+        const email = form.getValues("email");
+        if (!email || form.formState.errors.email) {
+            toast.error("올바른 이메일을 입력해주세요.");
+            return;
+        }
+        try {
+            await apiSendEmail(email);
+            setIsEmailSent(true);
+            setTimeLeft(300);
+            toast.success("인증번호가 발송되었습니다!");
+        } catch (error) {
+            toast.error("메일 발송에 실패했습니다.");
+        }
+    };
+
+    const handleVerifyCode = async () => {
+        const email = form.getValues("email");
+        try {
+            await apiVerifyEmail(email, authCode);
+            setIsVerified(true);
+            toast.success("이메일 인증 성공!");
+        } catch (error) {
+            toast.error("인증번호가 틀렸거나 만료되었습니다.");
+        }
+    };
+
     const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+        if (!isVerified) {
+            toast.error("이메일 인증을 먼저 완료해주세요.");
+            return;
+        }
         try {
             const formData = new FormData();
 
@@ -136,12 +189,45 @@ export function SignupForm() {
                 {/* 이메일 필드 */}
                 <Field>
                     <FieldLabel>이메일</FieldLabel>
-                    <Input {...form.register("email")} type="email" placeholder="example@coope.com" />
-                    <FieldDescription>로그인 시 사용할 이메일 주소입니다.</FieldDescription>
+                    <div className="flex gap-2">
+                        <Input {...form.register("email")}
+                            disabled={isVerified}
+                            type="email" placeholder="example@coope.com" />
+                        <Button type="button" variant="outline"
+                            onClick={handleSendCode}
+                            disabled={isVerified}>
+                            {isEmailSent ? "재발송" : "인증번호 발송"}
+                        </Button>
+                    </div>
                     {form.formState.errors.email && (
                         <p className="text-xs text-red-500 mt-1">{form.formState.errors.email.message}</p>
                     )}
                 </Field>
+
+                {isEmailSent && !isVerified && (
+                    <Field>
+                        <div className="flex justify-between items-center">
+                            <FieldLabel>인증번호</FieldLabel>
+                            {timeLeft > 0 ? (
+                                <span className="text-xs font-medium text-red-500">
+                                    남은 시간 {formatTime(timeLeft)}
+                                </span>
+                            ) : (
+                                <span className="text-xs font-medium text-red-500">인증 시간이 만료되었습니다.</span>
+                            )}
+                        </div>
+                        <div className="flex gap-2">
+                            <Input value={authCode}
+                                onChange={(e) => setAuthCode(e.target.value)}
+                                placeholder="6자리 번호 입력"
+                                disabled={timeLeft <= 0} // 시간 다 되면 입력 막기
+                            />
+                            <Button type="button" onClick={handleVerifyCode} disabled={timeLeft <= 0}>확인</Button>
+                        </div>
+                    </Field>
+                )}
+
+                {isVerified && <p className="text-xs text-green-500">이메일 인증이 완료되었습니다</p>}
 
                 {/* 비밀번호 필드 */}
                 <Field>
