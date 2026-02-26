@@ -69,6 +69,3 @@ export const apiSearchUser = async (nickname: string) => {
     });
     return response.data;
 }
-
-
-

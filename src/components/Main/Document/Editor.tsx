@@ -35,6 +35,8 @@ const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
     const { theme } = useTheme();
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
     const handleUpload = async (file: File) => {
 
@@ -55,6 +57,14 @@ const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
             throw error;
         }
     };
+
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+        };
+    }, []);
 
     const editor = useCreateBlockNote({
         schema,
@@ -82,7 +92,6 @@ const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
         }, 500);
     };
 
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     return (
         <div className="ml-0 md:-ml-14">
