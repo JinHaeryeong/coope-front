@@ -7,11 +7,11 @@ import { codeBlockOptions } from "@blocknote/code-block";
 import {
     BlockNoteSchema,
     createCodeBlockSpec,
-    defaultBlockSpecs
+    defaultBlockSpecs,
 } from "@blocknote/core";
 
 import { ko } from "@blocknote/core/locales";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { apiFileUpload } from "@/api/fileApi";
 import { toast } from "sonner";
 
@@ -35,6 +35,8 @@ const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
     const { theme } = useTheme();
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
     const handleUpload = async (file: File) => {
 
@@ -56,6 +58,14 @@ const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
         }
     };
 
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+        };
+    }, []);
+
     const editor = useCreateBlockNote({
         schema,
         dictionary: ko,
@@ -72,9 +82,16 @@ const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
         }
     }, [initialContent, editor, editable]);
 
+
     const handleEditorChange = () => {
-        onChange(JSON.stringify(editor.document));
+
+        if (timerRef.current) clearTimeout(timerRef.current);
+
+        timerRef.current = setTimeout(() => {
+            onChange(JSON.stringify(editor.document));
+        }, 500);
     };
+
 
     return (
         <div className="ml-0 md:-ml-14">
@@ -83,6 +100,7 @@ const Editor = ({ onChange, initialContent, editable = true }: EditorProps) => {
                 editable={editable}
                 theme={theme === "dark" ? "dark" : "light"}
                 onChange={handleEditorChange}
+
             />
         </div>
     );

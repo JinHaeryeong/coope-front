@@ -64,7 +64,7 @@ export function LoginForm() {
     };
 
     const handleSocialLogin = (provider: string) => {
-        toast.info("아직 없서영" + provider);
+        toast.info(provider + " 로그인은 준비중입니다");
     };
 
     return (

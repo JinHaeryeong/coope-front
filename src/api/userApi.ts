@@ -41,6 +41,17 @@ export const apiLogin = async (loginData: LoginRequest) => {
     return response.data;
 }
 
+export const apiSendEmail = async (email: string) => {
+    const response = await axiosInstance.post("/auth/email/send", { email });
+    return response.data;
+};
+
+// 인증번호 확인
+export const apiVerifyEmail = async (email: string, code: string) => {
+    const response = await axiosInstance.post("/auth/email/verify", { email, code });
+    return response.data;
+};
+
 export const apiGetMe = async () => {
     // axiosAuthInstance를 사용하면 인터셉터가 자동으로 Authorization 헤더를 붙여줍니다.
     const response = await axiosAuthInstance.get<UserInfo>("/user/me");
@@ -58,5 +69,3 @@ export const apiSearchUser = async (nickname: string) => {
     });
     return response.data;
 }
-
-
