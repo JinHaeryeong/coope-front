@@ -31,6 +31,7 @@ const InvitePage = lazy(() => import('./pages/Workspace/Invite/invitePage'));
 const DocumentsWelcomePage = lazy(() => import('./pages/Workspace/Document/documentsWelcomePage'))
 import CallModal from './components/Call/CallModal';
 const DocumentsPage = lazy(() => import('./pages/Workspace/Document/DocumentPage'));
+const ProfilePage = lazy(() => import('./pages/Marketing/ProfilePage'));
 
 
 
@@ -112,6 +113,7 @@ function App() {
                 <Route path="/" element={<MarketingPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/notice" element={<NoticePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/notice/:id" element={<NoticeDetailPage />} />
                 <Route element={<AdminGuard children={<Outlet />} />}>
                   <Route path="/notice/write" element={<NoticeWritePage />} />
