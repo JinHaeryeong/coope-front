@@ -94,6 +94,17 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
             console.error("채팅방 목록 로드 실패:", error);
         }
     }, []);
+
+
+    // 방 나가기
+    const closeChatWindow = useCallback((roomId: number) => {
+        setSelectedRoom(null);
+
+        setMessages([]);
+
+        setChatRooms(prev => prev.filter(room => room.roomId !== roomId));
+
+    }, []);
     useEffect(() => {
         if (!user) return;
 
@@ -212,7 +223,7 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
                 subscription?.unsubscribe();
             }
         };
-    }, [selectedRoom?.roomId, stompClient, isConnected]);
+    }, [selectedRoom?.roomId, stompClient, isConnected, user, closeChatWindow]);
 
     const fetchMoreMessages = async () => {
         if (!hasMoreMessages || isFetchingMore || !selectedRoom?.roomId) return;
@@ -302,19 +313,6 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // 방 나가기
-    const closeChatWindow = useCallback((roomId: number) => {
-        // 1. 현재 선택된 방 비우기
-        setSelectedRoom(null);
-
-        // 2. 메시지 목록 초기화
-        setMessages([]);
-
-        // 3. 채팅방 목록(Sidebar용)에서 해당 방 제거
-        setChatRooms(prev => prev.filter(room => room.roomId !== roomId));
-
-        // 4. 추가 팁: 만약 해당 방 소켓을 명시적으로 끊어야 한다면 여기서 처리!
-    }, []);
 
     const value: FriendContextType = {
         friendsList,

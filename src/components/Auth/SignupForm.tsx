@@ -26,11 +26,11 @@ const signupSchema = z.object({
     name: z
         .string()
         .min(2, "이름은 2자 이상 입력해주세요.")
-        .max(20, "이름은 10자 이내로 입력해주세요."),
+        .max(20, "이름은 20자 이내로 입력해주세요."),
     nickname: z
         .string()
         .min(2, "닉네임은 2자 이상 입력해주세요.")
-        .max(20, "닉네임은 10자 이내로 입력해주세요.")
+        .max(20, "닉네임은 20자 이내로 입력해주세요.")
         .regex(nicknameRegex, "닉네임은 특수문자를 제외한 한글, 영문, 숫자만 가능합니다."),
     email: z.string().email("올바른 이메일 형식을 입력해주세요."),
     password: z.string().min(8, "비밀번호는 최소 8자 이상 20자 이하이어야 합니다.").regex(

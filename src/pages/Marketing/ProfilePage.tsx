@@ -17,7 +17,7 @@ const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8
 const profileSchema = z.object({
     nickname: z.string()
         .min(2, "닉네임은 2자 이상이어야 합니다.")
-        .max(20, "닉네임은 10자 이내로 입력해주세요."),
+        .max(20, "닉네임은 20자 이내로 입력해주세요."),
     newPassword: z.string()
         .optional()
         .or(z.literal(""))
@@ -45,15 +45,20 @@ export const ProfilePage = () => {
     const [isVerified, setIsVerified] = useState(false);
     const [verifyInput, setVerifyInput] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        return () => {
-            if (selectedFile) {
-                URL.revokeObjectURL(URL.createObjectURL(selectedFile));
-            }
-        };
+        if (!selectedFile) {
+            setPreviewUrl(null);
+            return;
+        }
+
+        const url = URL.createObjectURL(selectedFile);
+        setPreviewUrl(url);
+
+        return () => URL.revokeObjectURL(url);
     }, [selectedFile]);
 
     const handleVerify = async () => {
@@ -66,7 +71,20 @@ export const ProfilePage = () => {
             setIsVerified(true);
             toast.success("본인 인증에 성공했습니다.");
         } catch (error) {
-            toast.error("비밀번호가 일치하지 않습니다.");
+            if (axios.isAxiosError(error)) {
+                const status = error.response?.status;
+                const serverMessage = (error.response?.data as any)?.message || error.message;
+                if (status === 401) {
+                    toast.error("세션이 만료되었습니다. 다시 로그인해주세요.");
+                    navigate("/");
+                } else if (status === 400 || status === 403) {
+                    toast.error(serverMessage || "비밀번호가 일치하지 않습니다.");
+                } else {
+                    toast.error(serverMessage || "본인 인증 중 오류가 발생했습니다.");
+                }
+            } else {
+                toast.error("예상치 못한 에러가 발생했습니다.");
+            }
         }
     };
 
@@ -154,12 +172,10 @@ export const ProfilePage = () => {
                                 <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-muted bg-secondary flex items-center justify-center">
                                     {selectedFile || user?.userIcon ? (
                                         <img
-                                            src={selectedFile ? URL.createObjectURL(selectedFile) : (user?.userIcon || DEFAULT_IMAGE)}
+                                            src={previewUrl || (user?.userIcon || DEFAULT_IMAGE)}
                                             className="w-full h-full object-cover"
                                             alt="Profile"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src = DEFAULT_IMAGE;
-                                            }}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_IMAGE; }}
                                         />
                                     ) : (
                                         <UserCircle className="w-16 h-16 text-muted-foreground" />

@@ -54,5 +54,5 @@ export const useDocumentSocket = (workspaceCode: string | undefined) => {
         return () => {
             subscription.unsubscribe();
         };
-    }, [stompClient, isConnected, workspaceCode, upsertDocument, removeDocument, documentId, navigate, notifyTrashUpdate]);
+    }, [stompClient, isConnected, workspaceCode, upsertDocument, removeDocument, documentId, navigate, notifyTrashUpdate, user, updateDocumentContentOnly]);
 };
