@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { DocumentHeader } from "@/components/Main/Document/DocumentHeader";
-import { apiGetDocumentById, apiUpdateDocument, apiUpdateDocumentContent } from "@/api/documentApi";
+import { apiGetDocumentById, apiUpdateDocumentContent } from "@/api/documentApi";
 import { Spinner } from "@/components/ui/spinner";
 import Editor from "@/components/Main/Document/Editor";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
