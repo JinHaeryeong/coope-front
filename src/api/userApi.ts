@@ -69,3 +69,16 @@ export const apiSearchUser = async (nickname: string) => {
     });
     return response.data;
 }
+
+export const apiVerifyPassword = async (password: string) => {
+    await axiosAuthInstance.post("/user/verify-password", { password });
+};
+
+export const apiUpdateProfile = async (formData: FormData) => {
+    const response = await axiosAuthInstance.patch<UserInfo>("/user/profile", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return response.data;
+};

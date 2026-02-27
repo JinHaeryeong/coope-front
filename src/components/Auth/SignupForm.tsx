@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 
 
 const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,20}$/;
-const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
 
 
 // 회원가입 유효성 검사 스키마
@@ -26,14 +26,14 @@ const signupSchema = z.object({
     name: z
         .string()
         .min(2, "이름은 2자 이상 입력해주세요.")
-        .max(10, "이름은 10자 이내로 입력해주세요."),
+        .max(20, "이름은 20자 이내로 입력해주세요."),
     nickname: z
         .string()
         .min(2, "닉네임은 2자 이상 입력해주세요.")
-        .max(10, "닉네임은 10자 이내로 입력해주세요.")
+        .max(20, "닉네임은 20자 이내로 입력해주세요.")
         .regex(nicknameRegex, "닉네임은 특수문자를 제외한 한글, 영문, 숫자만 가능합니다."),
     email: z.string().email("올바른 이메일 형식을 입력해주세요."),
-    password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다.").regex(
+    password: z.string().min(8, "비밀번호는 최소 8자 이상 20자 이하이어야 합니다.").regex(
         passwordRegex,
         "비밀번호는 영어, 숫자, 특수문자를 포함해야 합니다."
     ),
@@ -232,7 +232,7 @@ export function SignupForm() {
                 {/* 비밀번호 필드 */}
                 <Field>
                     <FieldLabel>비밀번호</FieldLabel>
-                    <Input {...form.register("password")} type="password" placeholder="••••••••" />
+                    <Input {...form.register("password")} type="password" placeholder="••••••••" maxLength={20} />
                     {form.formState.errors.password && (
                         <p className="text-xs text-red-500 mt-1">{form.formState.errors.password.message}</p>
                     )}
@@ -241,7 +241,7 @@ export function SignupForm() {
                 {/* 비밀번호 확인 필드 */}
                 <Field>
                     <FieldLabel>비밀번호 확인</FieldLabel>
-                    <Input {...form.register("confirmPassword")} type="password" placeholder="••••••••" />
+                    <Input {...form.register("confirmPassword")} type="password" placeholder="••••••••" maxLength={20} />
                     {form.formState.errors.confirmPassword && (
                         <p className="text-xs text-red-500 mt-1">{form.formState.errors.confirmPassword.message}</p>
                     )}

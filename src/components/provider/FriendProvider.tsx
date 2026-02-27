@@ -41,6 +41,7 @@ interface FriendContextType {
     fetchMoreMessages: () => Promise<void>;
     hasMoreMessages: boolean;
     isFetchingMore: boolean;
+    closeChatWindow: (roomId: number) => void;
 }
 
 const FriendContext = createContext<FriendContextType | null>(null);
@@ -92,6 +93,17 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
             console.error("채팅방 목록 로드 실패:", error);
         }
+    }, []);
+
+
+    // 방 나가기
+    const closeChatWindow = useCallback((roomId: number) => {
+        setSelectedRoom(null);
+
+        setMessages([]);
+
+        setChatRooms(prev => prev.filter(room => room.roomId !== roomId));
+
     }, []);
     useEffect(() => {
         if (!user) return;
@@ -172,18 +184,19 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
                         const newMessage: MessageResponse = JSON.parse(message.body);
 
                         setMessages((prev) => {
-                            const isAlreadyExists = prev.some((msg) => msg.id === newMessage.id);
-                            if (isAlreadyExists) return prev;
+                            if (prev.some((msg) => msg.id === newMessage.id)) return prev;
                             return [...prev, newMessage];
                         });
 
+                        if (newMessage.type === "LEAVE" && newMessage.senderId === user?.id) {
+                            closeChatWindow(newMessage.roomId);
+                            return;
+                        }
+
                         setChatRooms(prev => {
                             const updatedRoom = prev.find(r => r.roomId === newMessage.roomId);
-
                             if (!updatedRoom) return prev;
-
                             const others = prev.filter(r => r.roomId !== newMessage.roomId);
-
                             return [
                                 {
                                     ...updatedRoom,
@@ -210,7 +223,7 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
                 subscription?.unsubscribe();
             }
         };
-    }, [selectedRoom?.roomId, stompClient, isConnected]);
+    }, [selectedRoom?.roomId, stompClient, isConnected, user, closeChatWindow]);
 
     const fetchMoreMessages = async () => {
         if (!hasMoreMessages || isFetchingMore || !selectedRoom?.roomId) return;
@@ -300,6 +313,7 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+
     const value: FriendContextType = {
         friendsList,
         selectedRoom,
@@ -321,7 +335,8 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
         hasMoreRooms,
         fetchMoreMessages,
         hasMoreMessages,
-        isFetchingMore
+        isFetchingMore,
+        closeChatWindow,
     };
 
     return <FriendContext.Provider value={value}>{children}</FriendContext.Provider>;

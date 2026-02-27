@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { DocumentHeader } from "@/components/Main/Document/DocumentHeader";
-import { apiGetDocumentById, apiUpdateDocument } from "@/api/documentApi";
+import { apiGetDocumentById, apiUpdateDocumentContent } from "@/api/documentApi";
 import { Spinner } from "@/components/ui/spinner";
 import Editor from "@/components/Main/Document/Editor";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
@@ -10,7 +10,7 @@ import { useDocumentStore } from "@/store/useDocumentStore";
 const DocumentsPage = () => {
     const { workspaceCode, documentId } = useParams();
     const { workspaces } = useWorkspaceStore();
-    const { documents, upsertDocument } = useDocumentStore();
+    const { documents, upsertDocument, updateDocumentContentOnly } = useDocumentStore();
     const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
 
     const documentData = documents.find(d => d.id === Number(documentId));
@@ -54,10 +54,8 @@ const DocumentsPage = () => {
             try {
                 if (!documentId || !workspaceCode) return;
 
-                await apiUpdateDocument(Number(documentId), {
-                    content,
-                    workspaceCode
-                });
+                await apiUpdateDocumentContent(Number(documentId), content);
+                updateDocumentContentOnly(Number(documentId), content);
                 console.log("자동 저장 완료!");
             } catch (error) {
                 console.error("자동 저장 중 오류:", error);

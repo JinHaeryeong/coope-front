@@ -44,6 +44,28 @@ export const MessageItem = ({
         }
     };
 
+
+    if (message.type === "ENTER" || message.type === "LEAVE") {
+        return (
+            <div className="flex justify-center w-full my-6 px-4 animate-in fade-in slide-in-from-top-1 duration-300">
+                <span className="
+                bg-neutral-100/80 dark:bg-neutral-800/80 
+                backdrop-blur-sm 
+                text-neutral-500 dark:text-neutral-400 
+                text-[10px] sm:text-[11px] 
+                px-5 py-1.5 
+                rounded-full 
+                font-medium 
+                shadow-sm 
+                border border-neutral-200/50 dark:border-neutral-700/50
+                transition-all
+            ">
+                    {message.content}
+                </span>
+            </div>
+        );
+    }
+
     return (
         <>
             <article className={cn(

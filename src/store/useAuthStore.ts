@@ -17,6 +17,7 @@ interface AuthState {
 
     signIn: (accessToken: string, user: UserInfo) => void;
     signOut: () => void;
+    updateUser: (userInfo: UserInfo) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -34,6 +35,8 @@ export const useAuthStore = create<AuthState>()(
                         user,
                         isLoggedIn: true,
                     }),
+
+                updateUser: (user) => set({ user }),
 
                 // 로그아웃 시 호출
                 signOut: async () => {
