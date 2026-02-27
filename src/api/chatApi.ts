@@ -1,7 +1,7 @@
 import type { RoomType } from "@/components/provider/FriendProvider";
 import axiosAuthInstance from "./axiosAuthInstance";
 
-
+export type MessageType = "TALK" | "ENTER" | "LEAVE";
 export interface Slice<T> {
     content: T[];
     last: boolean;
@@ -13,6 +13,7 @@ export interface MessageResponse {
     senderNickname: string;
     senderProfile?: string;
     content: string;
+    type: MessageType;
     fileUrl?: string;
     fileName?: string;
     fileFormat?: string;
@@ -98,4 +99,8 @@ export const apiDownloadChatFile = async (fileUrl: string, fileName: string) => 
         responseType: 'blob'
     });
     return response.data;
+};
+
+export const apiLeaveChatRoom = async (roomId: number) => {
+    return await axiosAuthInstance.delete(`/chat/room/${roomId}/leave`);
 };

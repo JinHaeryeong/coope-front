@@ -4,13 +4,15 @@ import { useDocumentStore } from "@/store/useDocumentStore";
 import { useTrashStore } from "@/store/useTrashStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const useDocumentSocket = (workspaceCode: string | undefined) => {
     const navigate = useNavigate();
     const { documentId } = useParams<{ documentId: string }>();
     const { stompClient, isConnected } = useSocket();
-    const { upsertDocument, removeDocument } = useDocumentStore();
+    const { upsertDocument, removeDocument, updateDocumentContentOnly } = useDocumentStore();
     const { notifyTrashUpdate } = useTrashStore();
+    const { user } = useAuthStore();
 
     useEffect(() => {
         if (!isConnected || !stompClient || !workspaceCode) return;
@@ -26,6 +28,14 @@ export const useDocumentSocket = (workspaceCode: string | undefined) => {
                             notifyTrashUpdate();
                         }
                         break;
+                    case "CONTENT_UPDATE": {
+                        const { documentId: updatedId, content, senderId } = event.data;
+
+                        if (user?.id === senderId) return;
+
+                        updateDocumentContentOnly(Number(updatedId), content);
+                        break;
+                    }
                     case "ARCHIVE":
                     case "DELETE": {
                         const deletedId = Number(event.data);

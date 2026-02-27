@@ -8,6 +8,7 @@ interface DocumentStore {
     updateDocumentTitle: (id: number, title: string) => void;
     addDocument: (newDoc: DocumentResponse) => void;
     upsertDocument: (newDoc: DocumentResponse) => void;
+    updateDocumentContentOnly: (id: number, content: string) => void;
     removeDocument: (docId: number) => void;
     clearDocuments: () => void;
 }
@@ -61,6 +62,14 @@ export const useDocumentStore = create<DocumentStore>((set) => ({
         nextDocs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         return { documents: nextDocs };
     }),
+
+    updateDocumentContentOnly: (id: number, content: string) => {
+        set((state) => ({
+            documents: state.documents.map((doc) =>
+                doc.id === id ? { ...doc, content } : doc
+            ),
+        }));
+    },
 
     removeDocument: (docId: number) => set((state) => ({
         documents: state.documents.filter((d) => d.id !== docId)

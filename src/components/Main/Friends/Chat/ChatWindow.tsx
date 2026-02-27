@@ -1,4 +1,4 @@
-import { ChevronLeft, Phone, Users, UsersRound } from "lucide-react";
+import { ChevronLeft, LogOut, Phone, Users, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFriend } from "@/components/provider/FriendProvider";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -8,6 +8,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useCallStore } from "@/store/useCallStore";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { apiLeaveChatRoom } from "@/api/chatApi";
 
 interface ChatWindowProps {
     isMobile?: boolean;
@@ -17,7 +18,7 @@ interface ChatWindowProps {
 export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
     const {
         selectedRoom, messages, isFetchingMore, fetchMoreMessages, hasMoreMessages, bottomRef,
-        messageInput, setMessageInput, selectedFile, setSelectedFile, handleSendMessage, fileInputRef
+        messageInput, setMessageInput, selectedFile, setSelectedFile, handleSendMessage, fileInputRef, closeChatWindow
     } = useFriend();
 
     const user = useAuthStore((state) => state.user);
@@ -172,6 +173,33 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
         }
     };
 
+    const handleLeaveRoom = () => {
+        if (!selectedRoom?.roomId) return;
+
+        toast("채팅방 나가기", {
+            description: "정말로 이 채팅방을 나가시겠습니까? 대화 내용이 목록에서 사라집니다.",
+            action: {
+                label: "나가기",
+                onClick: async () => {
+                    try {
+                        await apiLeaveChatRoom(selectedRoom.roomId);
+
+                        closeChatWindow(selectedRoom.roomId)
+
+                        toast.success("채팅방에서 나갔습니다.");
+                        if (isMobile && onBack) onBack(); // 모바일이면 뒤로가기
+                    } catch (error) {
+                        toast.error("방을 나가는 중 오류가 발생했습니다.");
+                    }
+                },
+            },
+            cancel: {
+                label: "취소",
+                onClick: () => { },
+            },
+        });
+    };
+
     if (!selectedRoom) return null;
 
     return (
@@ -213,6 +241,14 @@ export const ChatWindow = ({ isMobile, onBack }: ChatWindowProps) => {
                         className="rounded-full hover:bg-primary/5 text-muted-foreground hover:text-primary transition-colors"
                     >
                         <Phone className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleLeaveRoom}
+                        className="rounded-full hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors"
+                    >
+                        <LogOut className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

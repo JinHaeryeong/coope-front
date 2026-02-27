@@ -108,3 +108,12 @@ export const apiUpdateDocument = async (
     const response = await axiosAuthInstance.patch(`/documents/${documentId}`, request);
     return response.data;
 };
+
+export const apiUpdateDocumentContent = async (
+    documentId: number,
+    content: string
+): Promise<void> => {
+    await axiosAuthInstance.patch(`/documents/${documentId}/content`, content, {
+        headers: { 'Content-Type': 'text/plain' }
+    });
+};
