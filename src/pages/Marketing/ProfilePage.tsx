@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -46,6 +46,9 @@ export const ProfilePage = () => {
     const [verifyInput, setVerifyInput] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isImageDeleted, setIsImageDeleted] = useState(false);
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const navigate = useNavigate();
 
@@ -96,11 +99,23 @@ export const ProfilePage = () => {
         },
     });
 
+
+    const handleDeleteImage = () => {
+        setSelectedFile(null);
+        setIsImageDeleted(true);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
     const onSubmit = async (values: z.infer<typeof profileSchema>) => {
         try {
             const formData = new FormData();
 
             formData.append("nickname", values.nickname);
+
+            formData.append("deleteProfileImage", String(isImageDeleted));
+
             if (selectedFile) {
                 formData.append("profileImage", selectedFile);
             }
@@ -116,6 +131,8 @@ export const ProfilePage = () => {
 
             toast.success("프로필이 성공적으로 수정되었습니다.");
 
+
+            setIsImageDeleted(false);
             form.reset({ nickname: updatedUser.nickname, newPassword: "" });
             setTimeout(() => {
                 navigate("/");
@@ -170,12 +187,11 @@ export const ProfilePage = () => {
                             <label className="text-sm font-semibold">프로필 이미지</label>
                             <div className="flex items-center gap-x-6">
                                 <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-muted bg-secondary flex items-center justify-center">
-                                    {selectedFile || user?.userIcon ? (
+                                    {previewUrl || (user?.userIcon && !isImageDeleted) ? (
                                         <img
-                                            src={previewUrl || (user?.userIcon || DEFAULT_IMAGE)}
+                                            src={previewUrl || user?.userIcon || DEFAULT_IMAGE}
                                             className="w-full h-full object-cover"
                                             alt="Profile"
-                                            onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_IMAGE; }}
                                         />
                                     ) : (
                                         <UserCircle className="w-16 h-16 text-muted-foreground" />
@@ -183,22 +199,33 @@ export const ProfilePage = () => {
                                 </div>
                                 <div className="flex-1">
                                     <Input
+                                        ref={fileInputRef}
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
-
-                                            if (file && file.size > 10 * 1024 * 1024) {
-                                                toast.error("프로필 이미지는 10MB 이하만 업로드 가능합니다.");
-                                                e.target.value = ""; // 입력창 비우기
-                                                setSelectedFile(null);
-                                                return;
+                                            if (file) {
+                                                if (file.size > 10 * 1024 * 1024) {
+                                                    toast.error("10MB 이하만 가능합니다.");
+                                                    return;
+                                                }
+                                                setSelectedFile(file);
+                                                setIsImageDeleted(false);
                                             }
-
-                                            setSelectedFile(file || null);
                                         }}
-                                        className="cursor-pointer file:cursor-pointer file:text-primary"
+                                        className="cursor-pointer"
                                     />
+                                    {(user?.userIcon || selectedFile) && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-xs text-destructive border-destructive hover:bg-destructive/10"
+                                            onClick={handleDeleteImage}
+                                        >
+                                            이미지 삭제
+                                        </Button>
+                                    )}
                                     <p className="text-[11px] text-muted-foreground mt-2">
                                         추천 크기: 200x200px (JPG, PNG, WebP) (10MB까지만)
                                     </p>
