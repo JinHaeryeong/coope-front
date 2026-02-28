@@ -38,11 +38,11 @@ const profileSchema = z.object({
     }
 });
 
-const DEFAULT_IMAGE = "/default-icon.webp";
 
 export const ProfilePage = () => {
     const { user, updateUser } = useAuthStore();
-    const [isVerified, setIsVerified] = useState(false);
+    const isSocialUser = user?.provider !== "LOCAL" && user?.provider !== null;
+    const [isVerified, setIsVerified] = useState(isSocialUser);
     const [verifyInput, setVerifyInput] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -187,14 +187,20 @@ export const ProfilePage = () => {
                             <label className="text-sm font-semibold">프로필 이미지</label>
                             <div className="flex items-center gap-x-6">
                                 <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-muted bg-secondary flex items-center justify-center">
-                                    {previewUrl || (user?.userIcon && !isImageDeleted) ? (
+                                    {previewUrl ? (
                                         <img
-                                            src={previewUrl || user?.userIcon || DEFAULT_IMAGE}
+                                            src={previewUrl}
+                                            className="w-full h-full object-cover"
+                                            alt="Preview"
+                                        />
+                                    ) : (user?.userIcon && !isImageDeleted) ? (
+                                        <img
+                                            src={user.userIcon}
                                             className="w-full h-full object-cover"
                                             alt="Profile"
                                         />
                                     ) : (
-                                        <UserCircle className="w-16 h-16 text-muted-foreground" />
+                                        <UserCircle className="w-20 h-20 text-muted-foreground/60" strokeWidth={1.5} />
                                     )}
                                 </div>
                                 <div className="flex-1">

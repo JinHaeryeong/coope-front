@@ -8,6 +8,7 @@ export interface UserInfo {
     nickname: string;
     userIcon: string;
     role: string;
+    provider: string;
 }
 
 interface AuthState {

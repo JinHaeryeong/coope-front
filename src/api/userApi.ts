@@ -20,6 +20,7 @@ export interface LoginResponse {
     nickname: string;
     userIcon: string;
     role: string;
+    provider: string;
 }
 
 export interface UserSearchResponse {

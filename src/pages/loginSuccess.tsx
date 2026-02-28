@@ -14,7 +14,7 @@ export function LoginSuccess() {
         if (accessToken) {
             const initLogin = async () => {
                 try {
-                    signIn(accessToken, { id: 0, email: "", nickname: "", userIcon: "", role: "" });
+                    signIn(accessToken, { id: 0, email: "", nickname: "", userIcon: "", role: "", provider: "" });
 
                     const userInfo = await apiGetMe();
 
