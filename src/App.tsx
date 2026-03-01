@@ -32,7 +32,8 @@ const DocumentsWelcomePage = lazy(() => import('./pages/Workspace/Document/docum
 import CallModal from './components/Call/CallModal';
 const DocumentsPage = lazy(() => import('./pages/Workspace/Document/DocumentPage'));
 const ProfilePage = lazy(() => import('./pages/Marketing/ProfilePage'));
-
+const InquiryWritePage = lazy(() => import('./pages/Marketing/inquiries/inquiryWritePage'));
+const InquiryDetailPage = lazy(() => import('./pages/Marketing/inquiries/inquiryDetailPage'));
 
 
 function App() {
@@ -123,6 +124,8 @@ function App() {
                 <Route path="/introduction" element={<IntroductionPage />} />
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/inquiry" element={<InquiryPage />} />
+                <Route path="/inquiry/write" element={<InquiryWritePage />} />
+                <Route path="/inquiry/:id" element={<InquiryDetailPage />} />
                 <Route path="*" element={<UnderConstructionPage />} />
               </Route>
 
