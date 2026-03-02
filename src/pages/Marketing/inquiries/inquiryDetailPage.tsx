@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import {
     CalendarDays, Computer, MessageCircle, User,
     Trash2, MessageSquare, Download, Loader2,
-    Clock, ZoomIn
+    Clock, ZoomIn,
+    UserCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +26,7 @@ import {
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { formatDate } from "@/lib/utils";
-import { apiGetInquiryById, apiDeleteInquiry } from "@/api/inquiryApi";
+import { apiGetInquiryById, apiDeleteInquiry, apiCreateInquiryAnswer } from "@/api/inquiryApi";
 
 const InquiryDetailPage = () => {
     const { id } = useParams();
@@ -35,6 +36,8 @@ const InquiryDetailPage = () => {
     const [inquiry, setInquiry] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isAnswerOpen, setIsAnswerOpen] = useState(false);
+    const [answerContent, setAnswerContent] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isAdmin = user?.role === "ROLE_ADMIN";
 
@@ -64,6 +67,27 @@ const InquiryDetailPage = () => {
             navigate("/inquiry");
         } catch (error) {
             toast.error("삭제 중 오류가 발생했습니다.");
+        }
+    };
+
+    const handleAnswerSubmit = async () => {
+        if (!answerContent.trim()) {
+            toast.error("답변 내용을 입력해주세요.");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            await apiCreateInquiryAnswer(Number(id), answerContent);
+            toast.success("답변이 등록되었습니다.");
+
+            const updatedData = await apiGetInquiryById(Number(id));
+            setInquiry(updatedData);
+            setIsAnswerOpen(false); // 입력창 닫기
+        } catch (error) {
+            toast.error("답변 등록에 실패했습니다.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -109,7 +133,7 @@ const InquiryDetailPage = () => {
                     </div>
                 </div>
 
-                <div className="text-slate-700 text-base md:text-lg leading-relaxed dark:text-slate-200 break-words">
+                <div className="text-slate-700 text-base md:text-lg leading-relaxed dark:text-slate-200 wrap-break-word">
                     {inquiry.content}
                 </div>
 
@@ -180,6 +204,31 @@ const InquiryDetailPage = () => {
                     </div>
                 )}
 
+                {isAdmin && isAnswerOpen && !inquiry.answer && (
+                    <div className="mt-10 p-8 rounded-[32px] border-2 border-dashed border-primary/30 bg-primary/5 space-y-4 animate-in slide-in-from-top-4 duration-300">
+                        <div className="flex items-center gap-2 text-primary font-bold text-xl">
+                            <MessageSquare size={24} />
+                            운영팀 답변 작성
+                        </div>
+                        <textarea
+                            className="w-full h-40 p-4 rounded-2xl border bg-card outline-none focus:ring-2 focus:ring-primary/50 resize-none text-lg"
+                            placeholder="사용자에게 전달할 답변 내용을 입력하세요..."
+                            value={answerContent}
+                            onChange={(e) => setAnswerContent(e.target.value)}
+                        />
+                        <div className="flex justify-end">
+                            <Button
+                                size="lg"
+                                className="px-10 h-12 text-lg font-bold"
+                                onClick={handleAnswerSubmit}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "등록 중..." : "답변 완료"}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
                 <div className="mt-16">
                     <div className="flex items-center gap-3 mb-6">
                         <h2 className="text-3xl font-black">답변</h2>
@@ -187,14 +236,14 @@ const InquiryDetailPage = () => {
                     {inquiry.answer ? (
                         <div className="p-8 md:p-12 rounded-[32px] bg-slate-50 dark:bg-slate-900 border-2 border-primary/10 shadow-inner">
                             <div className="flex items-center gap-2 mb-6 text-primary">
-                                <MessageSquare size={28} />
+                                <UserCog size={28} />
                                 <span className="text-xl font-bold">운영팀 답변</span>
                             </div>
-                            <div className="text-lg md:text-2xl leading-relaxed text-slate-800 dark:text-slate-100 whitespace-pre-wrap">
+                            <div className="text-sm md:text-lg leading-relaxed text-slate-800 dark:text-slate-100 whitespace-pre-wrap">
                                 {inquiry.answer}
                             </div>
                             <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 text-sm md:text-base text-slate-400">
-                                답변 완료일: {formatDate(inquiry.createdAt)}
+                                문의 작성일: {formatDate(inquiry.createdAt)}
                             </div>
                         </div>
                     ) : (

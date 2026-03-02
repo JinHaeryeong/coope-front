@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,13 @@ const InquiryWritePage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const redirectCS = () => navigate(-1);
+    const redirectCS = () => navigate("/inquiry");
+
+    useEffect(() => {
+        return () => {
+            previews.forEach(url => URL.revokeObjectURL(url));
+        };
+    }, [previews]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
@@ -80,6 +86,7 @@ const InquiryWritePage = () => {
             selectedFiles.forEach(file => formData.append("files", file));
             await apiCreateInquiry(formData);
 
+            previews.forEach(url => URL.revokeObjectURL(url));
             toast.success("문의가 등록되었습니다.");
             navigate("/inquiry");
         } catch (error) {

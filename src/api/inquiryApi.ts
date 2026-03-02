@@ -14,6 +14,17 @@ export const apiGetMyInquiries = async (page: number, size: number = 10) => {
     return response.data;
 };
 
+// 관리자의 조회
+export const apiGetAllInquiries = async (page: number, size: number = 10) => {
+    const response = await axiosAuthInstance.get('/inquiries/all', {
+        params: {
+            page,
+            size,
+            sort: 'createdAt,desc'
+        }
+    });
+    return response.data;
+};
 
 // 문의사항 등록
 export const apiCreateInquiry = async (formData: FormData) => {

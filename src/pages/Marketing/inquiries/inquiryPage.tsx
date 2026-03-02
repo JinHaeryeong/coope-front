@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/pagination";
 import { useAuthStore } from "@/store/useAuthStore";
 import { formatDate } from "@/lib/utils";
-import { apiGetMyInquiries } from "@/api/inquiryApi";
+import { apiGetAllInquiries, apiGetMyInquiries } from "@/api/inquiryApi";
 
 const InquiryPage = () => {
     const navigate = useNavigate();
@@ -35,7 +35,10 @@ const InquiryPage = () => {
         const fetchInquiries = async () => {
             try {
                 setLoading(true);
-                const response = await apiGetMyInquiries(currentPage - 1);
+                const safePage = Math.max(0, currentPage - 1);
+                const response = isAdmin
+                    ? await apiGetAllInquiries(safePage)
+                    : await apiGetMyInquiries(safePage);
 
                 setInquiries(response.content || []);
                 if (response.page) {
@@ -53,7 +56,7 @@ const InquiryPage = () => {
         };
 
         fetchInquiries();
-    }, [currentPage, isLoggedIn]);
+    }, [currentPage, isLoggedIn, isAdmin]);
 
     const handlePageChange = (page: number) => {
         if (page < 1 || page > totalPages) return;
@@ -119,8 +122,8 @@ const InquiryPage = () => {
                                             </div>
                                             {/* 모바일 전용 상태 표시 (NoticeList의 author 하단 배치 스타일 참고) */}
                                             <div className="md:hidden mt-1 flex items-center gap-2">
-                                                <span className={`text-[10px] font-bold ${inquiry.status === "COMPLETED" ? 'text-blue-500' : 'text-slate-400'}`}>
-                                                    {inquiry.status === "COMPLETED" ? '답변완료' : '답변대기'}
+                                                <span className={`text-[10px] font-bold ${inquiry.status === "ANSWERED" ? 'text-blue-500' : 'text-slate-400'}`}>
+                                                    {inquiry.status === "ANSWERED" ? '답변완료' : '답변대기'}
                                                 </span>
                                             </div>
                                         </TableCell>
@@ -130,8 +133,8 @@ const InquiryPage = () => {
                                             </TableCell>
                                         )}
                                         <TableCell className="hidden md:table-cell text-right">
-                                            <span className={`inline-flex items-center text-xs font-bold ${inquiry.status === "COMPLETED" ? 'text-blue-500' : 'text-slate-400'}`}>
-                                                {inquiry.status === "COMPLETED" ? (
+                                            <span className={`inline-flex items-center text-xs font-bold ${inquiry.status === "ANSWERED" ? 'text-blue-500' : 'text-slate-400'}`}>
+                                                {inquiry.status === "ANSWERED" ? (
                                                     <><CheckCircle2 size={12} className="mr-1" /> 답변완료</>
                                                 ) : (
                                                     <><Clock size={12} className="mr-1" /> 답변대기</>
