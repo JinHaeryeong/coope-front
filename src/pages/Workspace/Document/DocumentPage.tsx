@@ -1,16 +1,18 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { DocumentHeader } from "@/components/Main/Document/DocumentHeader";
-import { apiGetDocumentById, apiUpdateDocumentContent } from "@/api/documentApi";
+import { apiGetDocumentById } from "@/api/documentApi";
 import { Spinner } from "@/components/ui/spinner";
 import Editor from "@/components/Main/Document/Editor";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 import { useDocumentStore } from "@/store/useDocumentStore";
+import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react/suspense";
+import axiosAuthInstance from "@/api/axiosAuthInstance";
 
 const DocumentsPage = () => {
     const { workspaceCode, documentId } = useParams();
     const { workspaces } = useWorkspaceStore();
-    const { documents, upsertDocument, updateDocumentContentOnly } = useDocumentStore();
+    const { documents, upsertDocument } = useDocumentStore();
     const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
 
     const documentData = documents.find(d => d.id === Number(documentId));
@@ -43,51 +45,53 @@ const DocumentsPage = () => {
         };
     }, [documentId, workspaceCode]);
 
-    const onEditorChange = (content: string) => {
-        if (!isEditable) return;
 
-        if (timerRef.current) {
-            clearTimeout(timerRef.current);
-        }
-
-        timerRef.current = setTimeout(async () => {
-            try {
-                if (!documentId || !workspaceCode) return;
-
-                await apiUpdateDocumentContent(Number(documentId), content);
-                updateDocumentContentOnly(Number(documentId), content);
-                console.log("자동 저장 완료!");
-            } catch (error) {
-                console.error("자동 저장 중 오류:", error);
-            }
-        }, 1500);
-    };
-
-    if (isLoading && !documentData) {
+    if (isLoading || !documentData || documentData.content === undefined) {
         return <Spinner />;
     }
     if (!documentData) {
         return <div className="p-20 text-center">문서를 찾을 수 없습니다.</div>;
     }
 
-    return (
-        <div className="flex flex-col min-h-full pb-40">
-            <DocumentHeader
-                key={`header-${documentData.id}`}
-                initialData={documentData}
-                workspaceCode={workspaceCode!}
-                isViewer={!isEditable}
-            />
+    const roomId = `doc-${workspaceCode}-${documentId}-v4`;
 
-            <div className="max-w-4xl mx-auto w-full px-0 md:px-14 pb-72">
-                <Editor
-                    key={documentId}
-                    onChange={onEditorChange}
-                    initialContent={documentData.content}
-                    editable={isEditable}
-                />
-            </div>
-        </div>
+    const authCallback = async (room?: string) => {
+        try {
+            // axiosAuthInstance를 사용하면 토큰이 자동으로 실립니다!
+            const response = await axiosAuthInstance.post('/liveblocks-auth', {
+                roomId: room
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Liveblocks 인증 실패:", error);
+            throw error;
+        }
+    };
+
+    return (
+        <LiveblocksProvider authEndpoint={authCallback}>
+            <RoomProvider id={roomId}>
+                <ClientSideSuspense fallback={<Spinner className="h-96" />}>
+                    <div className="flex flex-col min-h-full pb-40">
+                        <DocumentHeader
+                            key={`header-${documentData.id}`}
+                            initialData={documentData}
+                            workspaceCode={workspaceCode!}
+                            isViewer={!isEditable}
+                        />
+
+                        <div className="max-w-7xl mx-auto w-full px-0 md:px-14 pb-72">
+                            <Editor
+                                key={documentId}
+                                initialContent={documentData.content}
+                                editable={isEditable}
+                                documentId={Number(documentId)}
+                            />
+                        </div>
+                    </div>
+                </ClientSideSuspense>
+            </RoomProvider>
+        </LiveblocksProvider>
     );
 };
 
