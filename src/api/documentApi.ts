@@ -117,3 +117,18 @@ export const apiUpdateDocumentContent = async (
         headers: { 'Content-Type': 'text/plain' }
     });
 };
+
+
+export const apiUpdateDocumentRedisSnapshot = async (
+    documentId: number,
+    content: string
+): Promise<void> => {
+    await axiosAuthInstance.patch(`/documents/${documentId}/redis-snapshot`, content, {
+        headers: { 'Content-Type': 'text/plain' }
+    });
+};
+
+export const apiGetDocumentRedisSnapshot = async (documentId: number): Promise<string> => {
+    const response = await axiosAuthInstance.get(`/documents/${documentId}/redis-snapshot`);
+    return response.data;
+};

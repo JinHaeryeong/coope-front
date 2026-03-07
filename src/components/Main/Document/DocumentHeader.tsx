@@ -110,7 +110,7 @@ export const DocumentHeader = ({ initialData, workspaceCode, isViewer }: Documen
                 )}
             </div>
 
-            <div className="max-w-4xl mx-auto px-4 md:px-14">
+            <div className="max-w-7xl mx-auto px-4 md:px-14">
                 <div className="flex items-center gap-x-2 py-4 -mt-12 relative z-10 w-fit">
                     <p className="text-5xl md:text-7xl select-none">
                         {initialData.icon || "📄"}
