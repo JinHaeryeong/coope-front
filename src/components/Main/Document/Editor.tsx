@@ -5,6 +5,7 @@ import { useCreateBlockNoteWithLiveblocks } from "@liveblocks/react-blocknote";
 import { FloatingComposer } from "@liveblocks/react-blocknote";
 import { useThreads } from "@liveblocks/react";
 import "@liveblocks/react-ui/styles.css";
+import "@liveblocks/react-ui/styles/dark/attributes.css";
 import { useTheme } from "@/components/provider/themeProvider";
 import { codeBlockOptions } from "@blocknote/code-block";
 import {
@@ -19,6 +20,7 @@ import { apiFileUpload } from "@/api/fileApi";
 import { toast } from "sonner";
 import { apiUpdateDocumentRedisSnapshot } from "@/api/documentApi";
 import { Thread } from "@liveblocks/react-ui";
+import { cn } from "@/lib/utils";
 
 interface EditorProps {
     initialContent?: string;
@@ -70,13 +72,20 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
             schema,
             dictionary: ko,
             uploadFile: handleUpload,
-
         },
         {
             mentions: true,
             initialContent: initialContent ? JSON.parse(initialContent) : undefined,
+
         }
     );
+
+    useEffect(() => {
+        if (editor) {
+            editor.isEditable = editable;
+            console.log(`[권한 동기화] 에디터 편집 가능 여부: ${editable}`);
+        }
+    }, [editor, editable]);
 
     const handler = () => {
         if (timerRef.current) clearTimeout(timerRef.current);
@@ -164,7 +173,14 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
                 <h3 className="text-sm font-bold mb-4 opacity-50">Comments</h3>
                 <div className="flex flex-col gap-6">
                     {threads.map((thread) => (
-                        <div key={thread.id} className="p-2 hover:bg-gray-50 dark:hover:bg-neutral-800 rounded-lg transition">
+                        <div
+                            key={thread.id}
+                            className={cn(
+                                "p-2 rounded-lg transition lb-root",
+                                theme === "dark" ? "dark lb-theme-dark hover:bg-neutral-800" : "hover:bg-gray-50"
+                            )}
+                            data-theme={theme === "dark" ? "dark" : "light"}
+                        >
                             <Thread thread={thread} />
                         </div>
                     ))}

@@ -81,7 +81,8 @@ export const MainLayout = () => {
 
         <div className={cn(
           "w-full bg-background dark:bg-[#1F1F1F] z-10",
-          isResetting && "transition-all ease-in-out duration-300"
+          isResetting && "transition-all ease-in-out duration-300",
+          shouldHideMenuIcon && "h-0 overflow-hidden"
         )}>
           {!!documentId ? (
             <Navbar isCollapsed={isCollapsed} onResetWidth={toggle} />

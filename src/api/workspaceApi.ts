@@ -7,6 +7,12 @@ export interface WorkspaceResponse {
     inviteCode: string;
 }
 
+export interface WorkspaceMemberResponse {
+    userId: number;
+    nickname: string;
+    role: 'OWNER' | 'EDITOR' | 'VIEWER';
+}
+
 
 // 워크스페이스 가져오기
 export const apiGetMyWorkspaces = async (): Promise<WorkspaceResponse[]> => {
@@ -41,3 +47,12 @@ export const apiJoinWorkspace = async (inviteCode: string): Promise<{ status: st
     return response.data;
 };
 
+export const apiGetWorkspaceMembers = async (workspaceCode: string): Promise<WorkspaceMemberResponse[]> => {
+    const response = await axiosAuthInstance.get(`/workspaces/${workspaceCode}/members`);
+    return response.data;
+};
+
+// 워크스페이스 멤버 권한 변경
+export const apiUpdateMemberRole = async (workspaceId: number, targetUserId: number, role: 'OWNER' | 'EDITOR' | 'VIEWER'): Promise<void> => {
+    await axiosAuthInstance.patch(`/workspaces/${workspaceId}/members/${targetUserId}/role`, { role });
+};
