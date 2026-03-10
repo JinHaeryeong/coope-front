@@ -38,10 +38,9 @@ const DocumentsPage = () => {
             }
         };
         fetchDoc();
-
     }, [documentId, workspaceCode]);
 
-    if (isLoading) {
+    if (isLoading || !documentData || documentData.content === undefined) {
         return (
             <div className="flex h-full items-center justify-center">
                 <Spinner />
@@ -49,17 +48,7 @@ const DocumentsPage = () => {
         );
     }
 
-    if (!documentData || documentData.content === undefined) {
-        return (
-            <div className="flex flex-col items-center justify-center p-20 text-center gap-4">
-                <p className="text-lg font-medium text-muted-foreground">
-                    문서를 찾을 수 없거나 불러오는 데 실패했습니다.
-                </p>
-            </div>
-        );
-    }
-
-    const roomId = `doc-${workspaceCode}-${documentId}-v4`;
+    const roomId = `doc-${workspaceCode}-${documentId}-v11`;
 
     const authCallback = async (room?: string) => {
         try {
@@ -87,7 +76,7 @@ const DocumentsPage = () => {
 
                         <div className="max-w-7xl mx-auto w-full px-0 md:px-14 pb-72">
                             <Editor
-                                key={documentId}
+                                key={`${documentId}-${roomId}`}
                                 initialContent={documentData.content}
                                 editable={isEditable}
                                 documentId={Number(documentId)}
