@@ -108,17 +108,18 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
         }
     };
 
-    const onRoleChange = async (targetUserId: number, newRole: 'OWNER' | 'EDITOR' | 'VIEWER') => {
+    const onRoleChange = async (targetUserId: number, newRole: 'EDITOR' | 'VIEWER') => {
         if (!currentWorkspace) return;
-
 
         setIsMembersLoading(true);
         try {
             await apiUpdateMemberRole(currentWorkspace.id, targetUserId, newRole);
             toast.success("권한이 변경되었습니다.");
-            fetchMembers();
+            await fetchMembers();
         } catch (err) {
             toast.error("권한 변경에 실패했습니다.");
+        } finally {
+            setIsMembersLoading(false);
         }
     };
 
@@ -194,7 +195,7 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
                         </span>
                     </Label>
 
-                    <div className="border rounded-md max-h-75 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-neutral-700">
+                    <div className="border rounded-md max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-neutral-700">
                         <div className="flex flex-col divide-y">
                             {isMembersLoading && members.length === 0 ? (
                                 <div className="p-8 text-center"><Spinner /></div>
@@ -208,10 +209,10 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
                                         </div>
 
                                         <div className="flex items-center gap-x-2">
-                                            {isOwner && member.userId !== user?.id ? (
+                                            {isOwner && member.userId !== user?.id && member.role !== 'OWNER' ? (
                                                 <select
                                                     value={member.role}
-                                                    onChange={(e) => onRoleChange(member.userId, e.target.value as any)}
+                                                    onChange={(e) => onRoleChange(member.userId, e.target.value as 'EDITOR' | 'VIEWER')}
                                                     disabled={isMembersLoading}
                                                     className="text-[11px] font-medium border rounded-md p-1 bg-background focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 cursor-pointer"
                                                 >

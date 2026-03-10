@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { DocumentHeader } from "@/components/Main/Document/DocumentHeader";
 import { apiGetDocumentById } from "@/api/documentApi";
 import { Spinner } from "@/components/ui/spinner";
@@ -18,17 +18,16 @@ const DocumentsPage = () => {
     const documentData = documents.find(d => d.id === Number(documentId));
     const [isLoading, setIsLoading] = useState(true);
 
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-
     const isEditable = currentWorkspace?.role === 'OWNER' || currentWorkspace?.role === 'EDITOR';
 
     useEffect(() => {
         const fetchDoc = async () => {
             if (!documentId || !workspaceCode) return;
+
             if (!documentData || documentData.content === undefined) {
                 setIsLoading(true);
             }
+
             try {
                 const data = await apiGetDocumentById(Number(documentId), workspaceCode);
                 upsertDocument(data);
@@ -40,24 +39,30 @@ const DocumentsPage = () => {
         };
         fetchDoc();
 
-        return () => {
-            if (timerRef.current) clearTimeout(timerRef.current);
-        };
     }, [documentId, workspaceCode]);
 
-
-    if (isLoading || !documentData || documentData.content === undefined) {
-        return <Spinner />;
+    if (isLoading) {
+        return (
+            <div className="flex h-full items-center justify-center">
+                <Spinner />
+            </div>
+        );
     }
-    if (!documentData) {
-        return <div className="p-20 text-center">문서를 찾을 수 없습니다.</div>;
+
+    if (!documentData || documentData.content === undefined) {
+        return (
+            <div className="flex flex-col items-center justify-center p-20 text-center gap-4">
+                <p className="text-lg font-medium text-muted-foreground">
+                    문서를 찾을 수 없거나 불러오는 데 실패했습니다.
+                </p>
+            </div>
+        );
     }
 
     const roomId = `doc-${workspaceCode}-${documentId}-v4`;
 
     const authCallback = async (room?: string) => {
         try {
-            // axiosAuthInstance를 사용하면 토큰이 자동으로 실립니다!
             const response = await axiosAuthInstance.post('/liveblocks-auth', {
                 roomId: room
             });

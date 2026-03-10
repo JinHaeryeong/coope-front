@@ -39,11 +39,26 @@ const schema = BlockNoteSchema.create({
 
 const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
+const safeParse = (content: string | undefined) => {
+    if (!content) return undefined;
+    try {
+        return JSON.parse(content);
+    } catch (e) {
+        console.error("[Editor] JSON 파싱 실패:", e);
+        return undefined;
+    }
+};
+
 const Editor = ({ initialContent, editable = true, documentId }: EditorProps) => {
     const { theme } = useTheme();
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lastSavedRef = useRef<number>(Date.now());
 
-
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, []);
 
     const handleUpload = async (file: File) => {
         if (!allowedTypes.includes(file.type)) {
@@ -64,9 +79,6 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
         }
     };
 
-    console.log("에디터로 넘어온 데이터 타입:", typeof initialContent);
-    console.log("데이터 내용:", initialContent);
-
     const editor = useCreateBlockNoteWithLiveblocks(
         {
             schema,
@@ -75,8 +87,7 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
         },
         {
             mentions: true,
-            initialContent: initialContent ? JSON.parse(initialContent) : undefined,
-
+            initialContent: safeParse(initialContent),
         }
     );
 
@@ -88,30 +99,38 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
     }, [editor, editable]);
 
     const handler = () => {
-        if (timerRef.current) clearTimeout(timerRef.current);
-        timerRef.current = setTimeout(async () => {
-            const blocks = editor.topLevelBlocks;
+        const now = Date.now();
+        const timeSinceLastSave = now - lastSavedRef.current;
 
+        if (timerRef.current) clearTimeout(timerRef.current);
+
+        const saveSnapshot = async () => {
+            if (!editor) return;
+
+            const blocks = editor.topLevelBlocks;
             const isActuallyEmpty = blocks.length === 0 || (
                 blocks.length === 1 &&
                 blocks[0].type === "paragraph" &&
                 (blocks[0].content as any[]).length === 0
             );
 
-            if (isActuallyEmpty) {
-                console.log("빈 문서라 Redis 스냅샷 저장을 건너뜁니다.");
-                return;
-            }
+            if (isActuallyEmpty) return;
 
             try {
                 await apiUpdateDocumentRedisSnapshot(documentId, JSON.stringify(blocks));
-                console.log("Redis 스냅샷 저장 (30초)");
+                lastSavedRef.current = Date.now();
+                console.log("[AutoSave] Redis 스냅샷 저장 완료");
             } catch (err) {
                 console.error("Redis 저장 실패", err);
             }
-        }, 30000);
-    };
+        };
 
+        if (timeSinceLastSave >= 30000) {
+            saveSnapshot();
+        } else {
+            timerRef.current = setTimeout(saveSnapshot, 30000 - timeSinceLastSave);
+        }
+    };
     useEffect(() => {
         if (editor && initialContent) {
             const currentBlocks = editor.topLevelBlocks;
