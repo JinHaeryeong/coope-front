@@ -69,7 +69,7 @@ const DocumentsPage = () => {
             return response.data;
         } catch (error) {
             console.error("Liveblocks 인증 실패:", error);
-            throw error;
+            return undefined;
         }
     };
 

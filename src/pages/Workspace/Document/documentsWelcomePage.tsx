@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { apiCreateDocument } from "@/api/documentApi";
 import { useTrashStore } from "@/store/useTrashStore";
 import { useDocumentStore } from "@/store/useDocumentStore";
+import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 
 function DocumentsWelcomePage() {
     const navigate = useNavigate();
@@ -16,14 +17,20 @@ function DocumentsWelcomePage() {
     const user = useAuthStore((state) => state.user);
 
     const { notifyTrashUpdate } = useTrashStore();
-
     const addDocumentToStore = useDocumentStore((state) => state.addDocument);
-    // 워크스페이스 코드가 없으면 아무것도 렌더링하지 않음 (보통 가드에서 걸러지겠지만 안전용)
-    if (!workspaceCode) {
-        return null;
-    }
+    // 1. [추가] 워크스페이스 스토어에서 현재 권한 가져오기
+    const { workspaces } = useWorkspaceStore();
+    const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
+    const isEditable = currentWorkspace?.role === 'OWNER' || currentWorkspace?.role === 'EDITOR';
+
+    if (!workspaceCode) return null;
+
 
     const onCreate = async () => {
+        if (!isEditable) {
+            toast.error("노트를 생성할 권한이 없습니다.");
+            return;
+        }
         try {
             const promise = apiCreateDocument({
                 title: "제목 없음",

@@ -9,5 +9,5 @@ createRoot(document.getElementById('root')!).render(
     <SocketProvider>
       <App />
     </SocketProvider>
-  </StrictMode>,
+  </StrictMode>
 )

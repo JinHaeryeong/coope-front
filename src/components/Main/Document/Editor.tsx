@@ -15,7 +15,7 @@ import {
 } from "@blocknote/core";
 
 import { ko } from "@blocknote/core/locales";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { apiFileUpload } from "@/api/fileApi";
 import { toast } from "sonner";
 import { apiUpdateDocumentRedisSnapshot } from "@/api/documentApi";
@@ -39,26 +39,22 @@ const schema = BlockNoteSchema.create({
 
 const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
-const safeParse = (content: string | undefined) => {
-    if (!content) return undefined;
-    try {
-        return JSON.parse(content);
-    } catch (e) {
-        console.error("[Editor] JSON 파싱 실패:", e);
-        return undefined;
-    }
-};
-
 const Editor = ({ initialContent, editable = true, documentId }: EditorProps) => {
     const { theme } = useTheme();
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lastSavedRef = useRef<number>(Date.now());
 
-    useEffect(() => {
-        return () => {
-            if (timerRef.current) clearTimeout(timerRef.current);
-        };
-    }, []);
+    // [변경포인트 1] initialContent를 useMemo로 감싸서 훅 옵션에 고정 전달
+    // 라이브러리가 "useLiveblocksExtension hook option"에 넣으라고 한 것이 바로 이 방식입니다.
+    const initialBlocks = useMemo(() => {
+        if (!initialContent || initialContent === "[]" || initialContent === "") return undefined;
+        try {
+            return JSON.parse(initialContent);
+        } catch (e) {
+            console.error("[Editor] JSON 파싱 실패:", e);
+            return undefined;
+        }
+    }, [initialContent]);
 
     const handleUpload = async (file: File) => {
         if (!allowedTypes.includes(file.type)) {
@@ -79,6 +75,7 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
         }
     };
 
+    // [변경포인트 2] initialContent 옵션 자리에 메모이제이션된 값을 전달
     const editor = useCreateBlockNoteWithLiveblocks(
         {
             schema,
@@ -87,10 +84,11 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
         },
         {
             mentions: true,
-            initialContent: safeParse(initialContent),
+            initialContent: initialBlocks,
         }
     );
 
+    // 권한 동기화
     useEffect(() => {
         if (editor) {
             editor.isEditable = editable;
@@ -98,7 +96,11 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
         }
     }, [editor, editable]);
 
+    // 자동 저장 핸들러
     const handler = () => {
+        // [방어] 뷰어 권한일 때는 저장 로직이 아예 실행되지 않도록 막음 (튕김 방지)
+        if (!editable) return;
+
         const now = Date.now();
         const timeSinceLastSave = now - lastSavedRef.current;
 
@@ -131,27 +133,10 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
             timerRef.current = setTimeout(saveSnapshot, 30000 - timeSinceLastSave);
         }
     };
-    useEffect(() => {
-        if (editor && initialContent) {
-            const currentBlocks = editor.topLevelBlocks;
-            const isEmpty = currentBlocks.length === 1 &&
-                currentBlocks[0].type === "paragraph" &&
-                (currentBlocks[0].content as any[]).length === 0;
-
-            if (isEmpty) {
-                try {
-                    const blocks = JSON.parse(initialContent);
-                    editor.replaceBlocks(currentBlocks, blocks);
-                    console.log("[성공] 에디터에 데이터를 강제로 주입했습니다.");
-                } catch (e) {
-                    console.error("데이터 주입 중 오류:", e);
-                }
-            }
-        }
-    }, [editor, initialContent]);
 
     useEffect(() => {
         const handleBlur = async () => {
+            if (!editable) return; // 뷰어 방어
             if (timerRef.current) clearTimeout(timerRef.current);
 
             const blocks = editor.topLevelBlocks;
@@ -171,7 +156,7 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
         };
         window.addEventListener("blur", handleBlur);
         return () => window.removeEventListener("blur", handleBlur);
-    }, [editor, documentId]);
+    }, [editor, documentId, editable]);
 
     const threads = useThreads()?.threads ?? [];
 
@@ -184,7 +169,6 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
                     theme={theme === "dark" ? "dark" : "light"}
                     onChange={handler}
                 />
-                {/* 플로팅은 보험으로 남겨두기 */}
                 <FloatingComposer editor={editor} />
             </div>
 
