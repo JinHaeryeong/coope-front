@@ -28,8 +28,14 @@ import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 import type { WorkspaceModalProps } from "@/types/workspace";
 import {
     apiUpdateWorkspace,
-    apiDeleteWorkspace
+    apiDeleteWorkspace,
+    apiGetWorkspaceMembers,
+    apiUpdateMemberRole,
+    type WorkspaceMemberResponse
 } from "@/api/workspaceApi";
+import { useAuthStore } from "@/store/useAuthStore";
+import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 interface SettingsModalProps extends WorkspaceModalProps {
     initialName?: string;
@@ -38,7 +44,7 @@ interface SettingsModalProps extends WorkspaceModalProps {
 export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps) {
     const settings = useSettings();
     const navigate = useNavigate();
-
+    const { user } = useAuthStore();
     const { workspaces, isLoading, updateWorkspaceName, deleteWorkspaceFromStore } = useWorkspaceStore();
 
     const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
@@ -48,6 +54,27 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
     const [name, setName] = useState(initialName ?? "");
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const [members, setMembers] = useState<WorkspaceMemberResponse[]>([]);
+    const [isMembersLoading, setIsMembersLoading] = useState(false);
+
+    const fetchMembers = async () => {
+        setIsMembersLoading(true);
+        try {
+            const data = await apiGetWorkspaceMembers(workspaceCode);
+            setMembers(data);
+        } catch (err) {
+            toast.error("멤버 목록을 불러오지 못했습니다.");
+        } finally {
+            setIsMembersLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (settings.isOpen) {
+            fetchMembers();
+        }
+    }, [settings.isOpen, workspaceCode]);
+
     useEffect(() => {
         if (settings.isOpen && initialName !== undefined) {
             setName(initialName);
@@ -55,6 +82,11 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
     }, [settings.isOpen, initialName]);
 
     const isNameUnchanged = name === initialName;
+
+    const handleClose = () => {
+        setMembers([]);
+        settings.onClose();
+    };
 
     // 이름 변경
     const handleRename = async () => {
@@ -73,6 +105,21 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
         } catch (err) {
             console.error(err);
             toast.error("변경 실패");
+        }
+    };
+
+    const onRoleChange = async (targetUserId: number, newRole: 'EDITOR' | 'VIEWER') => {
+        if (!currentWorkspace) return;
+
+        setIsMembersLoading(true);
+        try {
+            await apiUpdateMemberRole(currentWorkspace.id, targetUserId, newRole);
+            toast.success("권한이 변경되었습니다.");
+            await fetchMembers();
+        } catch (err) {
+            toast.error("권한 변경에 실패했습니다.");
+        } finally {
+            setIsMembersLoading(false);
         }
     };
 
@@ -102,7 +149,7 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
     };
 
     return (
-        <Dialog open={settings.isOpen} onOpenChange={settings.onClose}>
+        <Dialog open={settings.isOpen} onOpenChange={(open) => !open && handleClose()}>
             <DialogContent>
                 <DialogHeader className="border-b pb-3">
                     <DialogTitle>워크스페이스 설정</DialogTitle>
@@ -139,6 +186,53 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
                     >
                         {isOwner ? "이름 변경" : "수정 권한 없음"}
                     </Button>
+                </div>
+                <div className="space-y-4 pt-6 border-t mt-4">
+                    <Label className="text-sm font-bold flex items-center gap-x-2">
+                        멤버 관리
+                        <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                            {members.length}
+                        </span>
+                    </Label>
+
+                    <div className="border rounded-md max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-neutral-700">
+                        <div className="flex flex-col divide-y">
+                            {isMembersLoading && members.length === 0 ? (
+                                <div className="p-8 text-center"><Spinner /></div>
+                            ) : members.length === 0 ? (
+                                <div className="p-8 text-center text-sm text-muted-foreground">멤버가 없습니다.</div>
+                            ) : (
+                                members.map((member) => (
+                                    <div key={member.userId} className="flex items-center justify-between p-3 hover:bg-accent/50 transition">
+                                        <div className="flex flex-col gap-y-0.5">
+                                            <span className="text-sm font-semibold">{member.nickname}</span>
+                                        </div>
+
+                                        <div className="flex items-center gap-x-2">
+                                            {isOwner && member.userId !== user?.id && member.role !== 'OWNER' ? (
+                                                <select
+                                                    value={member.role}
+                                                    onChange={(e) => onRoleChange(member.userId, e.target.value as 'EDITOR' | 'VIEWER')}
+                                                    disabled={isMembersLoading}
+                                                    className="text-[11px] font-medium border rounded-md p-1 bg-background focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 cursor-pointer"
+                                                >
+                                                    <option value="EDITOR">Editor</option>
+                                                    <option value="VIEWER">Viewer</option>
+                                                </select>
+                                            ) : (
+                                                <span className={cn(
+                                                    "text-[10px] font-bold px-2 py-1 rounded-md uppercase",
+                                                    member.role === 'OWNER' ? "bg-amber-100 text-amber-700" : "bg-secondary text-secondary-foreground"
+                                                )}>
+                                                    {member.role}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="pt-6">

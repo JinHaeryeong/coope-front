@@ -13,6 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { ConfirmModal } from "@/components/Main/Modal/ConfirmModal";
 import { useTrashStore } from "@/store/useTrashStore";
+import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 
 interface TrashBoxProps {
     onClose?: () => void;
@@ -29,6 +30,9 @@ export function TrashBox({ onClose }: TrashBoxProps) {
     const workspaceCode = params.workspaceCode;
 
     const { notifyTrashUpdate, trashUpdateTicket } = useTrashStore();
+    const { workspaces } = useWorkspaceStore();
+    const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
+    const isEditable = currentWorkspace?.role === 'OWNER' || currentWorkspace?.role === 'EDITOR';
 
 
 
@@ -131,26 +135,22 @@ export function TrashBox({ onClose }: TrashBoxProps) {
                         onClick={() => onClick(document.id)}
                     >
                         <span className="truncate pl-2">{document.title}</span>
-                        <div className="flex items-center">
-                            <div
-                                className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
-                                onClick={(e) => onRestore(e, document.id)}
-                                title="복구하기"
-                            >
-                                <Undo className="w-4 h-4 text-muted-foreground" />
-                            </div>
-                            <ConfirmModal
-                                onConfirm={() => onRemove(document.id)}
-                            >
+                        {isEditable && (
+                            <div className="flex items-center">
                                 <div
                                     className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
-                                    role="button"
-                                    title="영구 삭제"
+                                    onClick={(e) => onRestore(e, document.id)}
+                                    title="복구하기"
                                 >
-                                    <Trash className="w-4 h-4 text-muted-foreground" />
+                                    <Undo className="w-4 h-4 text-muted-foreground" />
                                 </div>
-                            </ConfirmModal>
-                        </div>
+                                <ConfirmModal onConfirm={() => onRemove(document.id)}>
+                                    <div className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600" role="button">
+                                        <Trash className="w-4 h-4 text-muted-foreground" />
+                                    </div>
+                                </ConfirmModal>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

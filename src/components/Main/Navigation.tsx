@@ -45,6 +45,7 @@ export const Navigation = () => {
   const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
 
   const { isCollapsed, isResetting, toggle, setCollapsed, setResetting } = useSidebarStore();
+  const isEditable = currentWorkspace?.role === 'OWNER' || currentWorkspace?.role === 'EDITOR';
 
   const search = useSearch();
   const invite = useInvite();
@@ -185,7 +186,9 @@ export const Navigation = () => {
                 <TrashBox onClose={() => setIsTrashOpen(false)} />
               </PopoverContent>
             </Popover>
-            <Item onClick={handleCreate} label="새 노트" icon={PlusCircle} />
+            {isEditable && (
+              <Item onClick={handleCreate} label="새 노트" icon={PlusCircle} />
+            )}
           </div>
           <div className="flex-1 min-h-0 overflow-y-auto mt-4">
             <DocumentList onItemClick={() => isMobile && toggleSidebar()} />

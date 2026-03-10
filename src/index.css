@@ -393,11 +393,13 @@
 }
 
 /* 모바일에서 Swiper 화살표 가리기용 */
-
 @media (max-width: 768px) {
     .swiper-button-next,
     .swiper-button-prev {
         display: none;
+    }
+    .bn-container .bn-editor {
+        padding-inline: 1rem;
     }
 }
 

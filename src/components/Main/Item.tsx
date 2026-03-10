@@ -16,6 +16,7 @@ import {
 // API 함수 불러오기
 import { apiCreateDocument, apiArchiveDocument } from "@/api/documentApi";
 import { useTrashStore } from "@/store/useTrashStore";
+import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 
 interface ItemProps {
     id?: number;
@@ -47,9 +48,14 @@ export function Item({
     const navigate = useNavigate();
     const { workspaceCode } = useParams<{ workspaceCode: string }>();
 
+    const { workspaces } = useWorkspaceStore();
+    const currentWorkspace = workspaces.find(w => w.inviteCode === workspaceCode);
+    const isEditable = currentWorkspace?.role === 'OWNER' || currentWorkspace?.role === 'EDITOR';
+
     // 문서 삭제(아카이브) 로직 완성
     const onArchive = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
+        if (!isEditable) return;
         if (!id || !workspaceCode) return;
 
         const promise = apiArchiveDocument(id).then(() => {
@@ -128,7 +134,7 @@ export function Item({
                 </kbd>
             )}
 
-            {!!id && (
+            {!!id && isEditable && (
                 <div className="ml-auto flex items-center gap-x-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
