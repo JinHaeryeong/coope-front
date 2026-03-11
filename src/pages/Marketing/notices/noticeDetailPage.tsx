@@ -189,6 +189,7 @@ const NoticeDetailPage = () => {
                     onCommentAdded={fetchComments}
                 />
                 <CommentList
+                    noticeId={noticeId}
                     comments={comments}
                     onRefresh={fetchComments}
                 />

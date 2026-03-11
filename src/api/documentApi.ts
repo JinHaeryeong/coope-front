@@ -1,7 +1,5 @@
 import axiosAuthInstance from "./axiosAuthInstance";
 
-
-
 export interface DocumentResponse {
     id: number;
     title: string;
@@ -16,7 +14,6 @@ export interface DocumentResponse {
     createdAt: string;
 }
 
-
 export interface DocumentCreateRequest {
     title: string;
     workspaceCode: string;
@@ -26,11 +23,7 @@ export interface DocumentCreateRequest {
     content?: string;
 }
 
-/**
- * 사이드바 문서 목록 조회 (계층형)
- * @param workspaceCode URL의 inviteCode
- * @param parentId 부모 문서 ID (최상위 조회 시 null/undefined)
- */
+// 사이드바 문서 목록
 export const apiGetSidebarDocuments = async (
     workspaceCode: string,
     parentId?: number
@@ -41,7 +34,7 @@ export const apiGetSidebarDocuments = async (
     return response.data;
 };
 
-
+// 문서 생성
 export const apiCreateDocument = async (
     request: DocumentCreateRequest
 ): Promise<DocumentResponse> => {
@@ -49,28 +42,25 @@ export const apiCreateDocument = async (
     return response.data;
 };
 
+// 문서 상세 조회
 export const apiGetDocumentById = async (
     documentId: number,
     workspaceCode: string
 ): Promise<DocumentResponse> => {
-    // URL 파라미터나 쿼리 스트링으로 workspaceCode 함께 전달
     const response = await axiosAuthInstance.get(`/documents/${documentId}`, {
         params: { workspaceCode }
     });
     return response.data;
 };
 
+// 문서 아카이브(휴지통 이동)
 export const apiArchiveDocument = async (
     documentId: number
 ): Promise<void> => {
-    await axiosAuthInstance.patch(`/documents/${documentId}/archive`);
+    await axiosAuthInstance.put(`/documents/${documentId}/archive`);
 };
 
-
-/**
- * 휴지통 목록 조회
- * @param workspaceCode 워크스페이스 초대 코드
- */
+// 휴지통 목록 조회
 export const apiGetTrashDocuments = async (
     workspaceCode: string
 ): Promise<DocumentResponse[]> => {
@@ -80,27 +70,22 @@ export const apiGetTrashDocuments = async (
     return response.data;
 };
 
-/**
- * 문서 복구 (isArchived를 false로 변경)
- * @param documentId 복구할 문서 ID
- */
+// 문서 휴지통에서 복구
 export const apiRestoreDocument = async (
     documentId: number
 ): Promise<DocumentResponse> => {
-    const response = await axiosAuthInstance.patch(`/documents/${documentId}/restore`);
+    const response = await axiosAuthInstance.put(`/documents/${documentId}/restore`);
     return response.data;
 };
 
-/**
- * 문서 영구 삭제 (DB에서 제거)
- * @param documentId 삭제할 문서 ID
- */
+// 문서 영구 삭제
 export const apiHardDeleteDocument = async (
     documentId: number
 ): Promise<void> => {
     await axiosAuthInstance.delete(`/documents/${documentId}`);
 };
 
+// 제목 커버 이미지 등 수정
 export const apiUpdateDocument = async (
     documentId: number,
     request: Partial<DocumentCreateRequest>
@@ -109,6 +94,7 @@ export const apiUpdateDocument = async (
     return response.data;
 };
 
+// 문서 내용 수정
 export const apiUpdateDocumentContent = async (
     documentId: number,
     content: string
@@ -118,17 +104,21 @@ export const apiUpdateDocumentContent = async (
     });
 };
 
-
+/**
+ * Redis 스냅샷 수동 저장
+ */
 export const apiUpdateDocumentRedisSnapshot = async (
     documentId: number,
     content: string
 ): Promise<void> => {
-    await axiosAuthInstance.patch(`/documents/${documentId}/redis-snapshot`, content, {
+    await axiosAuthInstance.post(`/documents/${documentId}/snapshots`, content, {
         headers: { 'Content-Type': 'text/plain' }
     });
 };
 
+
+// Redis 스냅샷 조회 (상세 조회 시 통합되어 제공되나 별도 필요 시 사용)
 export const apiGetDocumentRedisSnapshot = async (documentId: number): Promise<string> => {
-    const response = await axiosAuthInstance.get(`/documents/${documentId}/redis-snapshot`);
+    const response = await axiosAuthInstance.get(`/documents/${documentId}/snapshots`);
     return response.data;
 };

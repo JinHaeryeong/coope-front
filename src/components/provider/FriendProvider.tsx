@@ -276,10 +276,7 @@ export const FriendProvider = ({ children }: { children: ReactNode }) => {
             let fileFormat: string | undefined = undefined;
 
             if (selectedFile) {
-                const formData = new FormData();
-                formData.append("file", selectedFile);
-
-                const uploadRes = await apiUploadChatFile(formData);
+                const uploadRes = await apiUploadChatFile(selectedRoom.roomId, selectedFile);
                 fileUrl = uploadRes.fileUrl;
                 fileName = uploadRes.fileName;
                 fileFormat = uploadRes.fileFormat;

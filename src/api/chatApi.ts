@@ -2,10 +2,14 @@ import type { RoomType } from "@/components/provider/FriendProvider";
 import axiosAuthInstance from "./axiosAuthInstance";
 
 export type MessageType = "TALK" | "ENTER" | "LEAVE";
+
+export type ImageCategory = "NOTICE" | "COMMENT" | "PROFILE" | "CHAT" | "COVER" | "DOCUMENT" | "INQUIRY";
+
 export interface Slice<T> {
     content: T[];
     last: boolean;
 }
+
 export interface MessageResponse {
     id: number;
     roomId: number;
@@ -19,6 +23,7 @@ export interface MessageResponse {
     fileFormat?: string;
     createdAt: string;
 }
+
 export interface ChatRoomResponse {
     roomId: number;
     title: string;
@@ -29,9 +34,9 @@ export interface ChatListResponse {
     roomId: number;
     title: string;
     type: RoomType;
-    lastMessage?: string; // 마지막 메시지 미리보기
-    lastMessageTime?: string; // 마지막 메시지 시간
-    unreadCount: number; // 안 읽은 메시지 수 (나중에 구현!)
+    lastMessage?: string;
+    lastMessageTime?: string;
+    unreadCount: number;
 }
 
 export interface SliceResponse<T> {
@@ -45,14 +50,14 @@ export interface SliceResponse<T> {
 }
 
 export const apiCreateOrGet1on1Room = async (friendId: number) => {
-    const response = await axiosAuthInstance.post<ChatRoomResponse>(`/chat/room/individual`, null, {
+    const response = await axiosAuthInstance.post<ChatRoomResponse>(`/chat/rooms/individual`, null, {
         params: { friendId }
     });
     return response.data;
 };
 
 export const apiCreateGroupRoom = async (userIds: number[], roomName: string) => {
-    const response = await axiosAuthInstance.post<ChatRoomResponse>(`/chat/room/group`, {
+    const response = await axiosAuthInstance.post<ChatRoomResponse>(`/chat/rooms/group`, {
         userIds,
         roomName
     });
@@ -64,7 +69,7 @@ export const apiGetChatMessages = async (
     lastMessageId: number | null = null,
     size: number = 20
 ) => {
-    const response = await axiosAuthInstance.get<Slice<MessageResponse>>(`/chat/room/${roomId}/messages`, {
+    const response = await axiosAuthInstance.get<Slice<MessageResponse>>(`/chat/rooms/${roomId}/messages`, {
         params: {
             lastMessageId,
             size
@@ -80,17 +85,20 @@ export const apiGetMyChatRooms = async (page: number = 0, size: number = 10) => 
     return response.data;
 };
 
-export const apiUploadChatFile = async (formData: FormData) => {
+export const apiUploadChatFile = async (roomId: number, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
     const response = await axiosAuthInstance.post<{
         fileUrl: string,
         fileName: string,
         fileFormat: string
-    }>(`/chat/upload`, formData);
+    }>(`/chat/rooms/${roomId}/files/upload`, formData);
     return response.data;
 };
 
-export const apiDownloadChatFile = async (fileUrl: string, fileName: string) => {
-    const response = await axiosAuthInstance.get(`/chat/download`, {
+export const apiDownloadChatFile = async (roomId: number, fileUrl: string, fileName: string) => {
+    const response = await axiosAuthInstance.get(`/chat/rooms/${roomId}/files/download`, {
         params: {
             fileUrl,
             fileName,
@@ -102,5 +110,5 @@ export const apiDownloadChatFile = async (fileUrl: string, fileName: string) => 
 };
 
 export const apiLeaveChatRoom = async (roomId: number) => {
-    return await axiosAuthInstance.delete(`/chat/room/${roomId}/leave`);
+    return await axiosAuthInstance.delete(`/chat/rooms/${roomId}/leave`);
 };

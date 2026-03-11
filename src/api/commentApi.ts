@@ -14,27 +14,28 @@ export interface CommentResponse {
 // 댓글 추가
 export const apiAddComment = async (noticeId: number, formData: FormData) => {
     const response = await axiosAuthInstance.post(
-        `/comments?noticeId=${noticeId}`,
-        formData,
+        `/notices/${noticeId}/comments`,
+        formData
     );
     return response;
 };
 
-// 댓글 목록
-export const apiGetComments = async (id: number): Promise<CommentResponse[]> => {
-    const response = await axiosInstance.get(`/comments?noticeId=${id}`);
+// 댓글 목록 조회
+export const apiGetComments = async (noticeId: number): Promise<CommentResponse[]> => {
+    const response = await axiosInstance.get(`/notices/${noticeId}/comments`);
     return response.data;
 }
 
 // 댓글 삭제
-export const apiDeleteComment = async (id: number) => {
-    const response = await axiosAuthInstance.delete(`/comments/${id}`);
+export const apiDeleteComment = async (noticeId: number, commentId: number) => {
+    const response = await axiosAuthInstance.delete(`/notices/${noticeId}/comments/${commentId}`);
     return response;
 };
 
 // 댓글 수정
-export const apiEditComment = async (id: number, formData: FormData) => {
-    const response = await axiosAuthInstance.patch(`/comments/${id}`,
+export const apiEditComment = async (noticeId: number, commentId: number, formData: FormData) => {
+    const response = await axiosAuthInstance.patch(
+        `/notices/${noticeId}/comments/${commentId}`,
         formData
     );
     return response;
