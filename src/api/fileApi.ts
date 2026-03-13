@@ -1,6 +1,13 @@
 import axiosAuthInstance from "./axiosAuthInstance";
 
-export type ImageCategory = "COVER" | "DOCUMENT" | "PROFILE";
+export type ImageCategory =
+    | "NOTICE"
+    | "COMMENT"
+    | "PROFILE"
+    | "CHAT"
+    | "COVER"
+    | "DOCUMENT"
+    | "INQUIRY";
 
 export const apiFileUpload = async (file: File, category: ImageCategory) => {
     const formData = new FormData();

@@ -109,14 +109,16 @@ export function SettingsModal({ workspaceCode, initialName }: SettingsModalProps
     };
 
     const onRoleChange = async (targetUserId: number, newRole: 'EDITOR' | 'VIEWER') => {
-        if (!currentWorkspace) return;
+        if (!currentWorkspace?.inviteCode) return;
 
         setIsMembersLoading(true);
         try {
-            await apiUpdateMemberRole(currentWorkspace.id, targetUserId, newRole);
+            await apiUpdateMemberRole(currentWorkspace.inviteCode, targetUserId, newRole);
+
             toast.success("권한이 변경되었습니다.");
-            await fetchMembers();
+            await fetchMembers(); // 목록 새로고침
         } catch (err) {
+            console.error(err);
             toast.error("권한 변경에 실패했습니다.");
         } finally {
             setIsMembersLoading(false);

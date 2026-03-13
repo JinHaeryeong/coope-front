@@ -27,11 +27,15 @@ export const MessageItem = ({
 
     const handleDownload = async () => {
         try {
-            const blob = await apiDownloadChatFile(message.fileUrl || "", message.fileName || "file");
+            const blob = await apiDownloadChatFile(
+                message.roomId,
+                message.fileUrl || "",
+                message.fileName || "file"
+            );
+
             const url = window.URL.createObjectURL(new Blob([blob]));
             const link = document.createElement('a');
             link.href = url;
-
             link.setAttribute('download', message.fileName || 'download');
             document.body.appendChild(link);
             link.click();
@@ -43,7 +47,6 @@ export const MessageItem = ({
             toast.error("파일 다운로드에 실패했습니다.");
         }
     };
-
 
     if (message.type === "ENTER" || message.type === "LEAVE") {
         return (

@@ -1,8 +1,6 @@
 import axiosAuthInstance from "./axiosAuthInstance";
 
-
 // 내 문의 내역 페이징 조회
-
 export const apiGetMyInquiries = async (page: number, size: number = 10) => {
     const response = await axiosAuthInstance.get('/inquiries/me', {
         params: {
@@ -14,9 +12,9 @@ export const apiGetMyInquiries = async (page: number, size: number = 10) => {
     return response.data;
 };
 
-// 관리자의 조회
+// 관리자 조회
 export const apiGetAllInquiries = async (page: number, size: number = 10) => {
-    const response = await axiosAuthInstance.get('/inquiries/all', {
+    const response = await axiosAuthInstance.get('/inquiries', {
         params: {
             page,
             size,
@@ -48,9 +46,9 @@ export const apiDeleteInquiry = async (id: number) => {
     return response;
 };
 
-// 문의 답변 작성
+// 문의 답변
 export const apiCreateInquiryAnswer = async (inquiryId: number, content: string) => {
-    const response = await axiosAuthInstance.post(`/inquiries/${inquiryId}/answer`, {
+    const response = await axiosAuthInstance.post(`/inquiries/${inquiryId}/answers`, {
         content: content
     });
     return response.data;

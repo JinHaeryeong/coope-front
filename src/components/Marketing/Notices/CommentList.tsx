@@ -21,11 +21,12 @@ export interface Comment {
 }
 
 interface CommentListProps {
+    noticeId: number;
     comments: Comment[];
     onRefresh: () => void;
 }
 
-export const CommentList = ({ comments, onRefresh }: CommentListProps) => {
+export const CommentList = ({ noticeId, comments, onRefresh }: CommentListProps) => {
     const { user } = useAuthStore();
     const [commentEdit, setCommentEdit] = useState("");
     const [editPreviewUrl, setEditPreviewUrl] = useState<string | null>(null);
@@ -35,9 +36,9 @@ export const CommentList = ({ comments, onRefresh }: CommentListProps) => {
     const [isImageDeletedFlag, setIsImageDeletedFlag] = useState(false);
 
     // 삭제 핸들러
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (commentId: number) => {
         try {
-            await apiDeleteComment(id);
+            await apiDeleteComment(noticeId, commentId);
             toast.success("댓글이 삭제되었습니다.");
             onRefresh(); // 부모의 fetchComments 실행
         } catch (error) {
@@ -68,7 +69,7 @@ export const CommentList = ({ comments, onRefresh }: CommentListProps) => {
                 formData.append("file", editFile);
             }
 
-            await apiEditComment(commentIdToEdit, formData);
+            await apiEditComment(noticeId, commentIdToEdit, formData);
             toast.success("댓글이 수정되었습니다.");
             setCommentIdToEdit(null);
             onRefresh();
