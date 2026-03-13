@@ -111,13 +111,13 @@ export const apiUpdateDocumentRedisSnapshot = async (
     documentId: number,
     content: string
 ): Promise<void> => {
-    await axiosAuthInstance.post(`/documents/${documentId}/snapshots`, content, {
+    await axiosAuthInstance.put(`/documents/${documentId}/snapshots`, content, {
         headers: { 'Content-Type': 'text/plain' }
     });
 };
 
 
-// Redis 스냅샷 조회 (상세 조회 시 통합되어 제공되나 별도 필요 시 사용)
+// Redis 스냅샷 조회
 export const apiGetDocumentRedisSnapshot = async (documentId: number): Promise<string> => {
     const response = await axiosAuthInstance.get(`/documents/${documentId}/snapshots`);
     return response.data;

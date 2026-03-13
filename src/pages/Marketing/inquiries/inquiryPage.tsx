@@ -40,14 +40,14 @@ const InquiryPage = () => {
                     ? await apiGetAllInquiries(safePage)
                     : await apiGetMyInquiries(safePage);
 
-                setInquiries(response.content || []);
-                if (response.page) {
-                    setTotalPages(response.page.totalPages || 0);
-                    setTotalElements(response.page.totalElements || 0);
-                } else {
-                    setTotalPages(response.totalPages || 0);
-                    setTotalElements(response.totalElements || 0);
-                }
+                setInquiries(response?.content || []);
+
+                const totalP = response?.page?.totalPages ?? response?.totalPages ?? 0;
+                const totalE = response?.page?.totalElements ?? response?.totalElements ?? 0;
+
+                setTotalPages(totalP);
+                setTotalElements(totalE);
+
             } catch (error) {
                 console.error("데이터 로드 실패", error);
             } finally {

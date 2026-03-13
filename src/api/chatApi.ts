@@ -3,8 +3,6 @@ import axiosAuthInstance from "./axiosAuthInstance";
 
 export type MessageType = "TALK" | "ENTER" | "LEAVE";
 
-export type ImageCategory = "NOTICE" | "COMMENT" | "PROFILE" | "CHAT" | "COVER" | "DOCUMENT" | "INQUIRY";
-
 export interface Slice<T> {
     content: T[];
     last: boolean;
@@ -102,7 +100,6 @@ export const apiDownloadChatFile = async (roomId: number, fileUrl: string, fileN
         params: {
             fileUrl,
             fileName,
-            category: "CHAT"
         },
         responseType: 'blob'
     });

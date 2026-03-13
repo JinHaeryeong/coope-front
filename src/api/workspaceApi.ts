@@ -29,8 +29,8 @@ export const apiGetWorkspaceByCode = async (inviteCode: string): Promise<Workspa
     return response.data;
 };
 
-export const apiUpdateWorkspace = async (inviteCode: string, name: string): Promise<WorkspaceResponse> => {
-    const response = await axiosAuthInstance.patch(`/workspaces/${inviteCode}`, { name });
+export const apiUpdateWorkspace = async (workspaceCode: string, name: string): Promise<WorkspaceResponse> => {
+    const response = await axiosAuthInstance.patch(`/workspaces/${workspaceCode}`, { name });
     return response.data;
 };
 
