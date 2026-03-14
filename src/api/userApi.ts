@@ -30,6 +30,25 @@ export interface UserSearchResponse {
     status: string;
 }
 
+export interface FindEmailRequest {
+    name: string;
+    nickname: string;
+}
+
+export interface FindEmailResponse {
+    maskedEmail: string;
+    provider: 'LOCAL' | 'GOOGLE' | 'KAKAO' | (string & {});
+}
+
+export interface FindPasswordRequest {
+    name: string;
+    email: string;
+}
+
+export interface ResetPasswordRequest {
+    resetToken: string;
+    newPassword: string;
+}
 export const apiSignUp = async (formData: FormData) => {
     const response = await axiosInstance.post<SignUpResponse>("/user", formData);
     return response.data;
@@ -77,5 +96,29 @@ export const apiUpdateProfile = async (formData: FormData) => {
             "Content-Type": "multipart/form-data",
         },
     });
+    return response.data;
+};
+
+export const apiFindEmail = async (data: FindEmailRequest) => {
+    const response = await axiosInstance.post<FindEmailResponse[]>("/auth/find-email", data);
+    return response.data;
+};
+
+export const apiFindPassword = async (data: FindPasswordRequest) => {
+    const response = await axiosInstance.post("/auth/find-password", data);
+    return response.data;
+};
+
+export const apiUnlockAccount = async (unlockToken: string) => {
+    const response = await axiosInstance.post<{ resetToken: string }>(
+        "/auth/unlock",
+        null,
+        { params: { unlockToken } }
+    );
+    return response.data;
+};
+
+export const apiResetPassword = async (data: ResetPasswordRequest) => {
+    const response = await axiosInstance.post("/auth/reset-password", data);
     return response.data;
 };

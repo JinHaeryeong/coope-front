@@ -42,15 +42,26 @@ export function LoginForm() {
             if (result) {
                 const { accessToken, ...userInfo } = result;
                 signIn(accessToken, userInfo);
-
-                console.log("로그인 성공 및 스토어 저장 완료");
-
                 loginModal.onClose();
                 navigate("/");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
+                const status = error.response?.status;
                 const serverMessage = error.response?.data?.message;
+
+                if (status === 423) {
+                    toast.error("로그인 5회 실패로 계정이 잠겼습니다. 이메일로 발송된 잠금 해제 링크를 확인해주세요.", {
+                        duration: 5000,
+                    });
+                    return;
+                }
+
+                if (status === 401) {
+                    toast.warning(serverMessage || "이메일 또는 비밀번호가 일치하지 않습니다.");
+                    return;
+                }
+
                 toast.info(serverMessage || "로그인에 실패했습니다.");
             } else {
                 console.error("알 수 없는 에러:", error);
@@ -92,16 +103,30 @@ export function LoginForm() {
                         <p className="text-xs text-red-500">{form.formState.errors.password.message}</p>
                     )}
                 </Field>
-                <div className="text-center">
-                    <p className="text-sm text-muted-foreground">
-                        계정이 없으신가요?
-                        <span
-                            className="ml-2 text-primary underline underline-offset-4 cursor-pointer hover:text-primary/80 transition"
-                            onClick={handleSignupClick}
-                        >
-                            회원가입
-                        </span>
-                    </p>
+                <div className="flex items-center justify-center gap-x-3 text-xs text-muted-foreground">
+                    <button
+                        type="button"
+                        className="hover:text-primary transition underline-offset-4 hover:underline"
+                        onClick={() => navigate("/find-account?type=email")}
+                    >
+                        아이디 찾기
+                    </button>
+                    <span className="w-px h-3 bg-slate-300" />
+                    <button
+                        type="button"
+                        className="hover:text-primary transition underline-offset-4 hover:underline"
+                        onClick={() => navigate("/find-account?type=password")}
+                    >
+                        비밀번호 찾기
+                    </button>
+                    <span className="w-px h-3 bg-slate-300" />
+                    <button
+                        type="button"
+                        className="font-medium hover:text-primary transition underline-offset-4 hover:underline"
+                        onClick={handleSignupClick}
+                    >
+                        회원가입
+                    </button>
                 </div>
                 <div className="flex flex-col gap-y-3">
                     <Button type="submit" className="w-full cursor-pointer">로그인</Button>

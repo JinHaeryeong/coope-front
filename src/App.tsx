@@ -30,11 +30,13 @@ const FriendsPage = lazy(() => import('./pages/Workspace/Friend/friendsPage'));
 const InvitePage = lazy(() => import('./pages/Workspace/Invite/invitePage'));
 const DocumentsWelcomePage = lazy(() => import('./pages/Workspace/Document/documentsWelcomePage'))
 import CallModal from './components/Call/CallModal';
+import NotFoundPage from './pages/notFoundPage';
 const DocumentsPage = lazy(() => import('./pages/Workspace/Document/DocumentPage'));
 const ProfilePage = lazy(() => import('./pages/Marketing/ProfilePage'));
 const InquiryWritePage = lazy(() => import('./pages/Marketing/inquiries/inquiryWritePage'));
 const InquiryDetailPage = lazy(() => import('./pages/Marketing/inquiries/inquiryDetailPage'));
-
+const FindAccountPage = lazy(() => import('./pages/Marketing/findAccountPage'));
+const ResetPasswordPage = lazy(() => import('./pages/Marketing/resetPasswordPage'));
 
 function App() {
 
@@ -113,6 +115,8 @@ function App() {
               <Route element={<MarketingLayout />}>
                 <Route path="/" element={<MarketingPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/find-account" element={<FindAccountPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/notice" element={<NoticePage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/notice/:id" element={<NoticeDetailPage />} />
@@ -126,7 +130,7 @@ function App() {
                 <Route path="/inquiry" element={<InquiryPage />} />
                 <Route path="/inquiry/write" element={<InquiryWritePage />} />
                 <Route path="/inquiry/:id" element={<InquiryDetailPage />} />
-                <Route path="*" element={<UnderConstructionPage />} />
+                <Route path="/function" element={<UnderConstructionPage />} />
               </Route>
 
               <Route path="/workspace/:workspaceCode" element={<MainLayout />}>
@@ -137,6 +141,7 @@ function App() {
                 <Route path="documents/:documentId" element={<DocumentsPage />} />
                 <Route path="friends" element={<FriendsPage />} />
               </Route>
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
         </BrowserRouter>
