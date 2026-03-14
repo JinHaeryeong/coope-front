@@ -34,8 +34,8 @@ export function FindEmailForm() {
                 <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-sm font-medium mb-2 text-slate-600">찾으시는 계정 정보입니다:</p>
                     {results.length > 0 ? (
-                        results.map((user, index) => (
-                            <div key={index} className="flex justify-between py-2 border-b last:border-0">
+                        results.map((user) => (
+                            <div key={`${user.maskedEmail}-${user.provider}`} className="flex justify-between py-2 border-b last:border-0">
                                 <span className="font-mono text-blue-600">{user.maskedEmail}</span>
                                 <span className="text-xs text-slate-400 bg-slate-200 px-2 py-1 rounded">{user.provider}</span>
                             </div>

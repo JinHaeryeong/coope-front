@@ -62,7 +62,11 @@ export default function ResetPasswordPage() {
     });
 
     const onSubmit = async (values: z.infer<typeof schema>) => {
-        if (!resetToken) return;
+        if (!resetToken) {
+            toast.error("인증이 만료되었습니다. 다시 시도해주세요.");
+            navigate("/find-account");
+            return;
+        }
 
         try {
             await apiResetPassword({
@@ -108,7 +112,7 @@ export default function ResetPasswordPage() {
                     {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>}
                 </Field>
 
-                <Button type="submit" className="w-full h-12 text-sm font-bold" disabled={isSubmitting}>
+                <Button type="submit" className="w-full h-12 text-sm font-bold" disabled={isSubmitting || !resetToken}>
                     비밀번호 변경하기
                 </Button>
             </form>

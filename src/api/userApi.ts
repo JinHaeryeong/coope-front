@@ -37,7 +37,7 @@ export interface FindEmailRequest {
 
 export interface FindEmailResponse {
     maskedEmail: string;
-    provider: 'LOCAL' | 'GOOGLE' | 'KAKAO' | string; // Provider enum 대응
+    provider: 'LOCAL' | 'GOOGLE' | 'KAKAO' | (string & {});
 }
 
 export interface FindPasswordRequest {
