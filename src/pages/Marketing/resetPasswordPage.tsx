@@ -83,8 +83,8 @@ export default function ResetPasswordPage() {
     if (isLoading) return <div className="flex justify-center mt-40"><Spinner /></div>;
 
     return (
-        <div className="max-w-xl m-auto mt-20 p-10 border rounded-2xl shadow-lg bg-white">
-            <h1 className="text-2xl font-bold mb-2 text-center text-slate-800">새 비밀번호 설정</h1>
+        <div className="max-w-xl m-auto mt-20 p-10 border rounded-2xl shadow-lg">
+            <h1 className="text-2xl font-bold mb-2 text-center">새 비밀번호 설정</h1>
             <p className="text-sm text-center text-muted-foreground mb-8">
                 새로운 비밀번호를 입력하여 계정 보안을 유지하세요.
             </p>
