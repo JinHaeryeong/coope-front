@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ModeToggle } from "@/components/Common/ModeToggle";
 import { Logo } from "./Logo";
-import { useLoginModal } from "@/hooks/useLoginModal";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useLoginModal } from "@/features/auth/hooks/useLoginModal";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 
 import {
     Avatar,

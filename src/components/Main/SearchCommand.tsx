@@ -10,7 +10,7 @@ import {
     CommandList,
 } from "@/components/ui/command";
 import { useSearch } from "@/hooks/useSearch";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { type DocumentResponse, apiGetSidebarDocuments } from "@/api/documentApi";
 import { toast } from "sonner";
 

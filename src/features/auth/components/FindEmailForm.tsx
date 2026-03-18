@@ -5,7 +5,8 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { apiFindEmail, type FindEmailResponse } from "@/api/userApi";
+import { apiFindEmail } from "../api/userApi";
+import type { FindEmailResponse } from "../types/auth";
 import { toast } from "sonner";
 
 const schema = z.object({

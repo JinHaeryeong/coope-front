@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { FindEmailForm } from "@/components/Marketing/FindEmailForm";
-import { FindPasswordForm } from "@/components/Marketing/FindPasswordForm";
+import { FindEmailForm } from "@/features/auth/components/FindEmailForm";
+import { FindPasswordForm } from "@/features/auth/components/FindPasswordForm";
 
 export default function FindAccountPage() {
     const [searchParams, setSearchParams] = useSearchParams();

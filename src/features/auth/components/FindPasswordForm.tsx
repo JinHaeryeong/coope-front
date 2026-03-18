@@ -4,7 +4,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { apiFindPassword } from "@/api/userApi";
+import { apiFindPassword } from "../api/userApi";
 import { toast } from "sonner";
 
 const schema = z.object({

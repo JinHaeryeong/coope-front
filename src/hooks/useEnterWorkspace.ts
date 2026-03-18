@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { toast } from "sonner";
 import { apiGetMyWorkspaces, apiCreateWorkspace } from "@/api/workspaceApi";
 

@@ -3,8 +3,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { formatDate } from "@/lib/utils";
-import { useAuthStore } from "@/store/useAuthStore";
-import { apiDeleteComment, apiEditComment } from "@/api/commentApi";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { apiDeleteComment, apiEditComment } from "../api/commentApi";
 import { toast } from "sonner";
 import { ImagePlus, Loader2, X } from "lucide-react";
 

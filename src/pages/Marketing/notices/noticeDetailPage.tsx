@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { CalendarDays, Eye, UserCog2, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { apiGetNoticeById, apiDeleteNotice, apiIncreaseView } from "@/api/noticeApi"; // API 함수 가정
+import { apiGetNoticeById, apiDeleteNotice, apiIncreaseView } from "@/features/notice/api/noticeApi"; // API 함수 가정
 import { formatDate } from "@/lib/utils";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner"
-import { CommentForm } from "@/components/Marketing/Notices/CommentForm";
-import { CommentList } from "@/components/Marketing/Notices/CommentList";
-import { apiGetComments, type CommentResponse } from "@/api/commentApi";
+import { CommentForm } from "@/features/notice/components/CommentForm";
+import { CommentList } from "@/features/notice/components/CommentList";
+import { apiGetComments, type CommentResponse } from "@/features/notice/api/commentApi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import axios from "axios";
-import { NoticeNotFound } from "@/components/Marketing/Notices/NoticeNotFound";
+import { NoticeNotFound } from "@/features/notice/components/NoticeNotFound";
 
 export interface NoticeDetail {
     id: number;

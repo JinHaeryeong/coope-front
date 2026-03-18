@@ -6,26 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useAuthStore } from "@/store/useAuthStore";
-import { apiVerifyPassword, apiUpdateProfile } from "@/api/userApi";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { apiVerifyPassword, apiUpdateProfile } from "@/features/auth/api/userApi";
 import axios from "axios";
 import { UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+import { PASSWORD_REGEX, PASSWORD_CONSTRAINTS, NICKNAME_REGEX, NICKNAME_CONSTRAINTS } from "@/features/auth/constants/validation";
 
 const profileSchema = z.object({
     nickname: z.string()
-        .min(2, "닉네임은 2자 이상이어야 합니다.")
-        .max(20, "닉네임은 20자 이내로 입력해주세요."),
+        .min(NICKNAME_CONSTRAINTS.MIN_LENGTH, `닉네임은 ${NICKNAME_CONSTRAINTS.MIN_LENGTH}자 이상이어야 합니다.`)
+        .max(NICKNAME_CONSTRAINTS.MAX_LENGTH, `닉네임은 ${NICKNAME_CONSTRAINTS.MAX_LENGTH}자 이내로 입력해주세요.`)
+        .regex(NICKNAME_REGEX, NICKNAME_CONSTRAINTS.MESSAGE),
     newPassword: z.string()
         .optional()
         .or(z.literal(""))
-        .refine((val) => !val || (val.length >= 8 && val.length <= 20), {
-            message: "비밀번호는 8자 이상 20자 이하로 입력해주세요.",
+        .refine((val) => !val || (val.length >= PASSWORD_CONSTRAINTS.MIN_LENGTH && val.length <= PASSWORD_CONSTRAINTS.MAX_LENGTH), {
+            message: PASSWORD_CONSTRAINTS.LENGTH_MESSAGE,
         })
-        .refine((val) => !val || passwordRegex.test(val), {
-            message: "비밀번호는 영어, 숫자, 특수문자를 포함해야 합니다.",
+        .refine((val) => !val || PASSWORD_REGEX.test(val), {
+            message: PASSWORD_CONSTRAINTS.MESSAGE,
         }),
     confirmPassword: z.string().optional().or(z.literal("")),
 }).superRefine(({ newPassword, confirmPassword }, ctx) => {

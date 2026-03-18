@@ -4,7 +4,7 @@ import { useDocumentStore } from "@/store/useDocumentStore";
 import { useTrashStore } from "@/store/useTrashStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 
 export const useDocumentSocket = (workspaceCode: string | undefined) => {
     const navigate = useNavigate();

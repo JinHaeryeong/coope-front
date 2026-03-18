@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronRight, type LucideIcon, MoreHorizontal, Plus, Trash } from "lucide-react";
 import { toast } from "sonner";
 
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import {

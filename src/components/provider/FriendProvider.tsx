@@ -1,6 +1,6 @@
 
 import { createContext, useState, useRef, type ReactNode, useEffect, useContext, useCallback } from "react";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { apiGetChatMessages, apiCreateOrGet1on1Room, apiGetMyChatRooms, apiUploadChatFile } from "@/api/chatApi";
 import type { FriendResponse } from "@/api/friendApi";
 import type { ChatListResponse, MessageResponse } from "@/api/chatApi";
