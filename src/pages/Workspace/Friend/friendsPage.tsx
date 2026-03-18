@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useFriendStore } from "@/store/useFriendStore";
 
 import AddFriend from "@/components/Main/Friends/AddFriend";

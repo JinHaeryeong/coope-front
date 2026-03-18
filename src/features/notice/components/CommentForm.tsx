@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/store/useAuthStore";
-import { apiAddComment } from "@/api/commentApi";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { apiAddComment } from "../api/commentApi";
 import { toast } from "sonner";
 import { ImagePlus, X } from "lucide-react";
 

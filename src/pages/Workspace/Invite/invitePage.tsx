@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
 import { apiJoinWorkspace } from '@/api/workspaceApi';

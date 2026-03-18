@@ -1,7 +1,7 @@
 import { ChevronLeft, LogOut, Phone, Users, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFriend } from "@/components/provider/FriendProvider";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import ChatInput from "./ChatInput";
 import { MessageItem } from "./MessageItem";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";

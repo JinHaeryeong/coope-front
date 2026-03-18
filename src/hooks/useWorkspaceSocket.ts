@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSocket } from "@/hooks/useSocket";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 
 export const useWorkspaceSocket = () => {
     const { stompClient, isConnected } = useSocket();

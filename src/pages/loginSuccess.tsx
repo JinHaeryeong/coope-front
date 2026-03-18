@@ -1,5 +1,5 @@
-import { apiGetMe } from "@/api/userApi";
-import { useAuthStore } from "@/store/useAuthStore";
+import { apiGetMe } from "@/features/auth/api/userApi";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 

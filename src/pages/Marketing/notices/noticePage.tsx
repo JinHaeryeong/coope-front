@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Loader2 } from "lucide-react";
 
-const NoticeList = lazy(() => import("@/components/Marketing/Notices/NoticeList"));
+const NoticeList = lazy(() => import("@/features/notice/components/NoticeList"));
 
 const NoticePage = () => {
     return (

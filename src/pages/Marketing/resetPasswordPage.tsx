@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { apiUnlockAccount, apiResetPassword } from "@/api/userApi";
+import { apiUnlockAccount, apiResetPassword } from "@/features/auth/api/userApi";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -9,10 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { PASSWORD_REGEX, PASSWORD_CONSTRAINTS } from "@/features/auth/constants/validation";
 
 const schema = z.object({
-    newPassword: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다."),
-    confirmPassword: z.string().min(8, "비밀번호 확인을 입력해주세요."),
+    newPassword: z.string()
+        .min(PASSWORD_CONSTRAINTS.MIN_LENGTH, PASSWORD_CONSTRAINTS.LENGTH_MESSAGE)
+        .max(PASSWORD_CONSTRAINTS.MAX_LENGTH, PASSWORD_CONSTRAINTS.LENGTH_MESSAGE)
+        .regex(PASSWORD_REGEX, PASSWORD_CONSTRAINTS.MESSAGE),
+    confirmPassword: z.string().min(PASSWORD_CONSTRAINTS.MIN_LENGTH, "비밀번호 확인을 입력해주세요."),
 }).refine((data) => data.newPassword === data.confirmPassword, {
     message: "비밀번호가 일치하지 않습니다.",
     path: ["confirmPassword"],

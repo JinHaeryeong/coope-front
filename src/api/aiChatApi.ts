@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useAiUsageStore } from "@/store/useAiUsageStore";
 
 export const apiStreamChat = async (message: string, previousMessages: any[], signal: AbortSignal) => {

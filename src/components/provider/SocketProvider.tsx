@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { useFriendStore } from "@/store/useFriendStore";
 import { SocketContext } from "@/lib/socketContext";
 import { toast } from "sonner";

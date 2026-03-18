@@ -33,7 +33,7 @@ import {
     apiUpdateMemberRole,
     type WorkspaceMemberResponse
 } from "@/api/workspaceApi";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 

@@ -6,16 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
 import { useNavigate } from "react-router-dom";
-import { useLoginModal } from "@/hooks/useLoginModal";
+import { useLoginModal } from "../hooks/useLoginModal";
 import axios from "axios";
-import { apiLogin } from "@/api/userApi";
-import { useAuthStore } from "@/store/useAuthStore";
+import { apiLogin } from "../api/userApi";
+import { useAuthStore } from "../store/useAuthStore";
 import { toast } from "sonner";
 
 // 유효성 검사 규칙 정의
 const formSchema = z.object({
     email: z.string().email("올바른 이메일을 입력해주세요."),
-    password: z.string().min(8, "비밀번호는 최소 8자 이상입니다."),
+    password: z.string().min(1, "비밀번호를 입력해주세요."),
 });
 
 export function LoginForm() {

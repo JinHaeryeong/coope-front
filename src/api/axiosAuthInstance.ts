@@ -1,7 +1,7 @@
-import { useAuthStore } from "@/store/useAuthStore";
+import { apiRefreshToken } from "@/features/auth/api/userApi";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
-import { apiRefreshToken } from "./userApi";
 
 const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 

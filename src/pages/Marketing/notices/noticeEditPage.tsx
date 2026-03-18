@@ -2,8 +2,8 @@ import React, { useRef, useState, useMemo, useEffect } from "react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/store/useAuthStore";
-import { apiGetNoticeById, apiEditNotice } from "@/api/noticeApi"; // API 추가
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { apiGetNoticeById, apiEditNotice } from "@/features/notice/api/noticeApi"; // API 추가
 import { toast } from "sonner";
 import { Smile, Paperclip, X, Loader2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";

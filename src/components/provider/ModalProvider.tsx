@@ -1,4 +1,4 @@
-import { useLoginModal } from "@/hooks/useLoginModal";
+import { useLoginModal } from "@/features/auth/hooks/useLoginModal";
 import { usePrivacyModal } from "@/hooks/usePrivacyModal";
 import { useQnaModal } from "@/hooks/useQnaModal";
 import { useTermsModal } from "@/hooks/useTermsModal";
@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 
 const Modal = lazy(() => import("@/components/Marketing/Modal"));
 const LoginForm = lazy(() =>
-    import("../Auth/LoginForm").then(module => ({ default: module.LoginForm }))
+    import("@/features/auth/components/LoginForm").then(module => ({ default: module.LoginForm }))
 );
 const FaqContent = lazy(() => import("@/components/Marketing/FaqContent"));
 const Policy = lazy(() => import("@/components/Marketing/Policy"));

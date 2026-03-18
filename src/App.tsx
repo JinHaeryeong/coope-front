@@ -3,14 +3,11 @@ import { lazy, Suspense, useEffect } from 'react';
 import { MarketingLayout } from './layouts/MarketingLayout';
 import { ThemeProvider } from "@/components/provider/themeProvider"
 import { ModalProvider } from './components/provider/ModalProvider';
-import { useAuthStore } from './store/useAuthStore';
 import { Toaster } from 'sonner';
-import { AdminGuard } from './components/Auth/AdminGuard';
 import { LoginSuccess } from './pages/loginSuccess';
 import { ScrollToTop } from './components/Common/ScrollToTop';
 import { Spinner } from './components/ui/spinner';
 import { MainLayout } from './layouts/MainLayout';
-import { apiRefreshToken } from './api/userApi';
 import { useCallStore } from './store/useCallStore';
 
 const MarketingPage = lazy(() => import('./pages/Marketing/marketingPage'));
@@ -31,6 +28,9 @@ const InvitePage = lazy(() => import('./pages/Workspace/Invite/invitePage'));
 const DocumentsWelcomePage = lazy(() => import('./pages/Workspace/Document/documentsWelcomePage'))
 import CallModal from './components/Call/CallModal';
 import NotFoundPage from './pages/notFoundPage';
+import { apiRefreshToken } from './features/auth/api/userApi';
+import { AdminGuard } from './features/auth/components/AdminGuard';
+import { useAuthStore } from './features/auth/store/useAuthStore';
 const DocumentsPage = lazy(() => import('./pages/Workspace/Document/DocumentPage'));
 const ProfilePage = lazy(() => import('./pages/Marketing/ProfilePage'));
 const InquiryWritePage = lazy(() => import('./pages/Marketing/inquiries/inquiryWritePage'));

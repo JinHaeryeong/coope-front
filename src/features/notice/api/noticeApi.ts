@@ -1,5 +1,5 @@
-import axiosAuthInstance from "./axiosAuthInstance";
-import axiosInstance from "./axiosInstance"
+import axiosAuthInstance from "@/api/axiosAuthInstance";
+import axiosInstance from "@/api/axiosInstance"
 
 export const apiNotices = async (page: number, size: number) => {
     const response = await axiosInstance.get(`/notices?page=${page}&size=${size}`);

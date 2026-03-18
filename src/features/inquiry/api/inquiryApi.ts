@@ -1,4 +1,4 @@
-import axiosAuthInstance from "./axiosAuthInstance";
+import axiosAuthInstance from "@/api/axiosAuthInstance";
 
 // 내 문의 내역 페이징 조회
 export const apiGetMyInquiries = async (page: number, size: number = 10) => {

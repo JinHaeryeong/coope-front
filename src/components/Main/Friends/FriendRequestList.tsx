@@ -5,7 +5,7 @@ import { Loader2, UserCheck, UserMinus2Icon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { apiAcceptFriend, apiDeleteFriend } from "@/api/friendApi";
 import { useFriendStore } from "@/store/useFriendStore";
 import axios from "axios";

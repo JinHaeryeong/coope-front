@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Outlet, useParams } from 'react-router-dom';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { useSidebarStore } from '@/store/useSidebarStore'; // 추가
 
 import { Button } from '@/components/ui/button';

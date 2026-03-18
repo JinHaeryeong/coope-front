@@ -11,14 +11,11 @@ import {
     FieldGroup,
     FieldDescription
 } from "@/components/ui/field";
-import { apiSendEmail, apiSignUp, apiVerifyEmail } from "@/api/userApi";
+import { apiSendEmail, apiSignUp, apiVerifyEmail } from "../api/userApi";
 import axios from "axios";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-
-
-const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,20}$/;
-const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+import { PASSWORD_REGEX, PASSWORD_CONSTRAINTS, NICKNAME_REGEX, NICKNAME_CONSTRAINTS } from "../constants/validation";
 
 
 // 회원가입 유효성 검사 스키마
@@ -29,19 +26,19 @@ const signupSchema = z.object({
         .max(20, "이름은 20자 이내로 입력해주세요."),
     nickname: z
         .string()
-        .min(2, "닉네임은 2자 이상 입력해주세요.")
-        .max(20, "닉네임은 20자 이내로 입력해주세요.")
-        .regex(nicknameRegex, "닉네임은 특수문자를 제외한 한글, 영문, 숫자만 가능합니다."),
+        .min(NICKNAME_CONSTRAINTS.MIN_LENGTH, `닉네임은 ${NICKNAME_CONSTRAINTS.MIN_LENGTH}자 이상 입력해주세요.`)
+        .max(NICKNAME_CONSTRAINTS.MAX_LENGTH, `닉네임은 ${NICKNAME_CONSTRAINTS.MAX_LENGTH}자 이내로 입력해주세요.`)
+        .regex(NICKNAME_REGEX, NICKNAME_CONSTRAINTS.MESSAGE),
     email: z.string().email("올바른 이메일 형식을 입력해주세요."),
-    password: z.string().min(8, "비밀번호는 최소 8자 이상 20자 이하이어야 합니다.").regex(
-        passwordRegex,
-        "비밀번호는 영어, 숫자, 특수문자를 포함해야 합니다."
-    ),
+    password: z.string()
+        .min(PASSWORD_CONSTRAINTS.MIN_LENGTH, PASSWORD_CONSTRAINTS.LENGTH_MESSAGE)
+        .max(PASSWORD_CONSTRAINTS.MAX_LENGTH, PASSWORD_CONSTRAINTS.LENGTH_MESSAGE)
+        .regex(PASSWORD_REGEX, PASSWORD_CONSTRAINTS.MESSAGE),
     confirmPassword: z.string().min(1, "비밀번호 확인을 입력해주세요."),
     userIcon: z.instanceof(File).optional()
 }).refine((data) => data.password === data.confirmPassword, {
     message: "비밀번호가 일치하지 않습니다.",
-    path: ["confirmPassword"], // 에러 메시지를 표시할 필드
+    path: ["confirmPassword"],
 });
 
 export function SignupForm() {

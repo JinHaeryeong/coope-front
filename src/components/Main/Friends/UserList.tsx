@@ -4,9 +4,10 @@ import { UserRoundPlus, Loader2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/store/useAuthStore";
-import { apiSearchUser, type UserSearchResponse } from "@/api/userApi";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { apiSearchUser } from "@/features/auth/api/userApi";
 import { apiSendFriendRequest } from "@/api/friendApi";
+import type { UserSearchResponse } from "@/features/auth/types/auth";
 
 interface UserListProps {
     nickname: string; // 검색할 닉네임
