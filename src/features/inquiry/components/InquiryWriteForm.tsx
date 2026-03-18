@@ -25,13 +25,16 @@ const InquiryWriteForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const previewUrlsRef = useRef<string[]>([]);
+
     const redirectCS = () => navigate("/inquiry");
 
     useEffect(() => {
         return () => {
-            previews.forEach(url => URL.revokeObjectURL(url));
+            previewUrlsRef.current.forEach(url => URL.revokeObjectURL(url));
+            previewUrlsRef.current = [];
         };
-    }, [previews]);
+    }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
@@ -54,8 +57,12 @@ const InquiryWriteForm = () => {
                 toast.error(`${file.name}은 5MB를 초과합니다.`);
                 return;
             }
+
+            const url = URL.createObjectURL(file);
             newFiles.push(file);
-            newPreviews.push(URL.createObjectURL(file));
+            newPreviews.push(url);
+
+            previewUrlsRef.current.push(url);
         });
 
         setSelectedFiles(prev => [...prev, ...newFiles]);
@@ -65,7 +72,11 @@ const InquiryWriteForm = () => {
     };
 
     const handleRemoveFile = (index: number) => {
-        URL.revokeObjectURL(previews[index]); // 메모리 해제
+        const urlToRemove = previews[index];
+        URL.revokeObjectURL(urlToRemove);
+
+        previewUrlsRef.current = previewUrlsRef.current.filter(url => url !== urlToRemove);
+
         setSelectedFiles(prev => prev.filter((_, i) => i !== index));
         setPreviews(prev => prev.filter((_, i) => i !== index));
     };
@@ -77,6 +88,7 @@ const InquiryWriteForm = () => {
             const formData = new FormData();
             formData.append("title", title);
             formData.append("content", content);
+
             const categoryMap: Record<string, string> = {
                 "계정문의": "ACCOUNT", "오류문의": "ERROR", "건의사항": "SUGGESTION", "기타": "ETC"
             };
@@ -84,12 +96,16 @@ const InquiryWriteForm = () => {
             formData.append("environment", environment);
 
             selectedFiles.forEach(file => formData.append("files", file));
+
             await apiCreateInquiry(formData);
 
-            previews.forEach(url => URL.revokeObjectURL(url));
+            previewUrlsRef.current.forEach(url => URL.revokeObjectURL(url));
+            previewUrlsRef.current = [];
+
             toast.success("문의가 등록되었습니다.");
             navigate("/inquiry");
         } catch (error) {
+            console.error(error);
             toast.error("문의 작성에 실패했습니다.");
         } finally {
             setIsSubmitting(false);
