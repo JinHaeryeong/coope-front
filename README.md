@@ -1,7 +1,7 @@
-# Coope: WebRTC 기반 화상 회의 및 실시간 동시 편집 솔루션
+# Coope
 
 <p align="center">
-  <img width="554" height="117"  alt="logo" src="https://github.com/user-attachments/assets/ee9196c1-a378-453f-a262-ed885714b888" />
+  <img width="1232" height="478" alt="coope" src="https://github.com/user-attachments/assets/f2803f4c-efed-44e3-857f-b203d48d8b66" />
 </p>
 
 > "React와 Mediasoup SFU 아키텍처를 결합한 화상 회의 및 실시간 툴"
@@ -51,77 +51,70 @@
 ## 📁 프로젝트 구조
 ```
 📦 
-├─ .gitignore
-├─ README.md
-├─ components.json
-├─ eslint.config.js
-├─ index.html
-├─ package.json
-├─ pnpm-lock.yaml
-├─ public
-│  ├─ chat.png
-│  ├─ default-icon.webp
-│  ├─ documents-dark.png
-│  ├─ documents-dark.webp
-│  ├─ documents.png
-│  ├─ documents.webp
-│  ├─ empty-dark.png
-│  ├─ empty.png
-│  ├─ error-dark.png
-│  ├─ error.png
-│  ├─ example1.png
-│  ├─ example2.png
-│  ├─ file.svg
-│  ├─ functionPeople.png
-│  ├─ globe.svg
-│  ├─ introduction.png
-│  ├─ introduction.webp
-│  ├─ logo-dark.png
-│  ├─ logo-dark.svg
-│  ├─ logo-dark.webp
-│  ├─ logo.png
-│  ├─ logo.svg
-│  ├─ logo.webp
-│  ├─ moon.png
-│  ├─ mountain.jpg
-│  ├─ next.svg
-│  ├─ paint.webp
-│  ├─ paint1.webp
-│  ├─ reading-dark.png
-│  ├─ reading-dark.webp
-│  ├─ reading.png
-│  ├─ reading.webp
-│  ├─ robot.png
-│  ├─ robot_dark.png
-│  ├─ robots.txt
-│  ├─ signup.webp
-│  ├─ support1.png
-│  ├─ support1.webp
-│  ├─ vercel.svg
-│  ├─ wave.svg
-│  └─ window.svg
-├─ src
-│  ├─ App.css
-│  ├─ App.tsx
-│  ├─ api
-│  │  ├─ aiChatApi.ts
-│  │  ├─ axiosAuthInstance.ts
-│  │  ├─ axiosInstance.ts
-│  │  ├─ chatApi.ts
-│  │  ├─ commentApi.ts
-│  │  ├─ documentApi.ts
-│  │  ├─ friendApi.ts
-│  │  ├─ inquiryApi.ts
-│  │  ├─ noticeApi.ts
-│  │  ├─ userApi.ts
+.gitignore
+README.md
+components.json
+eslint.config.js
+index.html
+package.json
+pnpm-lock.yaml
+public
+chat.png
+default-icon.webp
+documents-dark.png
+documents-dark.webp
+documents.png
+documents.webp
+empty-dark.png
+empty.png
+error-dark.png
+error.png
+example1.png
+example2.png
+file.svg
+functionPeople.png
+globe.svg
+introduction.png
+introduction.webp
+logo-dark.png
+logo-dark.svg
+logo-dark.webp
+logo.png
+logo.svg
+logo.webp
+moon.png
+mountain.jpg
+next.svg
+paint.webp
+paint1.webp
+reading-dark.png
+reading-dark.webp
+reading.png
+reading.webp
+robot.png
+robot_dark.png
+robots.txt
+signup.webp
+support1.png
+support1.webp
+vercel.svg
+wave.svg
+window.svg
+src
+App.css
+App.tsx
+api
+aiChatApi.ts
+axiosAuthInstance.ts
+axiosInstance.ts
+chatApi.ts
+documentApi.ts
+fileApi.ts
+friendApi.ts
 │  │  └─ workspaceApi.ts
 │  ├─ assets
 │  │  └─ react.svg
 │  ├─ components
-│  │  ├─ Auth
-│  │  │  ├─ AdminGuard.tsx
-│  │  │  ├─ LoginForm.tsx
-│  │  │  └─ SignupForm.tsx
 │  │  ├─ Call
 │  │  │  ├─ CallModal.tsx
 │  │  │  └─ WebRtcComponent.tsx
@@ -130,8 +123,11 @@
 │  │  │  └─ ScrollToTop.tsx
 │  │  ├─ Main
 │  │  │  ├─ Banner.tsx
+│  │  │  ├─ Document
+│  │  │  │  ├─ DocumentHeader.tsx
+│  │  │  │  └─ Editor.tsx
 │  │  │  ├─ DocumentList.tsx
-│  │  │  ├─ Friends
+Friends
 │  │  │  │  ├─ AddFriend.tsx
 │  │  │  │  ├─ Chat
 │  │  │  │  │  ├─ ChatInput.tsx
@@ -140,49 +136,45 @@
 │  │  │  │  ├─ DesktopFriendView.tsx
 │  │  │  │  ├─ FriendListItem.tsx
 │  │  │  │  ├─ FriendPageContent.tsx
-│  │  │  │  ├─ FriendRequestList.tsx
-│  │  │  │  ├─ FriendSidebar.tsx
+FriendRequestList.tsx
+FriendSidebar.tsx
 │  │  │  │  ├─ MobileFriendView.tsx
 │  │  │  │  └─ UserList.tsx
 │  │  │  ├─ Item.tsx
 │  │  │  ├─ Modal
-│  │  │  │  ├─ AiChatModal.tsx
-│  │  │  │  ├─ ConfirmModal.tsx
-│  │  │  │  ├─ InviteModal.tsx
+AiChatModal.tsx
+ConfirmModal.tsx
+InviteModal.tsx
 │  │  │  │  └─ SettingModal.tsx
 │  │  │  ├─ Navbar.tsx
 │  │  │  ├─ Navigation.tsx
-│  │  │  ├─ SearchCommand.tsx
-│  │  │  ├─ Title.tsx
+SearchCommand.tsx
+Title.tsx
 │  │  │  ├─ TrashBox.tsx
 │  │  │  └─ UserItem.tsx
 │  │  ├─ Marketing
 │  │  │  ├─ FaqContent.tsx
-│  │  │  ├─ Footer.tsx
-│  │  │  ├─ Heading.tsx
-│  │  │  ├─ Heroes.tsx
-│  │  │  ├─ ImageModal.tsx
-│  │  │  ├─ Logo.tsx
+Footer.tsx
+Heading.tsx
+Heroes.tsx
+ImageModal.tsx
+Logo.tsx
 │  │  │  ├─ Modal.tsx
 │  │  │  ├─ Navbar.tsx
-│  │  │  ├─ Notices
-│  │  │  │  ├─ CommentForm.tsx
-│  │  │  │  ├─ CommentList.tsx
-│  │  │  │  ├─ NoticeList.tsx
-│  │  │  │  └─ NoticeNotFound.tsx
-│  │  │  ├─ Policy.tsx
-│  │  │  ├─ ScrollToTop.tsx
+Policy.tsx
+ScrollToTop.tsx
 │  │  │  └─ Term.tsx
 │  │  ├─ provider
-│  │  │  ├─ FriendProvider.tsx
-│  │  │  ├─ ModalProvider.tsx
-│  │  │  ├─ SocketProvider.tsx
+FriendProvider.tsx
+ModalProvider.tsx
+SocketProvider.tsx
 │  │  │  └─ themeProvider.tsx
 │  │  └─ ui
 │  │     ├─ accordion.tsx
 │  │     ├─ alert-dialog.tsx
 │  │     ├─ avatar.tsx
 │  │     ├─ button.tsx
+│  │     ├─ card.tsx
 │  │     ├─ command.tsx
 │  │     ├─ dialog.tsx
 │  │     ├─ dropdown-menu.tsx
@@ -191,20 +183,61 @@
 │  │     ├─ label.tsx
 │  │     ├─ pagination.tsx
 │  │     ├─ popover.tsx
+│  │     ├─ radio-group.tsx
 │  │     ├─ resizable.tsx
-│  │     ├─ scroll-area.tsx
-│  │     ├─ separator.tsx
-│  │     ├─ skeleton.tsx
-│  │     ├─ sonner.tsx
-│  │     ├─ spinner.tsx
-│  │     ├─ table.tsx
+scroll-area.tsx
+select.tsx
+separator.tsx
+skeleton.tsx
+sonner.tsx
+spinner.tsx
+table.tsx
+tabs.tsx
 │  │     └─ textarea.tsx
+│  ├─ features
+│  │  ├─ auth
+│  │  │  ├─ api
+│  │  │  │  └─ userApi.ts
+│  │  │  ├─ components
+│  │  │  │  ├─ AdminGuard.tsx
+│  │  │  │  ├─ FindEmailForm.tsx
+│  │  │  │  ├─ FindPasswordForm.tsx
+│  │  │  │  ├─ LoginForm.tsx
+│  │  │  │  └─ SignupForm.tsx
+│  │  │  ├─ constants
+│  │  │  │  └─ validation.ts
+│  │  │  ├─ hooks
+│  │  │  │  └─ useLoginModal.ts
+│  │  │  ├─ store
+│  │  │  │  └─ useAuthStore.ts
+│  │  │  └─ types
+│  │  │     └─ auth.ts
+inquiry
+│  │  │  ├─ api
+│  │  │  │  └─ inquiryApi.ts
+│  │  │  ├─ components
+│  │  │  │  ├─ InquiryDetailContent.tsx
+│  │  │  │  ├─ InquiryList.tsx
+│  │  │  │  └─ InquiryWriteForm.tsx
+│  │  │  └─ types
+│  │  │     └─ inquiry.ts
+│  │  └─ notice
+│  │     ├─ api
+│  │     │  ├─ commentApi.ts
+│  │     │  └─ noticeApi.ts
+│  │     ├─ components
+│  │     │  ├─ CommentForm.tsx
+│  │     │  ├─ CommentList.tsx
+│  │     │  ├─ NoticeList.tsx
+│  │     │  └─ NoticeNotFound.tsx
+│  │     └─ types
+│  │        └─ notice.ts
 │  ├─ hooks
 │  │  ├─ useCoverImage.ts
-│  │  ├─ useEditorSync.ts
-│  │  ├─ useEnterWorkspace.ts
+│  │  ├─ useDocumentSocket.ts
+useEnterWorkspace.ts
+│  │  ├─ useFetchAiUsage.ts
 │  │  ├─ useInvite.ts
-│  │  ├─ useLoginModal.ts
 │  │  ├─ useMediasoup.ts
 │  │  ├─ usePrivacyModal.ts
 │  │  ├─ useQnaModal.ts
@@ -213,19 +246,24 @@
 │  │  ├─ useSearch.ts
 │  │  ├─ useSettings.ts
 │  │  ├─ useSocket.ts
-│  │  └─ useTermsModal.ts
+│  │  ├─ useTermsModal.ts
+│  │  └─ useWorkspaceSocket.ts
 │  ├─ index.css
 │  ├─ layouts
 │  │  ├─ MainLayout.tsx
 │  │  └─ MarketingLayout.tsx
 │  ├─ lib
-│  │  ├─ socketContext.ts
+socketContext.ts
 │  │  └─ utils.ts
 │  ├─ main.tsx
 │  ├─ pages
 │  │  ├─ Marketing
+│  │  │  ├─ ProfilePage.tsx
+│  │  │  ├─ findAccountPage.tsx
 │  │  │  ├─ inquiries
-│  │  │  │  └─ inquiryPage.tsx
+│  │  │  │  ├─ inquiryDetailPage.tsx
+│  │  │  │  ├─ inquiryPage.tsx
+│  │  │  │  └─ inquiryWritePage.tsx
 │  │  │  ├─ introducePage.tsx
 │  │  │  ├─ marketingPage.tsx
 │  │  │  ├─ notices
@@ -233,19 +271,27 @@
 │  │  │  │  ├─ noticeEditPage.tsx
 │  │  │  │  ├─ noticePage.tsx
 │  │  │  │  └─ noticeWritePage.tsx
+│  │  │  ├─ resetPasswordPage.tsx
 │  │  │  ├─ signupPage.tsx
 │  │  │  ├─ supportPage.tsx
 │  │  │  └─ underConstructionPage.tsx
 │  │  ├─ Workspace
+│  │  │  ├─ Document
+│  │  │  │  ├─ DocumentPage.tsx
+│  │  │  │  └─ documentsWelcomePage.tsx
 │  │  │  ├─ Friend
-│  │  │  │  └─ FriendsPage.tsx
-│  │  │  └─ documentsPage.tsx
-│  │  └─ loginSuccess.tsx
+│  │  │  │  └─ friendsPage.tsx
+│  │  │  └─ Invite
+│  │  │     └─ invitePage.tsx
+│  │  ├─ loginSuccess.tsx
+│  │  └─ notFoundPage.tsx
 │  ├─ store
-│  │  ├─ useAuthStore.ts
+│  │  ├─ useAiUsageStore.ts
 │  │  ├─ useCallStore.ts
 │  │  ├─ useChatStore.ts
+│  │  ├─ useDocumentStore.ts
 │  │  ├─ useFriendStore.ts
+│  │  ├─ useSidebarStore.ts
 │  │  ├─ useTrashStore.ts
 │  │  └─ useWorkspaceStore.ts
 │  └─ types
@@ -258,7 +304,6 @@
 └─ vite.config.ts
 ```
 ©generated by [Project Tree Generator](https://woochanleee.github.io/project-tree-generator)
-
 
 ## 🧪예시 결과
 ### 아래는 Next 시절 결과로 마이그레이션 완료사항은 완성 표시
