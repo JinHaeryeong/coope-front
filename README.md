@@ -1,7 +1,8 @@
 # Coope
 
 <p align="center">
-  <img width="1232" height="478" alt="coope" src="https://github.com/user-attachments/assets/f2803f4c-efed-44e3-857f-b203d48d8b66" />
+  <img width="554" height="117" alt="logo" src="https://github.com/user-attachments/assets/2ed864e6-606a-4932-8730-b9c6e68c5363" />
+
 </p>
 
 > "React와 Mediasoup SFU 아키텍처를 결합한 화상 회의 및 실시간 툴"
@@ -29,7 +30,7 @@
 
 
 ## 사용 기술
-<img width="1340" height="650" alt="diagram-export-2026 -2 -19 -오후-6_03_11" src="https://github.com/user-attachments/assets/9187f304-3aa5-4619-80fb-f492249ea2db" />
+<img width="1232" height="478" alt="coope" src="https://github.com/user-attachments/assets/f2803f4c-efed-44e3-857f-b203d48d8b66" />
 
 
 
