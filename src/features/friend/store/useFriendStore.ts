@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { apiGetFriends, apiGetReceivedRequests, type FriendResponse } from '@/api/friendApi';
+import { apiGetFriends, apiGetReceivedRequests } from '../api/friendApi';
 import { toast } from 'sonner';
+import type { FriendResponse } from '../types/friend';
 
 interface FriendState {
     friends: FriendResponse[];

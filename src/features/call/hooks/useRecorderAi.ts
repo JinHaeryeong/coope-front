@@ -2,9 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { apiCreateDocument, apiGetSidebarDocuments } from "@/api/documentApi";
-import { useCallStore } from "@/store/useCallStore";
 import axiosAuthInstance from "@/api/axiosAuthInstance";
-import { useAiUsageStore } from "@/store/useAiUsageStore";
+import { useCallStore } from "../store/useCallStore";
+import { useAiUsageStore } from "@/features/ai/store/useAiUsageStore";
 
 const AI_PROCESS_TIMEOUT = 180000;
 

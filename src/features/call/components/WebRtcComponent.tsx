@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 
 // 커스텀 훅 임포트
 
-import { useCallStore } from "@/store/useCallStore";
-import { useMediasoup, type RemoteStreamInfo } from "@/hooks/useMediasoup";
-import { useRecorderAi } from "@/hooks/useRecorderAi";
-import { useAiUsageStore } from "@/store/useAiUsageStore";
+import { useMediasoup, type RemoteStreamInfo } from "../hooks/useMediasoup";
+import { useCallStore } from "../store/useCallStore";
+import { useRecorderAi } from "../hooks/useRecorderAi";
+import { useAiUsageStore } from "@/features/ai/store/useAiUsageStore";
 
 /**
  * 상대방 영상 렌더링 컴포넌트

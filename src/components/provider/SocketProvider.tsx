@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import { useFriendStore } from "@/store/useFriendStore";
+import { useFriendStore } from "@/features/friend/store/useFriendStore";
 import { SocketContext } from "@/lib/socketContext";
 import { toast } from "sonner";
 

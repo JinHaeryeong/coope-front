@@ -1,10 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { apiDownloadChatFile, type MessageResponse } from "@/api/chatApi";
 import { cn } from "@/lib/utils";
 import { File } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import ImageModal from "@/components/Marketing/ImageModal";
+import type { MessageResponse } from "../../types/friend";
+import { apiDownloadChatFile } from "../../api/chatApi";
 
 interface MessageItemProps {
     message: MessageResponse;

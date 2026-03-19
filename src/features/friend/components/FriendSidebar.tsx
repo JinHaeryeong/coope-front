@@ -3,16 +3,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Users, MessageSquare, Search, UsersRound } from "lucide-react";
 
-import { useFriend } from "@/components/provider/FriendProvider";
 import FriendRequestList from "./FriendRequestList";
 import AddFriend from "./AddFriend";
 import FriendListItem from "./FriendListItem";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { apiCreateGroupRoom } from "@/api/chatApi";
-import { useFriendStore } from "@/store/useFriendStore";
 import { toast } from "sonner";
+import { useFriend } from "../provider/FriendProvider";
+import { apiCreateGroupRoom } from "../api/chatApi";
+import { useFriendStore } from "../store/useFriendStore";
 
 export const FriendSidebar = () => {
     const {

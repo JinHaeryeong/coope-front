@@ -1,51 +1,5 @@
-import type { RoomType } from "@/components/provider/FriendProvider";
-import axiosAuthInstance from "./axiosAuthInstance";
-
-export type MessageType = "TALK" | "ENTER" | "LEAVE";
-
-export interface Slice<T> {
-    content: T[];
-    last: boolean;
-}
-
-export interface MessageResponse {
-    id: number;
-    roomId: number;
-    senderId: number;
-    senderNickname: string;
-    senderProfile?: string;
-    content: string;
-    type: MessageType;
-    fileUrl?: string;
-    fileName?: string;
-    fileFormat?: string;
-    createdAt: string;
-}
-
-export interface ChatRoomResponse {
-    roomId: number;
-    title: string;
-    type: RoomType;
-}
-
-export interface ChatListResponse {
-    roomId: number;
-    title: string;
-    type: RoomType;
-    lastMessage?: string;
-    lastMessageTime?: string;
-    unreadCount: number;
-}
-
-export interface SliceResponse<T> {
-    content: T[];
-    last: boolean;
-    size: number;
-    number: number;
-    first: boolean;
-    numberOfElements: number;
-    empty: boolean;
-}
+import type { Slice, MessageResponse, ChatRoomResponse, ChatListResponse, SliceResponse } from "../types/friend";
+import axiosAuthInstance from "@/api/axiosAuthInstance";
 
 export const apiCreateOrGet1on1Room = async (friendId: number) => {
     const response = await axiosAuthInstance.post<ChatRoomResponse>(`/chat/rooms/individual`, null, {

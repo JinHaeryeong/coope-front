@@ -1,14 +1,5 @@
-import axiosAuthInstance from "./axiosAuthInstance";
-
-export type FriendStatus = "PENDING" | "ACCEPTED" | "REJECTED";
-
-export interface FriendResponse {
-    id: number;
-    friendId: number;
-    nickname: string;
-    userIcon: string;
-    status: FriendStatus;
-}
+import axiosAuthInstance from "@/api/axiosAuthInstance";
+import type { FriendStatus, FriendResponse } from "../types/friend";
 
 // 친구 목록 조회
 export const apiGetFriends = async (status: FriendStatus = "ACCEPTED") => {
