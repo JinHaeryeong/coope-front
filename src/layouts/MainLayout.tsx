@@ -6,11 +6,11 @@ import { useSidebarStore } from '@/store/useSidebarStore'; // 추가
 import { Button } from '@/components/ui/button';
 import { Ghost, MenuIcon } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
-import { AIChatModal } from "@/components/Main/Modal/AiChatModal";
+import { AIChatModal } from "@/features/ai-chat/components/AiChatModal";
 import { SearchCommand } from "@/components/Main/SearchCommand";
 import { Navigation } from '@/components/Main/Navigation';
 import { cn } from '@/lib/utils';
-import { useFriendStore } from '@/store/useFriendStore';
+import { useFriendStore } from '@/features/friend/store/useFriendStore';
 import { useMediaQuery } from "usehooks-ts";
 import { Navbar } from '@/components/Main/Navbar';
 import { useDocumentSocket } from '@/hooks/useDocumentSocket';
@@ -18,7 +18,7 @@ import { useDocumentStore } from '@/store/useDocumentStore';
 import { useWorkspaceSocket } from '@/hooks/useWorkspaceSocket';
 import { useWorkspaceStore } from '@/store/useWorkspaceStore';
 import { toast } from 'sonner';
-import { useFetchAiUsage } from '@/hooks/useFetchAiUsage';
+import { useFetchAiUsage } from '@/features/ai-chat/hooks/useFetchAiUsage';
 
 export const MainLayout = () => {
   const { isLoggedIn, accessToken } = useAuthStore();

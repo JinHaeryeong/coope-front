@@ -1,6 +1,6 @@
-import type { FriendResponse } from "@/api/friendApi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import type { FriendResponse } from "../types/friend";
 
 interface FriendListItemProps {
     friend: FriendResponse;

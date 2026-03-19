@@ -14,11 +14,11 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { cn } from "@/lib/utils";
-import { useChatStore, type Message } from "@/store/useChatStore";
 import type { SyntaxHighlighterProps } from "react-syntax-highlighter";
-import { apiStreamChat } from "@/api/aiChatApi";
-import { useAiUsageStore } from "@/store/useAiUsageStore";
 import { toast } from "sonner";
+import { useChatStore, type Message } from "../store/useChatStore";
+import { apiStreamChat } from "../api/aiChatApi";
+import { useAiUsageStore } from "@/features/ai/store/useAiUsageStore";
 
 const style = vscDarkPlus as SyntaxHighlighterProps["style"];
 

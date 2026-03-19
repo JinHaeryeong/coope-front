@@ -1,6 +1,6 @@
-import { useFriend } from "@/components/provider/FriendProvider";
 import { FriendSidebar } from "./FriendSidebar";
 import { ChatWindow } from "./Chat/ChatWindow";
+import { useFriend } from "../provider/FriendProvider";
 
 const MobileFriendView = () => {
     const { selectedRoom, setSelectedRoom } = useFriend();

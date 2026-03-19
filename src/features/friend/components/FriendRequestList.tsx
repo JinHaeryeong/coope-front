@@ -6,9 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import { apiAcceptFriend, apiDeleteFriend } from "@/api/friendApi";
-import { useFriendStore } from "@/store/useFriendStore";
 import axios from "axios";
+import { useFriendStore } from "../store/useFriendStore";
+import { apiAcceptFriend, apiDeleteFriend } from "../api/friendApi";
 
 interface FriendRequestListProps {
     onSuccess?: () => void;

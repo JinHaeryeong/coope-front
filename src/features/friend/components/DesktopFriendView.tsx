@@ -1,8 +1,8 @@
-import { useFriend } from "@/components/provider/FriendProvider";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import { FriendSidebar } from "./FriendSidebar";
 import { Loader2 } from "lucide-react";
 import { ChatWindow } from "./Chat/ChatWindow";
+import { useFriend } from "../provider/FriendProvider";
 
 const DesktopFriendView = () => {
     const { selectedRoom } = useFriend();

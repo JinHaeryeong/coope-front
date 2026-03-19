@@ -1,5 +1,5 @@
+import { useAiUsageStore } from "@/features/ai/store/useAiUsageStore";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import { useAiUsageStore } from "@/store/useAiUsageStore";
 
 export const apiStreamChat = async (message: string, previousMessages: any[], signal: AbortSignal) => {
     // Zustand 스토어에서 최신 액세스 토큰 가져오기

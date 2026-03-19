@@ -1,13 +1,12 @@
 
 import { createContext, useState, useRef, type ReactNode, useEffect, useContext, useCallback } from "react";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import { apiGetChatMessages, apiCreateOrGet1on1Room, apiGetMyChatRooms, apiUploadChatFile } from "@/api/chatApi";
-import type { FriendResponse } from "@/api/friendApi";
-import type { ChatListResponse, MessageResponse } from "@/api/chatApi";
 import { useSocket } from "@/hooks/useSocket";
-import { useFriendStore } from "@/store/useFriendStore";
 import { type StompSubscription } from "@stomp/stompjs";
 import { toast } from "sonner";
+import type { ChatListResponse, FriendResponse, MessageResponse } from "../types/friend";
+import { useFriendStore } from "../store/useFriendStore";
+import { apiCreateOrGet1on1Room, apiGetChatMessages, apiGetMyChatRooms, apiUploadChatFile } from "../api/chatApi";
 
 export type RoomType = "INDIVIDUAL" | "GROUP";
 

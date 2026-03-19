@@ -1,5 +1,5 @@
 import axiosAuthInstance from "@/api/axiosAuthInstance";
-import { useAiUsageStore } from "@/store/useAiUsageStore";
+import { useAiUsageStore } from "@/features/ai/store/useAiUsageStore";
 import { useCallback } from 'react';
 
 export const useFetchAiUsage = () => {

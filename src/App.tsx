@@ -8,7 +8,6 @@ import { LoginSuccess } from './pages/loginSuccess';
 import { ScrollToTop } from './components/Common/ScrollToTop';
 import { Spinner } from './components/ui/spinner';
 import { MainLayout } from './layouts/MainLayout';
-import { useCallStore } from './store/useCallStore';
 
 const MarketingPage = lazy(() => import('./pages/Marketing/marketingPage'));
 const SignupPage = lazy(() => import('./pages/Marketing/signupPage'));
@@ -26,11 +25,12 @@ const NoticeEditPage = lazy(() => import('./pages/Marketing/notices/noticeEditPa
 const FriendsPage = lazy(() => import('./pages/Workspace/Friend/friendsPage'));
 const InvitePage = lazy(() => import('./pages/Workspace/Invite/invitePage'));
 const DocumentsWelcomePage = lazy(() => import('./pages/Workspace/Document/documentsWelcomePage'))
-import CallModal from './components/Call/CallModal';
 import NotFoundPage from './pages/notFoundPage';
 import { apiRefreshToken } from './features/auth/api/userApi';
 import { AdminGuard } from './features/auth/components/AdminGuard';
 import { useAuthStore } from './features/auth/store/useAuthStore';
+import { useCallStore } from './features/call/store/useCallStore';
+import CallModal from './features/call/components/CallModal';
 const DocumentsPage = lazy(() => import('./pages/Workspace/Document/DocumentPage'));
 const ProfilePage = lazy(() => import('./pages/Marketing/ProfilePage'));
 const InquiryWritePage = lazy(() => import('./pages/Marketing/inquiries/inquiryWritePage'));

@@ -1,14 +1,14 @@
 import { ChevronLeft, LogOut, Phone, Users, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useFriend } from "@/components/provider/FriendProvider";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
 import ChatInput from "./ChatInput";
 import { MessageItem } from "./MessageItem";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useCallStore } from "@/store/useCallStore";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { apiLeaveChatRoom } from "@/api/chatApi";
+import { useFriend } from "../../provider/FriendProvider";
+import { apiLeaveChatRoom } from "../../api/chatApi";
+import { useCallStore } from "@/features/call/store/useCallStore";
 
 interface ChatWindowProps {
     isMobile?: boolean;

@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/features/auth/store/useAuthStore";
-import { useFriendStore } from "@/store/useFriendStore";
+import { useFriendStore } from "@/features/friend/store/useFriendStore";
 
-import AddFriend from "@/components/Main/Friends/AddFriend";
-import FriendRequestList from "@/components/Main/Friends/FriendRequestList";
-import { FriendProvider } from "@/components/provider/FriendProvider";
-import FriendPageContent from "@/components/Main/Friends/FriendPageContent";
+import AddFriend from "@/features/friend/components/AddFriend";
+import FriendRequestList from "@/features/friend/components/FriendRequestList";
+import { FriendProvider } from "@/features/friend/provider/FriendProvider";
+import FriendPageContent from "@/features/friend/components/FriendPageContent";
 
 const FriendsPage = () => {
     const { user } = useAuthStore();

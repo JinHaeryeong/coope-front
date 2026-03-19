@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import React, { useRef } from "react";
 import { Expand, Minus, PhoneOff, Square, SquareArrowOutDownLeft, X } from "lucide-react";
 import Draggable from "react-draggable";
-import { useCallStore } from "@/store/useCallStore"; // 스토어 임포트
 import WebRtcComponent from "./WebRtcComponent";
+import { useCallStore } from "../store/useCallStore";
 
 interface ModalProps {
     isOpen: boolean;
