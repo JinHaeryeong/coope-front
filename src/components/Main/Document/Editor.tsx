@@ -12,6 +12,7 @@ import {
     createCodeBlockSpec,
     defaultBlockSpecs,
 } from "@blocknote/core";
+import { useStatus } from "@liveblocks/react";
 
 import { ko } from "@blocknote/core/locales";
 import { useEffect, useRef } from "react";
@@ -19,6 +20,7 @@ import { apiFileUpload } from "@/api/fileApi";
 import { toast } from "sonner";
 import { apiUpdateDocumentRedisSnapshot } from "@/api/documentApi";
 import { Thread } from "@liveblocks/react-ui";
+import { Spinner } from "@/components/ui/spinner";
 
 interface EditorProps {
     initialContent?: string;
@@ -40,6 +42,9 @@ const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 const Editor = ({ initialContent, editable = true, documentId }: EditorProps) => {
     const { theme } = useTheme();
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const status = useStatus();
+    const isLiveblocksLoading = status === "initial" || status === "connecting";
+    const isConnectionIssue = status === "disconnected" || status === "reconnecting";
 
 
     const handleUpload = async (file: File) => {
@@ -74,27 +79,6 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
                 : undefined,
         }
     );
-
-    useEffect(() => {
-        if (editor && initialContent && initialContent !== "[]") {
-            const currentBlocks = editor.topLevelBlocks;
-
-            const isEmpty = currentBlocks.length === 1 &&
-                currentBlocks[0].type === "paragraph" &&
-                (currentBlocks[0].content as any[]).length === 0;
-
-            if (isEmpty) {
-                try {
-                    const blocks = JSON.parse(initialContent);
-                    if (Array.isArray(blocks) && blocks.length > 0) {
-                        editor.replaceBlocks(currentBlocks, blocks);
-                    }
-                } catch (e) {
-                    console.error("데이터 주입 실패:", e);
-                }
-            }
-        }
-    }, [editor, initialContent]);
 
     const handler = () => {
         if (!editable) return;
@@ -138,7 +122,36 @@ const Editor = ({ initialContent, editable = true, documentId }: EditorProps) =>
         return () => window.removeEventListener("blur", handleBlur);
     }, [editor, documentId, editable]);
 
+
     const threads = useThreads()?.threads ?? [];
+
+    if (isConnectionIssue) {
+        return (
+            <div className="flex flex-col items-center justify-center w-full h-64 border border-red-200 bg-red-50 rounded-lg">
+                <p className="text-sm text-red-600 font-medium">
+                    서버와의 연결이 불안정합니다.
+                </p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="mt-2 text-xs text-red-500 underline"
+                >
+                    새로고침 시도
+                </button>
+            </div>
+        );
+    }
+
+    if (isLiveblocksLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center w-full h-64 gap-2">
+                <Spinner />
+                <p className="text-sm text-muted-foreground animate-pulse">
+                    문서를 동기화하고 있습니다...
+                </p>
+            </div>
+        );
+    }
+
 
     return (
         <div className="flex w-full gap-4">
