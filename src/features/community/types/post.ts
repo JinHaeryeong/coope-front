@@ -1,0 +1,1 @@
+export type Category = "RECRUITMENT" | "SHOWCASE" | "QNA" | "GENERAL";
