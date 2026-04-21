@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom"; // react-router-dom으로 교체
+import { Link } from "react-router-dom";
 import { HatGlassesIcon, LogOut, Menu, UserIcon, X } from "lucide-react";
 
 import { useScrollTop } from "@/hooks/useScrollTop";
@@ -27,6 +27,7 @@ import {
 
 const Links = [
     { href: "/notice", text: '공지사항' },
+    { href: "/community", text: '커뮤니티' },
     { href: "/introduction", text: '회사소개' },
     { href: "/support", text: '고객지원' },
 ]

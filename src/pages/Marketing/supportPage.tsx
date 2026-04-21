@@ -16,10 +16,10 @@ const SupportPage = () => {
         <div className="min-h-full flex flex-col relative box-border pt-10">
             <div className="flex flex-col items-center justify-center md:justify-start text-center gap-y-8 flex-1 px-6 pb-10">
                 <header className="space-y-4 text-center box-border max-w-2xl">
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight">
+                    <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight">
                         고객지원
                     </h1>
-                    <p className="text-base md:text-xl text-muted-foreground break-keep">
+                    <p className="text-muted-foreground break-keep">
                         Coope의 기능들을 함께 알아보고, 의문을 해결하세요
                     </p>
                 </header>

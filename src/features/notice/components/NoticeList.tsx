@@ -65,7 +65,7 @@ const NoticeList = () => {
     return (
         <div className="min-h-screen flex flex-col pt-10 px-4 md:px-6">
             <header className="space-y-4 text-center mb-10">
-                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">공지사항</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">공지사항</h1>
                 <p className="text-muted-foreground">새로운 소식과 업데이트를 확인하세요</p>
             </header>
 
@@ -95,7 +95,7 @@ const NoticeList = () => {
                             <TableBody>
                                 {notices.map((notice, index) => (
                                     <TableRow key={notice.id}>
-                                        <TableCell className="text-center text-xs md:text-sm px-1">
+                                        <TableCell className="text-center text-xs md:text-sm">
                                             {totalElements - ((currentPage - 1) * noticesPerPage) - index}
                                         </TableCell>
                                         <TableCell className="truncate">

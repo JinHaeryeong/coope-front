@@ -70,7 +70,7 @@ const InquiryList = () => {
     return (
         <div className="min-h-screen flex flex-col pt-10 px-4 md:px-6">
             <header className="space-y-4 text-center mb-10">
-                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+                <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">
                     {isAdmin ? "문의 관리" : "내 문의 내역"}
                 </h1>
                 <p className="text-muted-foreground">

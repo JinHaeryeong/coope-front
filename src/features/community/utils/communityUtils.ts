@@ -1,6 +1,6 @@
-import { type Category } from "../types/post";
+import { type PostCategory } from "../types/posts";
 
-export const getCategoryStyle = (category: Category) => {
+export const getCategoryStyle = (category: PostCategory) => {
     switch (category) {
         case "RECRUITMENT":
             return "bg-green-50 text-green-700 border-green-200 hover:bg-green-50";
@@ -15,8 +15,8 @@ export const getCategoryStyle = (category: Category) => {
     }
 };
 
-export const getCategoryLabel = (category: Category) => {
-    const labels: Record<Category, string> = {
+export const getCategoryLabel = (category: PostCategory) => {
+    const labels: Record<PostCategory, string> = {
         RECRUITMENT: "모집",
         SHOWCASE: "자랑",
         QNA: "질문",
