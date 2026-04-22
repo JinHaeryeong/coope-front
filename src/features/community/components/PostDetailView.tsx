@@ -64,7 +64,9 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
             )}
 
             {/* 본문 (마크다운 지원) */}
-            <div className="prose dark:prose-invert max-w-none mb-16 text-slate-700 dark:text-slate-200 leading-relaxed">
+            <div className="prose dark:prose-invert prose-p:my-0.5 
+        prose-headings:mt-4 
+        prose-headings:mb-2 max-w-none mb-16 text-slate-700 dark:text-slate-200 leading-relaxed">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {post.content}
                 </ReactMarkdown>

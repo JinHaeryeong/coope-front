@@ -7,7 +7,8 @@ export type ImageCategory =
     | "CHAT"
     | "COVER"
     | "DOCUMENT"
-    | "INQUIRY";
+    | "INQUIRY"
+    | "COMMUNITY";
 
 export const apiFileUpload = async (file: File, category: ImageCategory) => {
     const formData = new FormData();

@@ -116,7 +116,7 @@ const PostDetailPage = () => {
                     )}
                 </div>
 
-                // TODO: CommentForm, CommentList 컴포넌트 여기 배치하기
+                {/* // TODO: CommentForm, CommentList 컴포넌트 여기 배치하기 */}
                 <div className="flex items-center gap-2 text-xl font-bold mt-6">
                     댓글 <span className="text-blue-600">{post.comments?.length || 0}</span>
                 </div>
