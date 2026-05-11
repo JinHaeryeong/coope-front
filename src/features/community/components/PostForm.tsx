@@ -101,7 +101,7 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
             title: "",
             content: "",
             targetMembers: 2,
-            techStack: "",
+            techStacks: [],
         },
     });
 
@@ -110,18 +110,15 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
 
     const addTag = (tag: string) => {
         if (tags.includes(tag)) return;
-
         const newTags = [...tags, tag];
-
         setTags(newTags);
-        setValue("techStack", newTags.join(","));
+        setValue("techStacks", newTags);  // 배열 그대로
     };
 
     const removeTag = (tagToRemove: string) => {
         const newTags = tags.filter((tag) => tag !== tagToRemove);
-
         setTags(newTags);
-        setValue("techStack", newTags.join(","));
+        setValue("techStacks", newTags);  // 배열 그대로
     };
 
     const handleImageUpload = async (

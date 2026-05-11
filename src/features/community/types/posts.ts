@@ -22,7 +22,7 @@ export interface PostResponse {
     createdAt: string;
 
     // 모집 카드 전용 필드
-    techStack?: string;
+    techStacks?: string[];
     currentMembers?: number;
     targetMembers?: number;
 }
@@ -31,7 +31,7 @@ export interface PostCreateRequest {
     category: PostCategory;
     title: string;
     content: string;
-    techStack?: string;
+    techStacks?: string[];
     currentMembers?: number;
     targetMembers?: number;
 }
@@ -39,7 +39,7 @@ export interface PostCreateRequest {
 export interface PostUpdateRequest {
     title: string;
     content: string;
-    techStack?: string;
+    techStacks?: string[];
     currentMembers?: number;
     targetMembers?: number;
 }
@@ -55,7 +55,7 @@ export interface PostDetailResponse {
     createdAt: string;
 
     // 모집 전용 필드
-    techStack?: string;
+    techStacks?: string[];
     currentMembers?: number;
     targetMembers?: number;
 

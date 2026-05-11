@@ -11,22 +11,13 @@ const PostWritePage = () => {
 
     const handleSubmit = async (formData: PostCreateRequest) => {
         try {
-            let cleanTechStack = formData.techStack;
-
-            if (cleanTechStack) {
-                cleanTechStack = cleanTechStack
-                    .split(',')               // 1) 쉼표 기준으로 자르고
-                    .map(s => s.trim())       // 2) 양쪽 끝 공백 제거 (Trim)
-                    .filter(s => s !== "")    // 3) 빈 문자열 제거 (실수로 ,, 입력한 경우 방지)
-                    .join(',');               // 4) 다시 쉼표로 합치기
-            }
 
             const requestData = {
                 ...formData,
-                techStack: cleanTechStack, // 정제된 데이터 주입
                 targetMembers: formData.targetMembers ? Number(formData.targetMembers) : undefined,
                 currentMembers: 1,
             };
+
 
             await communityApi.createPost(requestData);
             toast.success("게시글이 등록되었습니다.");

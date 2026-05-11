@@ -112,7 +112,9 @@ const CommunityList = () => {
                                                 </div>
                                                 {post.category === "RECRUITMENT" && (
                                                     <div className="flex items-center gap-2 text-[11px] text-muted-foreground truncate">
-                                                        <span className="bg-slate-100 dark:bg-gray-950 px-1 rounded shrink-0">{post.techStack}</span>
+                                                        <span className="bg-slate-100 dark:bg-gray-950 px-1 rounded shrink-0">
+                                                            {post.techStacks?.join(", ")}
+                                                        </span>
                                                         <span className="truncate">인원: {post.currentMembers}/{post.targetMembers}</span>
                                                     </div>
                                                 )}

@@ -46,9 +46,13 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
                         <div className="space-y-2">
                             <span className="text-xs text-slate-400">기술 스택</span>
                             <div className="flex flex-wrap gap-2">
-                                {post.techStack?.split(',').map((tech, i) => (
-                                    <Badge key={i} variant="secondary" className="bg-white dark:bg-slate-800 border">
-                                        {tech.trim()}
+                                {post.techStacks?.map((tech, i) => (
+                                    <Badge
+                                        key={i}
+                                        variant="secondary"
+                                        className="bg-white dark:bg-slate-800 border"
+                                    >
+                                        {tech}
                                     </Badge>
                                 ))}
                             </div>
