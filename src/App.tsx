@@ -33,7 +33,8 @@ import { useCallStore } from './features/call/store/useCallStore';
 import CallModal from './features/call/components/CallModal';
 const PostDetailPage = lazy(() => import('./pages/Community/postDetailPage'));
 const CommunityPage = lazy(() => import('./pages/Community/communityPage'));
-const PostWritePage = lazy(() => import('./pages/Community/postWritePage'))
+const PostWritePage = lazy(() => import('./pages/Community/postWritePage'));
+const PostEditPage = lazy(() => import('./pages/Community/postEditPage'));
 const DocumentsPage = lazy(() => import('./pages/Workspace/Document/DocumentPage'));
 const ProfilePage = lazy(() => import('./pages/Marketing/ProfilePage'));
 const InquiryWritePage = lazy(() => import('./pages/Marketing/inquiries/inquiryWritePage'));
@@ -124,6 +125,7 @@ function App() {
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/community/write" element={<PostWritePage />} />
                 <Route path="/community/:id" element={<PostDetailPage />} />
+                <Route path="/community/edit/:id" element={<PostEditPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/notice/:id" element={<NoticeDetailPage />} />
                 <Route element={<AdminGuard children={<Outlet />} />}>

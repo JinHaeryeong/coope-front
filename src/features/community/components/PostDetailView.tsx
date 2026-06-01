@@ -22,7 +22,6 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
                     {post.title}
                 </h1>
 
-                {/* TODO: 유저 닉네임을 보여주고, 친구 추가 기능을 닉네임 검색 => 이메일 검색으로 수정하기 */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-2">
                     <div className="flex items-center gap-1.5 font-medium">
                         <User size={16} /> 익명

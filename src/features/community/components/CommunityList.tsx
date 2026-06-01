@@ -55,7 +55,7 @@ const CommunityList = () => {
     };
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="min-h-screen flex flex-col pt-10 px-4 md:px-6">
 
             <header className="space-y-4 text-center mb-10">
                 <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">커뮤니티</h1>
@@ -67,7 +67,7 @@ const CommunityList = () => {
             <CategoryTabs currentCategory={currentCategory} onCategoryChange={handleCategoryChange} />
 
             {/* 테이블 영역 */}
-            <div className="rounded-md border bg-card relative min-h-100 flex flex-col">
+            <div className="rounded-md border bg-card relative min-h-100 flex flex-col my-2">
                 {loading ? (
                     <div className="flex-1 flex flex-col items-center justify-center gap-2">
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -169,8 +169,6 @@ const CommunityList = () => {
                     </>
                 )}
             </div>
-
-            {/* TODO: 글쓰기 기능 추가 */}
 
             {isLoggedIn && (
                 <div className="flex justify-end w-full">

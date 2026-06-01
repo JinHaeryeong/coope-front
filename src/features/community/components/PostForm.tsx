@@ -51,6 +51,8 @@ import type {
 
 interface PostFormProps {
     onSubmit: (data: PostCreateRequest) => void;
+    initialData?: PostCreateRequest; // Optional로 선언 (작성 시에는 안 넘어옴)
+    isEdit?: boolean;
 }
 
 const TECH_STACKS = [
@@ -80,13 +82,13 @@ const TECH_STACKS = [
     "Python",
 ] as const;
 
-export const PostForm = ({ onSubmit }: PostFormProps) => {
+export const PostForm = ({ onSubmit, initialData, isEdit }: PostFormProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [isUploading, setIsUploading] = useState(false);
     const [activeTab, setActiveTab] = useState("write");
 
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<string[]>(initialData?.techStacks || []);
     const [open, setOpen] = useState(false);
 
     const {
@@ -97,11 +99,12 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
         formState: { isSubmitting },
     } = useForm<PostCreateRequest>({
         defaultValues: {
-            category: "GENERAL",
-            title: "",
-            content: "",
-            targetMembers: 2,
-            techStacks: [],
+            category: initialData?.category || "GENERAL",
+            title: initialData?.title || "",
+            content: initialData?.content || "",
+            targetMembers: initialData?.targetMembers || 2,
+            techStacks: initialData?.techStacks || [],
+            currentMembers: initialData?.currentMembers || 1,
         },
     });
 
@@ -119,6 +122,16 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
         const newTags = tags.filter((tag) => tag !== tagToRemove);
         setTags(newTags);
         setValue("techStacks", newTags);  // 배열 그대로
+    };
+
+    const onValidSubmit = (data: PostCreateRequest) => {
+        if (category === "RECRUITMENT" && tags.length === 0) {
+            toast.error("모집 글은 최소 하나 이상의 기술 스택을 선택해야 합니다.");
+            return; // 백엔드로 API 요청을 보내지 않고 여기서 중단!
+        }
+
+        // 검증을 통과하면 부모(Page)가 넘겨준 진짜 onSubmit 실행
+        onSubmit(data);
     };
 
     const handleImageUpload = async (
@@ -158,7 +171,7 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
 
     return (
         <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onValidSubmit)}
             className="editor mx-auto w-full flex flex-col border border-gray-200 dark:border-neutral-800 p-4 md:p-6 shadow-lg max-w-4xl rounded-lg bg-card text-card-foreground space-y-4 md:space-y-6"
         >
             <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-start md:items-center">
@@ -168,13 +181,9 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
                     </span>
 
                     <Select
-                        defaultValue="GENERAL"
-                        onValueChange={(value) =>
-                            setValue(
-                                "category",
-                                value as PostCategory
-                            )
-                        }
+                        defaultValue={initialData?.category || "GENERAL"}
+                        onValueChange={(value) => setValue("category", value as PostCategory)}
+                        disabled={isEdit}
                     >
                         <SelectTrigger className="w-full md:w-40 border-gray-300 dark:border-neutral-700 h-10 bg-transparent">
                             <SelectValue placeholder="카테고리" />
@@ -329,13 +338,8 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
 
                         <div className="max-w-50">
                             <Select
-                                defaultValue="2"
-                                onValueChange={(v) =>
-                                    setValue(
-                                        "targetMembers",
-                                        Number(v)
-                                    )
-                                }
+                                defaultValue={initialData?.targetMembers?.toString() || "2"}
+                                onValueChange={(v) => setValue("targetMembers", Number(v))}
                             >
                                 <SelectTrigger className="w-full h-10 border-blue-200 dark:border-blue-900/50 bg-white dark:bg-neutral-900/50">
                                     <SelectValue placeholder="인원 선택" />
@@ -474,7 +478,9 @@ export const PostForm = ({ onSubmit }: PostFormProps) => {
                     disabled={isSubmitting || isUploading}
                     className="flex-1 md:flex-none h-10 px-10 text-xs md:text-sm font-semibold shadow-sm"
                 >
-                    {isSubmitting ? "등록 중..." : "등록"}
+                    {isSubmitting
+                        ? (initialData ? "수정 중..." : "등록 중...")
+                        : (initialData ? "수정 완료" : "등록")}
                 </Button>
             </div>
         </form>

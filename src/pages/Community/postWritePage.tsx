@@ -5,9 +5,19 @@ import { PostForm } from "@/features/community/components/PostForm";
 import { communityApi } from "@/features/community/api/communityApi";
 import { toast } from "sonner";
 import type { PostCreateRequest } from "@/features/community/types/posts";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
+import { useEffect } from "react";
 
 const PostWritePage = () => {
     const navigate = useNavigate();
+    const { isLoggedIn } = useAuthStore();
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            toast.error("로그인이 필요한 서비스입니다.");
+            navigate("/community", { replace: true });
+        }
+    }, [isLoggedIn, navigate]);
 
     const handleSubmit = async (formData: PostCreateRequest) => {
         try {

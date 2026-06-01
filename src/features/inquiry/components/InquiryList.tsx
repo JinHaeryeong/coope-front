@@ -83,7 +83,6 @@ const InquiryList = () => {
                     <div className="flex-1 flex flex-col items-center justify-center py-20 gap-6">
                         <Clock className="w-8 h-8 text-slate-400" />
                         <p className="text-slate-500 text-lg font-medium">로그인이 필요한 페이지입니다.</p>
-                        <Button onClick={() => navigate("/login")}>로그인하러 가기</Button>
                     </div>
                 ) : loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
