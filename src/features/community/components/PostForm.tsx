@@ -50,7 +50,7 @@ import type {
 } from "../types/posts";
 
 interface PostFormProps {
-    onSubmit: (data: PostCreateRequest) => void;
+    onSubmit: (data: PostCreateRequest) => Promise<void> | void;
     initialData?: PostCreateRequest; // Optional로 선언 (작성 시에는 안 넘어옴)
     isEdit?: boolean;
 }
@@ -131,7 +131,7 @@ export const PostForm = ({ onSubmit, initialData, isEdit }: PostFormProps) => {
         }
 
         // 검증을 통과하면 부모(Page)가 넘겨준 진짜 onSubmit 실행
-        onSubmit(data);
+        return onSubmit(data);
     };
 
     const handleImageUpload = async (

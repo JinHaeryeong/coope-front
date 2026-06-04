@@ -44,12 +44,12 @@ const PostDetailPage = () => {
         const now = Date.now();
         const ONE_DAY = 24 * 60 * 60 * 1000; // 24시간
 
-        if (!lastViewTime || now - parseInt(lastViewTime) > ONE_DAY) {
+        if (!lastViewTime || now - Number(lastViewTime) > ONE_DAY) {
             try {
                 await communityApi.increaseView(id); // POST /api/community/posts/{id}/views
                 localStorage.setItem(VIEW_KEY, now.toString());
 
-                setPost(prev => prev ? { ...prev, viewCount: prev.viewCount } : null);
+                setPost(prev => prev ? { ...prev, viewCount: prev.viewCount + 1 } : null);
             } catch (error) {
                 console.error("조회수 증가 처리 중 오류:", error);
             }

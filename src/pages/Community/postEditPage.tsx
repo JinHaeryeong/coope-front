@@ -39,6 +39,7 @@ const PostEditPage = () => {
                     title: data.title,
                     content: data.content,
                     targetMembers: data.targetMembers || 2,
+                    currentMembers: data.currentMembers ?? 1, // 버그 수정 1: 기존 참여 인원 데이터 추가 유실 방지
                     techStacks: data.techStacks || [],
                 });
             } catch (error) {
@@ -50,19 +51,15 @@ const PostEditPage = () => {
         };
 
         if (postId) fetchPostDetail();
-    }, [postId, navigate]);
+    }, [isLoggedIn, user, postId, navigate]); // 버그 수정 2: 의존성 배열에 user 인스턴스를 바인딩하여 갱신 보장
 
     // 수정 완료 버튼 눌렀을 때 PUT 요청 핸들러
     const handleUpdateSubmit = async (formData: PostCreateRequest) => {
         try {
-            const { category, ...updateData } = formData;
+            const { category, ...updateData } = formData; // category를 제외한 최신 폼 데이터 추출
 
-            const requestBody = {
-                ...updateData,
-                currentMembers: formData.currentMembers || 1
-            };
-
-            await communityApi.updatePost(postId, requestBody as PostUpdateRequest);
+            // 버그 수정 3: 잘못된 단언 연산자(|| 1) 제거 및 안전한 타입 전송
+            await communityApi.updatePost(postId, updateData as PostUpdateRequest);
 
             toast.success("게시글이 성공적으로 수정되었습니다.");
             navigate(`/community/${postId}`, { replace: true }); // 수정 후 다시 상세페이지로 이동

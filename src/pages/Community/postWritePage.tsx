@@ -24,7 +24,7 @@ const PostWritePage = () => {
 
             const requestData = {
                 ...formData,
-                targetMembers: formData.targetMembers ? Number(formData.targetMembers) : undefined,
+                targetMembers: formData.targetMembers != null ? Number(formData.targetMembers) : undefined,
                 currentMembers: 1,
             };
 
