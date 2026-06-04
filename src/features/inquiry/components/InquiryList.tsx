@@ -70,7 +70,7 @@ const InquiryList = () => {
     return (
         <div className="min-h-screen flex flex-col pt-10 px-4 md:px-6">
             <header className="space-y-4 text-center mb-10">
-                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+                <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">
                     {isAdmin ? "문의 관리" : "내 문의 내역"}
                 </h1>
                 <p className="text-muted-foreground">
@@ -83,7 +83,6 @@ const InquiryList = () => {
                     <div className="flex-1 flex flex-col items-center justify-center py-20 gap-6">
                         <Clock className="w-8 h-8 text-slate-400" />
                         <p className="text-slate-500 text-lg font-medium">로그인이 필요한 페이지입니다.</p>
-                        <Button onClick={() => navigate("/login")}>로그인하러 가기</Button>
                     </div>
                 ) : loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
